@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>劉若玥 Luna Liu｜R.R RakuenɒuyɘЯ</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;1,400&display=swap');
+  :root { --black:#04040A;--grey:#888899;--grey-light:#BBBBCC;--white:#F0F0F5;--off-white:#E8E8EE; }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--black);color:var(--white);font-family:'Space Mono',monospace;overflow-x:hidden;cursor:none;}
+  .cursor{position:fixed;width:6px;height:6px;background:var(--white);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;}
+  .cursor-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(240,240,245,0.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all 0.12s ease;mix-blend-mode:difference;}
+  .grain{position:fixed;inset:-50%;width:200%;height:200%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");pointer-events:none;z-index:100;opacity:0.3;animation:grain-drift 0.15s steps(1) infinite;}
+  @keyframes grain-drift{0%{transform:translate(0,0)}20%{transform:translate(-2%,-1%)}40%{transform:translate(1%,2%)}60%{transform:translate(-1%,1%)}80%{transform:translate(2%,-1%)}100%{transform:translate(0,0)}}
+  nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:24px 48px;background:linear-gradient(to bottom,rgba(4,4,10,0.7),transparent);}
+  .nav-logo img{height:28px;filter:invert(1);opacity:0.85;display:block;}
+  .nav-links{display:flex;gap:40px;}
+  .nav-links a{font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--grey-light);text-decoration:none;transition:color 0.3s;}
+  .nav-links a:hover{color:var(--white);}
+
+  /* HERO — full height split */
+  .hero{display:grid;grid-template-columns:55% 45%;min-height:100vh;}
+  .hero-photo{position:relative;overflow:hidden;}
+  .hero-photo img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:grayscale(15%);transition:filter 0.6s;}
+  .hero-photo:hover img{filter:grayscale(0%);}
+  .hero-photo-overlay{position:absolute;inset:0;background:linear-gradient(to right,transparent 60%,var(--black) 100%);}
+  /* Song playing indicator */
+  .now-playing{position:absolute;bottom:32px;left:32px;display:flex;align-items:center;gap:8px;font-size:9px;letter-spacing:0.2em;color:rgba(240,240,245,0.4);text-transform:uppercase;}
+  .playing-dot{width:6px;height:6px;border-radius:50%;background:rgba(240,240,245,0.4);animation:pulse 2s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:0.4;transform:scale(1)}50%{opacity:0.8;transform:scale(1.3)}}
+
+  .hero-info{display:flex;flex-direction:column;justify-content:center;padding:120px 64px 80px 48px;}
+  .hero-label{font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:var(--grey);margin-bottom:32px;display:block;}
+  .hero-name-cn{font-family:'Noto Serif TC',serif;font-size:clamp(52px,7vw,96px);font-weight:300;letter-spacing:0.05em;line-height:1;margin-bottom:8px;color:var(--white);}
+  .hero-name-en{font-family:'EB Garamond',serif;font-style:italic;font-size:clamp(16px,2vw,24px);color:var(--grey-light);letter-spacing:0.15em;margin-bottom:40px;display:block;}
+  .hero-role{font-size:10px;letter-spacing:0.15em;color:var(--grey);line-height:2.2;margin-bottom:48px;}
+  .hero-bio{font-family:'Noto Serif TC',serif;font-size:13px;line-height:2.2;color:rgba(240,240,245,0.65);max-width:320px;margin-bottom:48px;font-weight:300;}
+  .ig-link{display:inline-flex;align-items:center;gap:8px;font-size:10px;letter-spacing:0.15em;color:var(--grey);text-decoration:none;transition:color 0.2s;border-bottom:1px solid rgba(136,136,153,0.3);padding-bottom:4px;}
+  .ig-link:hover{color:var(--white);border-bottom-color:rgba(240,240,245,0.5);}
+
+  /* IG FEED PLACEHOLDER */
+  .feed-section{padding:80px 48px 120px;}
+  .feed-label{font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:var(--grey);margin-bottom:32px;display:block;border-bottom:1px solid rgba(240,240,245,0.06);padding-bottom:16px;}
+  .feed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;}
+  .feed-item{aspect-ratio:1;background:#111118;position:relative;overflow:hidden;cursor:none;}
+  .feed-item a{display:block;width:100%;height:100%;}
+  .feed-item img{width:100%;height:100%;object-fit:cover;filter:grayscale(30%);transition:filter 0.4s,transform 0.4s;}
+  .feed-item:hover img{filter:grayscale(0%);transform:scale(1.05);}
+  .feed-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:9px;letter-spacing:0.2em;color:rgba(240,240,245,0.1);text-transform:uppercase;aspect-ratio:1;}
+  .feed-ig-btn{display:inline-flex;align-items:center;gap:8px;margin-top:24px;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--grey);text-decoration:none;border:1px solid rgba(240,240,245,0.15);padding:10px 20px;transition:all 0.2s;}
+  .feed-ig-btn:hover{color:var(--white);border-color:rgba(240,240,245,0.5);}
+
+  /* NAV between characters */
+  .char-nav{padding:0 48px 80px;display:flex;justify-content:space-between;border-top:1px solid rgba(240,240,245,0.06);padding-top:48px;}
+  .char-nav a{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--grey);text-decoration:none;transition:color 0.2s;}
+  .char-nav a:hover{color:var(--white);}
+
+  footer{background:var(--black);border-top:1px solid rgba(240,240,245,0.06);padding:48px;display:flex;justify-content:space-between;align-items:center;}
+  .footer-logo img{height:28px;filter:invert(1);opacity:0.6;}
+  .footer-copy{font-size:9px;color:rgba(136,136,153,0.4);letter-spacing:0.1em;}
+
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 50%,rgba(4,4,10,0.5) 100%);pointer-events:none;z-index:99;}
+
+  @media(max-width:768px){
+    .hero{grid-template-columns:1fr;min-height:auto;}
+    .hero-photo{height:65vw;min-height:320px;}
+    .hero-photo-overlay{background:linear-gradient(to bottom,transparent 50%,var(--black) 100%);}
+    .hero-info{padding:40px 24px 60px;}
+    nav{padding:16px 24px;}
+    .feed-section{padding:48px 24px 80px;}
+    .char-nav{padding:32px 24px 60px;}
+    footer{padding:32px 24px;flex-direction:column;gap:16px;text-align:center;}
+  }
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="grain"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo"><img src="logo-main.png" alt="R.R"></a>
+  <div class="nav-links">
+    <a href="what-we-do.html">what we do</a>
+    <a href="index.html#who">who we are</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-photo">
+    <img src="luna-main.jpg" alt="劉若玥 Luna Liu" id="lunaPhoto">
+    <div class="hero-photo-overlay"></div>
+    <div class="now-playing">
+      <span class="playing-dot"></span>
+      Between — now playing
+    </div>
+  </div>
+  <div class="hero-info">
+    <span class="hero-label">R.R — 劉若玥</span>
+    <h1 class="hero-name-cn">劉若玥</h1>
+    <span class="hero-name-en">Luna Liu</span>
+    <p class="hero-role">26 · PM / 企劃 / 兼職設計</p>
+    <p class="hero-bio">在把事情做好之前不會停下來。<br>策略是她的語言，節奏是她的性格。<br>工作時綁高馬尾，說話有重量。</p>
+    <a href="https://instagram.com/liu.ruoyue" target="_blank" class="ig-link">
+      ↗ @liu.ruoyue
+    </a>
+  </div>
+</section>
+
+<section class="feed-section">
+  <span class="feed-label">@liu.ruoyue — 最新動態</span>
+  <div class="feed-grid">
+    <div class="feed-item"><div class="feed-placeholder">即將開放</div></div>
+    <div class="feed-item"><div class="feed-placeholder">即將開放</div></div>
+    <div class="feed-item"><div class="feed-placeholder">即將開放</div></div>
+    <div class="feed-item"><div class="feed-placeholder">即將開放</div></div>
+    <div class="feed-item"><div class="feed-placeholder">即將開放</div></div>
+    <div class="feed-item"><div class="feed-placeholder">即將開放</div></div>
+  </div>
+  <a href="https://instagram.com/liu.ruoyue" target="_blank" class="feed-ig-btn">
+    ↗ 前往 Instagram
+  </a>
+</section>
+
+<div class="char-nav">
+  <a href="index.html">← 返回</a>
+  <a href="ari.html">Ari 林書亞 →</a>
+</div>
+
+<footer>
+  <a href="index.html" class="footer-logo"><img src="logo-main.png" alt="R.R"></a>
+  <span class="footer-copy">© 2026 R.R｜RakuenɒuyɘЯ</span>
+</footer>
+
+<script>
+  const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  function anim(){cursor.style.left=mx+'px';cursor.style.top=my+'px';rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);}
+  anim();
+  // Photo swap on scroll
+  let alt=false;
+  window.addEventListener('scroll',()=>{
+    const y=window.scrollY,h=window.innerHeight;
+    if(y>h*0.3&&!alt){alt=true;document.getElementById('lunaPhoto').src='luna-alt.jpg';}
+    else if(y<=h*0.3&&alt){alt=false;document.getElementById('lunaPhoto').src='luna-main.jpg';}
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BETWEEN｜R.R RakuenɒuyɘЯ</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400&family=Space+Mono:wght@400;700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap');
+  :root{--black:#04040A;--grey:#888899;--white:#F0F0F5;--accent:#888899;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--black);color:var(--white);font-family:'Space Mono',monospace;overflow-x:hidden;cursor:none;}
+  .cursor{position:fixed;width:6px;height:6px;background:var(--white);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;}
+  .cursor-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(240,240,245,0.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all 0.12s;mix-blend-mode:difference;}
+  .grain{position:fixed;inset:-50%;width:200%;height:200%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");pointer-events:none;z-index:100;opacity:0.3;animation:gd 0.15s steps(1) infinite;}
+  @keyframes gd{0%{transform:translate(0,0)}50%{transform:translate(-1%,1%)}100%{transform:translate(0,0)}}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:24px 48px;background:linear-gradient(to bottom,rgba(4,4,10,0.85),transparent);}
+  .nav-logo img{height:26px;filter:invert(1);opacity:0.85;}
+  .nav-links{display:flex;gap:32px;}
+  .nav-links a{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--grey);text-decoration:none;transition:color 0.2s;}
+  .nav-links a:hover{color:var(--white);}
+
+  /* HERO */
+  .hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden;}
+  /* Glitch background for NO PROOF */
+  .hero-bg{position:absolute;inset:0;background:#04040A;z-index:0;}
+  .hero-bg::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(240,240,245,0.008) 2px,rgba(123,140,222,0.015) 4px);}
+  /* Occasional glitch line */
+  .glitch-line{position:absolute;left:0;right:0;height:1px;background:rgba(240,240,245,0.08);animation:glitch-move 8s infinite;}
+  @keyframes glitch-move{0%,90%,100%{top:-10%;opacity:0}92%{top:30%;opacity:1}94%{top:32%;opacity:0}96%{top:70%;opacity:0.5}98%{top:71%;opacity:0}}
+
+  .hero-cover{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;padding:120px 48px 80px;}
+  .cover-img{width:min(400px,80%);aspect-ratio:1;object-fit:cover;box-shadow:0 0 60px rgba(240,240,245,0.06);}
+
+  .hero-info{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:120px 64px 80px 32px;}
+  .track-label{font-size:8px;letter-spacing:0.5em;text-transform:uppercase;color:var(--accent);margin-bottom:24px;display:block;}
+  .track-title{font-family:'EB Garamond',serif;font-size:clamp(48px,6vw,88px);font-weight:400;line-height:1;margin-bottom:8px;letter-spacing:-0.01em;}
+  .track-artist{font-size:10px;letter-spacing:0.2em;color:var(--grey);margin-bottom:40px;}
+  .track-desc{font-family:'Noto Serif TC',serif;font-size:13px;line-height:2.2;color:rgba(240,240,245,0.55);max-width:360px;margin-bottom:48px;font-weight:300;}
+
+  /* Player bar */
+  .player{background:rgba(255,255,255,0.04);border:1px solid rgba(240,240,245,0.08);padding:20px 24px;max-width:400px;margin-bottom:32px;}
+  .player-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .player-title{font-size:10px;letter-spacing:0.1em;color:var(--white);}
+  .player-sub{font-size:9px;color:var(--grey);}
+  .player-controls{display:flex;align-items:center;gap:16px;}
+  .player-btn{background:none;border:none;color:var(--grey);cursor:none;font-size:14px;transition:color 0.2s;padding:4px;}
+  .player-btn:hover,.player-btn.active{color:var(--white);}
+  .player-btn.play{width:32px;height:32px;border:1px solid rgba(240,240,245,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;}
+  .player-btn.play:hover{border-color:var(--white);}
+  .progress-bar{width:100%;height:2px;background:rgba(240,240,245,0.1);position:relative;cursor:none;margin-bottom:8px;}
+  .progress-fill{height:100%;background:rgba(240,240,245,0.6);width:0%;transition:width 0.1s;}
+  .player-time{display:flex;justify-content:space-between;font-size:8px;color:var(--grey);}
+  .player-note{font-size:9px;color:var(--grey);letter-spacing:0.1em;margin-top:8px;opacity:0.6;}
+
+  /* Lyrics */
+  .lyrics-section{padding:80px 48px;}
+  .section-label{font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:var(--grey);margin-bottom:24px;display:block;border-bottom:1px solid rgba(240,240,245,0.06);padding-bottom:12px;}
+  .lyrics-toggle{display:flex;align-items:center;gap:12px;cursor:none;margin-bottom:0;}
+  .lyrics-toggle-btn{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--grey);background:none;border:1px solid rgba(240,240,245,0.15);padding:8px 16px;cursor:none;transition:all 0.2s;}
+  .lyrics-toggle-btn:hover{color:var(--white);border-color:rgba(240,240,245,0.4);}
+  .lyrics-content{max-height:0;overflow:hidden;transition:max-height 0.6s ease;}
+  .lyrics-content.open{max-height:2000px;}
+  .lyrics-text{font-family:'Noto Serif TC',serif;font-size:14px;line-height:3;color:rgba(240,240,245,0.7);padding:32px 0;font-weight:300;white-space:pre-line;}
+
+  /* BTS Photos */
+  .bts-section{padding:0 48px 80px;}
+  .bts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:3px;margin-top:24px;}
+  .bts-item{aspect-ratio:4/3;overflow:hidden;position:relative;}
+  .bts-item img{width:100%;height:100%;object-fit:cover;filter:grayscale(20%);transition:filter 0.4s,transform 0.5s;}
+  .bts-item:hover img{filter:grayscale(0%);transform:scale(1.04);}
+
+  /* Track nav */
+  .track-nav{padding:48px;display:flex;justify-content:space-between;border-top:1px solid rgba(240,240,245,0.06);}
+  .track-nav a{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--grey);text-decoration:none;transition:color 0.2s;display:flex;align-items:center;gap:8px;}
+  .track-nav a:hover{color:var(--white);}
+
+  footer{background:var(--black);padding:32px 48px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(240,240,245,0.06);}
+  .footer-logo img{height:24px;filter:invert(1);opacity:0.6;}
+  .footer-copy{font-size:9px;color:rgba(136,136,153,0.4);}
+
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 50%,rgba(4,4,10,0.6) 100%);pointer-events:none;z-index:99;}
+
+  @media(max-width:768px){
+    .hero{grid-template-columns:1fr;}
+    .hero-cover{padding:100px 24px 32px;}
+    .cover-img{width:min(280px,90%);}
+    .hero-info{padding:24px 24px 60px;}
+    nav{padding:16px 24px;}
+    .lyrics-section,.bts-section{padding:48px 24px;}
+    .track-nav{padding:32px 24px;}
+  }
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="grain"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo"><img src="logo-main.png" alt="R.R"></a>
+  <div class="nav-links">
+    <a href="what-we-do.html">what we do</a>
+    <a href="index.html#who">who we are</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"><div class="glitch-line"></div></div>
+  <div class="hero-cover">
+    <img src="cover-between.jpg" class="cover-img" alt="NO PROOF">
+  </div>
+  <div class="hero-info">
+    <span class="track-label">R.R · 2026 · Luna Liu</span>
+    <h1 class="track-title">BETWEEN</h1>
+    <p class="track-artist">Luna Liu 劉若玥</p>
+    <p class="track-desc">在之間的地方，我還是我。<br>沒有出口，但我學會在裡面呼吸。</p>
+
+    <div class="player" id="player" style="filter:grayscale(30%)">
+      <div class="player-top">
+        <div>
+          <div class="player-title">NO PROOF</div>
+          <div class="player-sub">Luna · Ari · Irene</div>
+        </div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="player-time">
+        <span id="currentTime">0:00</span>
+        <span id="duration">—</span>
+      </div>
+      <div class="player-controls" style="margin-top:12px;">
+        <button class="player-btn play" id="playBtn" onclick="togglePlay()">▶</button>
+        <span style="font-size:9px;color:var(--grey);letter-spacing:0.1em;">NO PROOF</span>
+      </div>
+      <audio id="audioEl" src="music-between.mp3" preload="metadata"></audio>
+      <p class="player-note">音檔即將上線 · 串流平台敬請期待</p>
+    </div>
+  </div>
+</section>
+
+<section class="lyrics-section">
+  <span class="section-label">歌詞 Lyrics</span>
+  <div class="lyrics-toggle">
+    <button class="lyrics-toggle-btn" onclick="toggleLyrics()">展開歌詞</button>
+  </div>
+  <div class="lyrics-content" id="lyricsContent">
+    <div class="lyrics-text">歌詞即將釋出。</div>
+  </div>
+</section>
+
+<section class="bts-section">
+  <span class="section-label">拍攝側記 Behind the Scenes</span>
+  <div class="bts-grid">
+    <div class="bts-item"><img src="between-bts0.jpg" alt="BETWEEN BTS"></div>
+    <div class="bts-item"><img src="between-bts1.jpg" alt="BETWEEN BTS"></div>
+    <div class="bts-item"><img src="between-bts2.jpg" alt="BETWEEN BTS"></div>
+    <div class="bts-item"><img src="between-bts3.jpg" alt="BETWEEN BTS"></div>
+  </div>
+</section>
+
+<div class="track-nav">
+  <a href="what-we-do.html">← 全部創作</a>
+  <a href="music-signal.html">Signal →</a>
+</div>
+
+<footer>
+  <a href="index.html" class="footer-logo"><img src="logo-main.png" alt="R.R"></a>
+  <span class="footer-copy">© 2026 R.R｜RakuenɒuyɘЯ</span>
+</footer>
+
+<script>
+  const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  (function anim(){cursor.style.left=mx+'px';cursor.style.top=my+'px';rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);})();
+
+  const audio=document.getElementById('audioEl');
+  const playBtn=document.getElementById('playBtn');
+  const fill=document.getElementById('progressFill');
+  const currT=document.getElementById('currentTime');
+  const durEl=document.getElementById('duration');
+  let playing=false;
+
+  function fmt(s){const m=Math.floor(s/60);return m+':'+(Math.floor(s%60)+'').padStart(2,'0');}
+  audio.addEventListener('loadedmetadata',()=>{durEl.textContent=fmt(audio.duration);});
+  audio.addEventListener('timeupdate',()=>{
+    if(audio.duration){fill.style.width=(audio.currentTime/audio.duration*100)+'%';currT.textContent=fmt(audio.currentTime);}
+  });
+  function togglePlay(){
+    if(playing){audio.pause();playBtn.textContent='▶';}
+    else{audio.play().catch(()=>{});playBtn.textContent='❚❚';}
+    playing=!playing;
+  }
+  audio.addEventListener('ended',()=>{playing=false;playBtn.textContent='▶';fill.style.width='0%';});
+
+  function toggleLyrics(){
+    const c=document.getElementById('lyricsContent');
+    const btn=document.querySelector('.lyrics-toggle-btn');
+    c.classList.toggle('open');
+    btn.textContent=c.classList.contains('open')?'收起歌詞':'展開歌詞';
+  }
+</script>
+</body>
+</html>

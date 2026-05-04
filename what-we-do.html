@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What We Do｜R.R RakuenɒuyɘЯ</title>
+<meta name="description" content="樂園裡的所有東西。音樂、服飾、印刷、字型、酷卡——都可以帶走。">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;1,400&display=swap');
+
+  :root {
+    --black: #04040A;
+    --grey-dark: #1A1A2A;
+    --grey: #888899;
+    --grey-light: #BBBBCC;
+    --white: #F0F0F5;
+    --off-white: #E8E8EE;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CURSOR */
+  .cursor { position:fixed;width:6px;height:6px;background:var(--white);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference; }
+  .cursor-ring { position:fixed;width:32px;height:32px;border:1px solid rgba(240,240,245,0.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all 0.12s ease;mix-blend-mode:difference; }
+
+  /* GRAIN */
+  .grain { position:fixed;inset:-50%;width:200%;height:200%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");pointer-events:none;z-index:100;opacity:0.3;animation:grain-drift 0.15s steps(1) infinite; }
+  @keyframes grain-drift {
+    0%{transform:translate(0,0)} 20%{transform:translate(-2%,-1%)} 40%{transform:translate(1%,2%)}
+    60%{transform:translate(-1%,1%)} 80%{transform:translate(2%,-1%)} 100%{transform:translate(0,0)}
+  }
+
+  /* NAVBAR */
+  nav {
+    position: fixed; top:0; left:0; right:0; z-index:1000;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 20px 48px;
+    background: linear-gradient(to bottom, rgba(4,4,10,0.9), transparent);
+    backdrop-filter: blur(8px);
+  }
+  .nav-logo { display:flex; align-items:center; text-decoration:none; }
+  .nav-logo img { height:28px; filter:invert(1); opacity:0.9; }
+  .nav-links { display:flex; gap:40px; align-items:center; }
+  .nav-links a {
+    font-size:10px; letter-spacing:0.25em; text-transform:uppercase;
+    color:var(--grey-light); text-decoration:none; transition:color 0.3s;
+    position:relative;
+  }
+  .nav-links a::after {
+    content:''; position:absolute; bottom:-2px; left:0; right:0;
+    height:1px; background:var(--white); transform:scaleX(0);
+    transition:transform 0.3s; transform-origin:left;
+  }
+  .nav-links a:hover { color:var(--white); }
+  .nav-links a:hover::after { transform:scaleX(1); }
+  .nav-links a.active { color:var(--white); }
+  .nav-links a.active::after { transform:scaleX(1); }
+  .nav-back {
+    font-size:9px; letter-spacing:0.2em; color:var(--grey);
+    text-decoration:none; transition:color 0.2s;
+  }
+  .nav-back:hover { color:var(--white); }
+
+  /* PAGE HEADER */
+  .page-header {
+    padding: 140px 48px 60px;
+    border-bottom: 1px solid rgba(240,240,245,0.06);
+    position: relative;
+  }
+  .page-header-label {
+    font-size:9px; letter-spacing:0.4em; color:var(--grey);
+    text-transform:uppercase; margin-bottom:24px; display:block;
+  }
+  .page-header h1 {
+    font-family:'Noto Serif TC', serif;
+    font-size:clamp(36px,5vw,72px);
+    font-weight:300;
+    letter-spacing:0.05em;
+    color:var(--white);
+    line-height:1.1;
+    margin-bottom:16px;
+  }
+  .page-header p {
+    font-size:11px; color:var(--grey); letter-spacing:0.1em;
+    max-width:480px; line-height:1.8;
+  }
+
+  /* FILTER BAR */
+  .filter-bar {
+    position:sticky; top:68px; z-index:100;
+    background:rgba(4,4,10,0.95);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(240,240,245,0.06);
+    padding:16px 48px;
+    display:flex; gap:8px; align-items:center;
+    overflow-x:auto;
+  }
+  .filter-bar::-webkit-scrollbar { display:none; }
+  .filter-btn {
+    font-family:'Space Mono',monospace;
+    font-size:9px; letter-spacing:0.2em; text-transform:uppercase;
+    padding:6px 16px;
+    border:1px solid rgba(240,240,245,0.2);
+    background:transparent; color:var(--grey);
+    cursor:none; white-space:nowrap;
+    transition:all 0.2s;
+  }
+  .filter-btn:hover { border-color:rgba(240,240,245,0.5); color:var(--white); }
+  .filter-btn.active {
+    background:var(--white); color:var(--black);
+    border-color:var(--white);
+  }
+  .filter-count {
+    font-size:8px; opacity:0.5; margin-left:4px;
+  }
+
+  /* ITEMS GRID */
+  .items-section {
+    padding:60px 48px 120px;
+  }
+  .section-title {
+    font-size:9px; letter-spacing:0.4em; text-transform:uppercase;
+    color:var(--grey); margin-bottom:32px; display:block;
+    padding-bottom:12px; border-bottom:1px solid rgba(240,240,245,0.06);
+  }
+
+  .items-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));
+    gap:2px;
+  }
+
+  /* ITEM CARD */
+  .item-card {
+    background:var(--grey-dark);
+    position:relative; overflow:hidden;
+    cursor:none; text-decoration:none; color:inherit;
+    display:block;
+    transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);
+  }
+  .item-card:hover { transform:scale(1.01); z-index:2; }
+  .item-card[data-cat="音樂"] { background:#0C0C16; }
+  .item-card[data-cat="服飾"] { background:#111118; }
+  .item-card[data-cat="印刷"] { background:#0E0E18; }
+  .item-card[data-cat="酷卡"] { background:#0A0A14; }
+  .item-card[data-cat="字型"] { background:#0D0D17; }
+  .item-card[data-cat="訂閱"] { background:#050508; }
+  .item-card.hidden { display:none; }
+
+  /* Scan line on hover */
+  .item-card::before {
+    content:''; position:absolute; top:-100%; left:0; right:0;
+    height:1px; background:linear-gradient(90deg,transparent,rgba(240,240,245,0.25),transparent);
+    z-index:3; transition:top 0.5s ease;
+  }
+  .item-card:hover::before { top:100%; }
+
+  .item-visual {
+    width:100%; aspect-ratio:4/3;
+    display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+    background:rgba(0,0,0,0.3);
+  }
+  .item-visual img {
+    width:100%; height:100%; object-fit:cover;
+    filter:grayscale(20%);
+    transition:filter 0.4s, transform 0.6s;
+  }
+  .item-card:hover .item-visual img { filter:grayscale(0%); transform:scale(1.04); }
+
+  /* Music visual */
+  .music-visual {
+    width:100%; height:100%;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    gap:12px; padding:24px;
+  }
+  .music-cover {
+    width:80px; height:80px;
+    background:var(--grey-dark);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Noto Serif TC',serif;
+    font-size:22px; color:rgba(240,240,245,0.2);
+  }
+  .waveform {
+    display:flex; align-items:center; gap:2px; height:32px;
+  }
+  .wave-bar {
+    width:3px; background:rgba(240,240,245,0.35); border-radius:1px;
+    animation:wave-anim var(--dur,1s) ease-in-out infinite alternate;
+  }
+  @keyframes wave-anim { from{height:20%} to{height:100%} }
+
+  /* Typeface visual */
+  .type-visual {
+    font-family:'EB Garamond',serif;
+    font-size:72px; color:rgba(240,240,245,0.12);
+    letter-spacing:-0.02em; line-height:1;
+    user-select:none;
+  }
+
+  /* Subscribe visual */
+  .sub-visual {
+    font-family:'Noto Serif TC',serif;
+    font-size:20px; color:rgba(240,240,245,0.18);
+    letter-spacing:0.15em; text-align:center; padding:0 24px;
+  }
+
+  .item-body { padding:20px 24px 24px; }
+  .item-cat {
+    font-size:8px; letter-spacing:0.3em; text-transform:uppercase;
+    color:var(--grey); margin-bottom:8px; display:block;
+  }
+  .item-title {
+    font-family:'Noto Serif TC',serif;
+    font-size:18px; font-weight:400; color:var(--white);
+    letter-spacing:0.02em; margin-bottom:4px; line-height:1.3;
+  }
+  .item-sub {
+    font-size:9px; color:var(--grey); letter-spacing:0.08em;
+    margin-bottom:16px; line-height:1.6;
+  }
+  .item-footer {
+    display:flex; align-items:center; justify-content:space-between;
+    padding-top:12px;
+    border-top:1px solid rgba(240,240,245,0.06);
+  }
+  .item-price {
+    font-family:'Space Mono',monospace;
+    font-size:13px; color:var(--white); letter-spacing:0.05em;
+  }
+  .item-price.free { color:var(--grey); }
+  .item-action {
+    font-size:9px; letter-spacing:0.2em; text-transform:uppercase;
+    padding:6px 14px; border:1px solid rgba(240,240,245,0.25);
+    color:var(--grey-light); background:transparent;
+    cursor:none; transition:all 0.2s;
+    text-decoration:none; display:inline-block;
+  }
+  .item-action:hover { background:var(--white); color:var(--black); border-color:var(--white); }
+  .item-action.buy { border-color:var(--white); color:var(--white); }
+
+  /* Cart sidebar */
+  .cart-bar {
+    position:fixed; bottom:32px; right:32px; z-index:500;
+    background:var(--white); color:var(--black);
+    padding:12px 20px;
+    display:flex; align-items:center; gap:12px;
+    cursor:none;
+    transform:translateY(120px); opacity:0;
+    transition:transform 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
+  }
+  .cart-bar.visible { transform:translateY(0); opacity:1; }
+  .cart-bar span { font-size:10px; letter-spacing:0.15em; }
+  .cart-count {
+    background:var(--black); color:var(--white);
+    width:20px; height:20px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:9px;
+  }
+
+  /* ORDER MODAL */
+  .modal-overlay {
+    position:fixed; inset:0; z-index:2000;
+    background:rgba(4,4,10,0.92);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none;
+    transition:opacity 0.3s;
+    padding:24px;
+  }
+  .modal-overlay.open { opacity:1; pointer-events:all; }
+  .modal {
+    background:#0E0E18;
+    border:1px solid rgba(240,240,245,0.08);
+    width:100%; max-width:560px;
+    max-height:90vh; overflow-y:auto;
+    padding:48px;
+    transform:translateY(20px);
+    transition:transform 0.3s;
+  }
+  .modal-overlay.open .modal { transform:translateY(0); }
+  .modal h2 {
+    font-family:'Noto Serif TC',serif;
+    font-size:24px; font-weight:300; margin-bottom:8px;
+  }
+  .modal-price { font-size:14px; color:var(--grey); margin-bottom:32px; }
+  .modal label {
+    display:block; font-size:9px; letter-spacing:0.2em;
+    text-transform:uppercase; color:var(--grey); margin-bottom:6px;
+    margin-top:20px;
+  }
+  .modal label:first-of-type { margin-top:0; }
+  .modal input, .modal select, .modal textarea {
+    width:100%; background:#1A1A2A; border:1px solid rgba(240,240,245,0.1);
+    color:var(--white); padding:10px 14px;
+    font-family:'Space Mono',monospace; font-size:11px;
+    letter-spacing:0.05em; outline:none;
+    transition:border-color 0.2s;
+  }
+  .modal input:focus, .modal select:focus, .modal textarea:focus {
+    border-color:rgba(240,240,245,0.35);
+  }
+  .modal select option { background:#1A1A2A; }
+  .modal textarea { resize:vertical; min-height:80px; }
+  .modal-actions {
+    display:flex; gap:12px; margin-top:32px;
+  }
+  .btn-primary {
+    flex:1; padding:14px; background:var(--white); color:var(--black);
+    border:none; font-family:'Space Mono',monospace;
+    font-size:10px; letter-spacing:0.2em; text-transform:uppercase;
+    cursor:none; transition:opacity 0.2s;
+  }
+  .btn-primary:hover { opacity:0.85; }
+  .btn-secondary {
+    padding:14px 20px; background:transparent;
+    border:1px solid rgba(240,240,245,0.15); color:var(--grey);
+    font-family:'Space Mono',monospace; font-size:10px;
+    letter-spacing:0.2em; cursor:none; transition:all 0.2s;
+  }
+  .btn-secondary:hover { border-color:rgba(240,240,245,0.4); color:var(--white); }
+  .modal-close {
+    position:absolute; top:20px; right:24px;
+    background:none; border:none; color:var(--grey);
+    font-size:18px; cursor:none; line-height:1;
+  }
+  .modal-success {
+    text-align:center; padding:40px 0;
+    display:none;
+  }
+  .modal-success.show { display:block; }
+  .modal-success-icon {
+    font-size:32px; margin-bottom:16px; display:block;
+  }
+  .modal-success h3 {
+    font-family:'Noto Serif TC',serif; font-weight:300;
+    font-size:20px; margin-bottom:8px;
+  }
+  .modal-success p { font-size:10px; color:var(--grey); line-height:1.8; }
+
+  /* FOOTER */
+  footer {
+    background:var(--black); border-top:1px solid rgba(240,240,245,0.06);
+    padding:48px; display:flex; justify-content:space-between; align-items:flex-end;
+  }
+  .footer-logo img { height:36px; filter:invert(1); opacity:0.7; margin-bottom:8px; display:block; }
+  .footer-tagline { font-size:9px; letter-spacing:0.2em; color:var(--grey); text-transform:uppercase; }
+  .footer-right { text-align:right; }
+  .footer-right a { display:block; font-size:10px; color:var(--grey); text-decoration:none; margin-bottom:4px; transition:color 0.2s; }
+  .footer-right a:hover { color:var(--white); }
+  .footer-copy { font-size:9px; color:rgba(136,136,153,0.4); text-align:center; padding:16px 0 24px; }
+
+  /* Vignette */
+  body::before {
+    content:''; position:fixed; inset:0;
+    background:radial-gradient(ellipse at center, transparent 50%, rgba(4,4,10,0.6) 100%);
+    pointer-events:none; z-index:99;
+  }
+
+  /* Reveal animation */
+  .reveal { opacity:0; transform:translateY(20px); transition:opacity 0.8s, transform 0.8s; }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="grain"></div>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="logo-main.png" alt="R.R">
+  </a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-back">← 首頁</a>
+    <a href="what-we-do.html" class="active">what we do</a>
+    <a href="index.html#who">who we are</a>
+    <a href="index.html" style="font-size:9px;letter-spacing:0.2em;color:var(--grey);text-decoration:none;margin-left:8px;">← 首頁</a>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <span class="page-header-label">樂園 Rakuen — 所有東西</span>
+  <h1>What We Do</h1>
+  <p>這裡的東西都可以帶走。<br>音樂可以聽，衣服可以穿，圖可以印，字型可以用，卡片可以收藏。</p>
+</header>
+
+<!-- FILTER BAR -->
+<div class="filter-bar" id="filterBar">
+  <button class="filter-btn active" data-filter="all" onclick="filterItems('all')">全部 <span class="filter-count" id="count-all"></span></button>
+  <button class="filter-btn" data-filter="音樂" onclick="filterItems('音樂')">聽 <span class="filter-count" id="count-音樂"></span></button>
+  <button class="filter-btn" data-filter="服飾" onclick="filterItems('服飾')">穿 <span class="filter-count" id="count-服飾"></span></button>
+  <button class="filter-btn" data-filter="印刷" onclick="filterItems('印刷')">拿 <span class="filter-count" id="count-印刷"></span></button>
+  <button class="filter-btn" data-filter="酷卡" onclick="filterItems('酷卡')">酷卡 <span class="filter-count" id="count-酷卡"></span></button>
+  <button class="filter-btn" data-filter="字型" onclick="filterItems('字型')">用 <span class="filter-count" id="count-字型"></span></button>
+  <button class="filter-btn" data-filter="訂閱" onclick="filterItems('訂閱')">進去 <span class="filter-count" id="count-訂閱"></span></button>
+</div>
+
+<!-- ITEMS -->
+<section class="items-section">
+  <div class="items-grid" id="itemsGrid">
+
+    <!-- NO PROOF -->
+    <a class="item-card reveal" data-cat="音樂" href="#" href="music-noproof.html">
+      <div class="item-visual" style="padding:0;">
+        <img src="cover-noproof.jpg" style="width:100%;height:100%;object-fit:cover;" alt="NO PROOF">
+        <div class="music-visual" style="display:none;">
+          <div class="music-cover">樂</div>
+          <div class="waveform">
+            <div class="wave-bar" style="--dur:0.8s;height:40%"></div>
+            <div class="wave-bar" style="--dur:1.1s;height:70%"></div>
+            <div class="wave-bar" style="--dur:0.6s;height:30%"></div>
+            <div class="wave-bar" style="--dur:1.3s;height:90%"></div>
+            <div class="wave-bar" style="--dur:0.9s;height:50%"></div>
+            <div class="wave-bar" style="--dur:0.7s;height:80%"></div>
+            <div class="wave-bar" style="--dur:1.2s;height:40%"></div>
+            <div class="wave-bar" style="--dur:0.5s;height:60%"></div>
+            <div class="wave-bar" style="--dur:1.0s;height:35%"></div>
+            <div class="wave-bar" style="--dur:0.8s;height:75%"></div>
+          </div>
+        </div>
+      </div>
+      <div class="item-body">
+        <span class="item-cat">音樂</span>
+        <p class="item-title">NO PROOF</p>
+        <p class="item-sub">Luna · Ari · Irene 三人合唱 · 2026<br>Electro Pop · F minor</p>
+        <div class="item-footer">
+          <span class="item-price free">免費</span>
+          <span class="item-action">▶ 播放</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Between -->
+    <a class="item-card reveal" data-cat="音樂" href="#" href="music-between.html" style="animation-delay:0.05s">
+      <div class="item-visual" style="padding:0;">
+        <img src="cover-between.jpg" style="width:100%;height:100%;object-fit:cover;" alt="Between">
+        <div class="music-visual" style="display:none;">
+          <div class="music-cover">玥</div>
+          <div class="waveform">
+            <div class="wave-bar" style="--dur:1.2s;height:60%"></div>
+            <div class="wave-bar" style="--dur:0.7s;height:30%"></div>
+            <div class="wave-bar" style="--dur:1.5s;height:80%"></div>
+            <div class="wave-bar" style="--dur:0.9s;height:45%"></div>
+            <div class="wave-bar" style="--dur:1.1s;height:90%"></div>
+            <div class="wave-bar" style="--dur:0.6s;height:35%"></div>
+            <div class="wave-bar" style="--dur:1.3s;height:65%"></div>
+            <div class="wave-bar" style="--dur:0.8s;height:55%"></div>
+          </div>
+        </div>
+      </div>
+      <div class="item-body">
+        <span class="item-cat">音樂</span>
+        <p class="item-title">Between</p>
+        <p class="item-sub">Luna Liu 劉若玥 · 個人單曲 · 2026</p>
+        <div class="item-footer">
+          <span class="item-price free">免費</span>
+          <span class="item-action">▶ 播放</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Signal -->
+    <a class="item-card reveal" data-cat="音樂" href="#" href="music-signal.html" style="animation-delay:0.1s">
+      <div class="item-visual" style="padding:0;">
+        <img src="cover-signal.jpg" style="width:100%;height:100%;object-fit:cover;" alt="Signal">
+        <div class="music-visual" style="display:none;">
+          <div class="music-cover">然</div>
+          <div class="waveform">
+            <div class="wave-bar" style="--dur:0.5s;height:80%"></div>
+            <div class="wave-bar" style="--dur:1.4s;height:40%"></div>
+            <div class="wave-bar" style="--dur:0.8s;height:95%"></div>
+            <div class="wave-bar" style="--dur:1.1s;height:30%"></div>
+            <div class="wave-bar" style="--dur:0.6s;height:70%"></div>
+            <div class="wave-bar" style="--dur:1.3s;height:50%"></div>
+            <div class="wave-bar" style="--dur:0.9s;height:85%"></div>
+            <div class="wave-bar" style="--dur:0.7s;height:45%"></div>
+          </div>
+        </div>
+      </div>
+      <div class="item-body">
+        <span class="item-cat">音樂</span>
+        <p class="item-title">Signal</p>
+        <p class="item-sub">Irene Zang 臧映然 · 個人單曲 · 2026</p>
+        <div class="item-footer">
+          <span class="item-price free">免費</span>
+          <span class="item-action">▶ 播放</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 界線 -->
+    <a class="item-card reveal" data-cat="音樂" href="#" href="music-jiexian.html" style="animation-delay:0.15s">
+      <div class="item-visual" style="padding:0;">
+        <img src="cover-jiexian.jpg" style="width:100%;height:100%;object-fit:cover;" alt="界線">
+        <div class="music-visual" style="display:none;">
+          <div class="music-cover">亞</div>
+          <div class="waveform">
+            <div class="wave-bar" style="--dur:1.0s;height:50%"></div>
+            <div class="wave-bar" style="--dur:0.6s;height:75%"></div>
+            <div class="wave-bar" style="--dur:1.3s;height:35%"></div>
+            <div class="wave-bar" style="--dur:0.8s;height:85%"></div>
+            <div class="wave-bar" style="--dur:1.1s;height:45%"></div>
+            <div class="wave-bar" style="--dur:0.7s;height:65%"></div>
+            <div class="wave-bar" style="--dur:1.4s;height:30%"></div>
+            <div class="wave-bar" style="--dur:0.9s;height:90%"></div>
+          </div>
+        </div>
+      </div>
+      <div class="item-body">
+        <span class="item-cat">音樂</span>
+        <p class="item-title">界線</p>
+        <p class="item-sub">Ari Lin 林書亞 · 個人單曲 · 2026</p>
+        <div class="item-footer">
+          <span class="item-price free">免費</span>
+          <span class="item-action">▶ 播放</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- R.R Tee -->
+    <a class="item-card reveal" data-cat="服飾" href="#" onclick="openModal('R.R Tee — Black','NT$980','apparel'); return false;" style="animation-delay:0.05s">
+      <div class="item-visual" style="background:#0A0A0F;">
+        <div style="display:flex;align-items:center;justify-content:center;height:100%;padding:40px;">
+          <svg width="100" height="120" viewBox="0 0 100 120" fill="none">
+            <path d="M25,14 L2,28 L14,38 L14,108 L86,108 L86,38 L98,28 L75,14 C72,4 28,4 25,14 Z" fill="rgba(240,240,245,0.08)" stroke="rgba(240,240,245,0.2)" stroke-width="1"/>
+            <text x="50" y="68" text-anchor="middle" font-family="Space Mono" font-size="9" fill="rgba(240,240,245,0.25)" letter-spacing="2">R · R</text>
+          </svg>
+        </div>
+      </div>
+      <div class="item-body">
+        <span class="item-cat">服飾</span>
+        <p class="item-title">R.R Tee</p>
+        <p class="item-sub">重磅純棉 · 黑色 · 符號版型<br>尺寸：S / M / L / XL</p>
+        <div class="item-footer">
+          <span class="item-price">NT$980</span>
+          <span class="item-action buy">購買</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- A3 Poster Luna -->
+    <a class="item-card reveal" data-cat="印刷" href="#" onclick="openModal('A3 海報 — Luna','NT$350','poster'); return false;">
+      <div class="item-visual" style="background:#0A0A12;">
+        <div style="display:flex;align-items:center;justify-content:center;height:100%;padding:32px;">
+          <div style="border:1px solid rgba(240,240,245,0.08);padding:24px 16px;text-align:center;width:140px;">
+            <div style="font-family:'Noto Serif TC',serif;font-size:28px;color:rgba(240,240,245,0.15);letter-spacing:0.2em;">劉若玥</div>
+            <div style="font-size:8px;color:rgba(240,240,245,0.06);letter-spacing:0.3em;margin-top:8px;">A3 · 297×420mm</div>
+          </div>
+        </div>
+      </div>
+      <div class="item-body">
+        <span class="item-cat">印刷</span>
+        <p class="item-title">A3 海報 · Luna</p>
+        <p class="item-sub">劉若玥 · 黑白高對比 · 297×420mm<br>霧面特種紙</p>
+        <div class="item-footer">
+          <span class="item-price">NT$350</span>
+          <span class="item-action buy">購買</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- A3 Poster Irene -->
+    <a class="item-card reveal" data-cat="印刷" href="#" onclick="openModal('A3 海報 — Irene','NT$350','poster'); return false;" style="animation-delay:0.05s">
+      <div class="item-visual" style="background:#0A0A12;">
+        <div style="display:flex;align-items:center;justify-content:center;height:100%;padding:32px;">
+          <div style="border:1px solid rgba(240,240,245,0.08);padding:24px 16px;text-align:center;width:140px;">
+            <div style="font-family:'Noto Serif TC',serif;font-size:28px;color:rgba(240,240,245,0.15);letter-spacing:0.2em;">臧映然</div>
+            <div style="font-size:8px;color:rgba(240,240,245,0.06);letter-spacing:0.3em;margin-top:8px;">A3 · 297×420mm</div>
+          </div>
+        </div>
+      </div>
+      <div class="item-body">
+        <span class="item-cat">印刷</span>
+        <p class="item-title">A3 海報 · Irene</p>
+        <p class="item-sub">臧映然 · 黑白高對比 · 297×420mm<br>霧面特種紙</p>
+        <div class="item-footer">
+          <span class="item-price">NT$350</span>
+          <span class="item-action buy">購買</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- A2 Limited Irene -->
+    <a class="item-card reveal" data-cat="印刷" href="#" onclick="openModal('A2 限量海報 — Irene（含簽名符號）','NT$880','poster-limited'); return false;" style="animation-delay:0.1s">
+      <div class="item-visual" style="background:#080810;position:relative;">
+        <div style="position:absolute;top:12px;right:12px;font-size:8px;letter-spacing:0.2em;color:rgba(240,240,245,0.3);font-family:'Space Mono',monospace;">限量 50</div>
+        <div style="display:flex;align-items:center;justify-content:center;height:100%;padding:32px;">
+          <div style="border:1px solid rgba(240,240,245,0.12);padding:32px 20px;text-align:center;width:160px;">
+            <div style="font-family:'Noto Serif TC',serif;font-size:32px;color:rgba(240,240,245,0.2);letter-spacing:0.2em;">臧映然</div>
+            <div style="font-size:7px;color:rgba(240,240,245,0.1);letter-spacing:0.3em;margin-top:8px;">A2 · 420×594mm</div>
+            <div style="font-size:7px;color:rgba(240,240,245,0.08);letter-spacing:0.1em;margin-top:4px;">含手寫符號</div>
+          </div>
+        </div>
+      </div>
+      <div class="item-body">
+        <span class="item-cat">印刷</span>
+        <p class="item-title">A2 限量海報 · Irene</p>
+        <p class="item-sub">含手寫符號 · 編號限量 50 份<br>420×594mm · 霧面特種紙</p>
+        <div class="item-footer">
+          <span class="item-price">NT$880</span>
+          <span class="item-action buy">購買</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Cool Card Bundle -->
+    <a class="item-card reveal" data-cat="酷卡" href="#" onclick="openModal('酷卡組合 · 四首全集','NT$580 / 套','coolcard-bundle'); return false;">
+      <div class="item-visual" style="background:#080812;">
+        <div style="display:flex;align-items:center;justify-content:center;height:100%;padding:32px;">
+          <div style="position:relative;width:160px;height:100px;">
+            <div style="position:absolute;transform:rotate(-8deg) translate(-20px,8px);width:90px;height:60px;border:1px solid rgba(240,240,245,0.15);background:#0C0C18;"></div>
+            <div style="position:absolute;transform:rotate(-3deg) translate(-5px,3px);width:90px;height:60px;border:1px solid rgba(240,240,245,0.2);background:#111120;"></div>
+            <div style="position:absolute;transform:rotate(2deg);width:90px;height:60px;border:1px solid rgba(240,240,245,0.3);background:#16162A;display:flex;align-items:center;justify-content:center;">
+              <span style="font-size:9px;color:rgba(240,240,245,0.3);letter-spacing:0.1em;font-family:'Space Mono',monospace;">R · R</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="item-body">
+        <span class="item-cat">酷卡</span>
+        <p class="item-title">酷卡組合 · 四首全集</p>
+        <p class="item-sub">4首歌 × 各1張 · 各含 QRcode 掃碼聽歌<br>限定外盒包裝</p>
+        <div class="item-footer">
+          <span class="item-price">NT$580 / 套</span>
+          <span class="item-action buy">購買</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Cool Card Single -->
+    <a class="item-card reveal" data-cat="酷卡" href="#" onclick="openModal('酷卡單組（選一首）','NT$180 / 組','coolcard-single'); return false;" style="animation-delay:0.05s">
+      <div class="item-visual" style="background:#080812;">
+        <div style="display:flex;align-items:center;justify-content:center;height:100%;padding:32px;">
+          <div style="width:90px;height:60px;border:1px solid rgba(240,240,245,0.25);background:#16162A;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;">
+            <span style="font-size:9px;color:rgba(240,240,245,0.3);letter-spacing:0.1em;font-family:'Space Mono',monospace;">R · R</span>
+            <div style="width:28px;height:28px;border:1px solid rgba(240,240,245,0.15);display:grid;grid-template-columns:repeat(4,1fr);gap:1px;padding:3px;">
+              <div style="background:rgba(240,240,245,0.2)"></div><div></div><div style="background:rgba(240,240,245,0.2)"></div><div></div>
+              <div></div><div style="background:rgba(240,240,245,0.2)"></div><div></div><div style="background:rgba(240,240,245,0.2)"></div>
+              <div style="background:rgba(240,240,245,0.2)"></div><div></div><div></div><div style="background:rgba(240,240,245,0.2)"></div>
+              <div></div><div style="background:rgba(240,240,245,0.2)"></div><div style="background:rgba(240,240,245,0.2)"></div><div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="item-body">
+        <span class="item-cat">酷卡</span>
+        <p class="item-title">酷卡單組</p>
+        <p class="item-sub">選擇一首歌 × 同款 3 張<br>含 QRcode · 掃碼聽歌</p>
+        <div class="item-footer">
+          <span class="item-price">NT$180 / 組</span>
+          <span class="item-action buy">購買</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- AIDA Typeface -->
+    <a class="item-card reveal" data-cat="字型" href="#" onclick="openModal('AIDA Typeface','免費下載','typeface'); return false;">
+      <div class="item-visual" style="background:#0A0A14;overflow:hidden;">
+        <div style="display:flex;align-items:center;justify-content:center;height:100%;padding:24px;">
+          <div style="text-align:center;">
+            <div class="type-visual">Aa</div>
+            <div style="font-family:'Space Mono',monospace;font-size:8px;color:rgba(240,240,245,0.15);letter-spacing:0.3em;margin-top:8px;">AIDA TYPEFACE</div>
+          </div>
+        </div>
+      </div>
+      <div class="item-body">
+        <span class="item-cat">字型</span>
+        <p class="item-title">AIDA Typeface</p>
+        <p class="item-sub">R.R 品牌字型 · TTF + OTF<br>使用請標註來源</p>
+        <div class="item-footer">
+          <span class="item-price free">免費</span>
+          <span class="item-action">下載</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 樂園內層 -->
+    <a class="item-card reveal" data-cat="訂閱" href="#" onclick="openModal('進入樂園內層','NT$199 / 月','subscribe'); return false;" style="animation-delay:0.1s">
+      <div class="item-visual" style="background:#030306;border:1px solid rgba(240,240,245,0.04);">
+        <div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:12px;padding:32px;text-align:center;">
+          <div style="font-family:'Noto Serif TC',serif;font-size:22px;color:rgba(240,240,245,0.15);letter-spacing:0.15em;line-height:1.6;">進入<br>樂園內層</div>
+          <div style="font-size:8px;color:rgba(240,240,245,0.08);letter-spacing:0.2em;font-family:'Space Mono',monospace;">限定圖 · 音樂 · 互動</div>
+        </div>
+      </div>
+      <div class="item-body">
+        <span class="item-cat">訂閱</span>
+        <p class="item-title">樂園內層</p>
+        <p class="item-sub">每月限定圖 · 未公開音樂 · 與三人互動<br>隨時可取消</p>
+        <div class="item-footer">
+          <span class="item-price">NT$199 / 月</span>
+          <span class="item-action buy">訂閱</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <img src="logo-rakuen.png" alt="R.R">
+    <span class="footer-tagline">虛構的，所以真實</span>
+  </div>
+  <div class="footer-right">
+    <a href="https://instagram.com/rakuen.rr" target="_blank">@rakuen.rr</a>
+    <a href="https://instagram.com/liu.ruoyue" target="_blank">@liu.ruoyue</a>
+    <a href="https://instagram.com/lin.shuya" target="_blank">@lin.shuya</a>
+    <a href="https://instagram.com/zang.yingran" target="_blank">@zang.yingran</a>
+    <a href="mailto:studio@rakuen-rr.com" style="margin-top:8px;font-size:9px;">studio@rakuen-rr.com</a>
+  </div>
+</footer>
+<p class="footer-copy">© 2026 R.R｜RakuenɒuyɘЯ. All rights reserved.</p>
+
+<!-- ORDER MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal" style="position:relative;">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+
+    <div id="modalForm">
+      <h2 id="modalTitle">商品名稱</h2>
+      <p class="modal-price" id="modalPrice">NT$000</p>
+
+      <!-- Music: just show streaming links -->
+      <div id="formMusic" style="display:none;">
+        <p style="font-size:11px;color:var(--grey);line-height:2;margin-bottom:24px;">
+          這首歌免費聆聽。<br>串流平台即將上線，敬請期待。<br><br>
+          如果你手上有酷卡，掃描背面 QRcode 即可直接播放。
+        </p>
+        <div class="modal-actions">
+          <button class="btn-primary" onclick="closeModal()">好的</button>
+        </div>
+      </div>
+
+      <!-- Typeface: download -->
+      <div id="formTypeface" style="display:none;">
+        <p style="font-size:11px;color:var(--grey);line-height:2;margin-bottom:24px;">
+          AIDA Typeface 免費提供下載。<br>
+          使用時請以 @rakuen.rr 標註來源。
+        </p>
+        <div class="modal-actions">
+          <a class="btn-primary" href="#" style="text-align:center;display:block;text-decoration:none;">下載字型（即將開放）</a>
+        </div>
+      </div>
+
+      <!-- Subscribe -->
+      <div id="formSubscribe" style="display:none;">
+        <p style="font-size:11px;color:var(--grey);line-height:2;margin-bottom:24px;">
+          每月 NT$199，取得樂園內層的存取資格。<br>
+          含每月限定圖、未公開音樂、與三人的互動空間。<br>
+          隨時可取消，不需違約金。
+        </p>
+        <label>你的 Email</label>
+        <input type="email" placeholder="your@email.com" id="subEmail">
+        <div class="modal-actions" style="margin-top:24px;">
+          <button class="btn-primary" onclick="submitOrder('subscribe')">開始訂閱</button>
+          <button class="btn-secondary" onclick="closeModal()">再考慮</button>
+        </div>
+      </div>
+
+      <!-- Purchase form (apparel, poster, coolcard) -->
+      <div id="formPurchase">
+        <label>姓名</label>
+        <input type="text" placeholder="收件人姓名" id="orderName">
+
+        <label>電話</label>
+        <input type="tel" placeholder="0912 345 678" id="orderPhone">
+
+        <label>Email</label>
+        <input type="email" placeholder="your@email.com" id="orderEmail">
+
+        <div id="sizeField" style="display:none;">
+          <label>尺寸</label>
+          <select id="orderSize">
+            <option value="">選擇尺寸</option>
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+          </select>
+        </div>
+
+        <div id="cardSongField" style="display:none;">
+          <label>選擇歌曲（酷卡單組）</label>
+          <select id="orderSong">
+            <option value="">選擇一首</option>
+            <option value="NO PROOF">NO PROOF — 三人合唱</option>
+            <option value="Between">Between — Luna Liu</option>
+            <option value="Signal">Signal — Irene Zang</option>
+            <option value="界線">界線 — Ari Lin</option>
+          </select>
+        </div>
+
+        <label>收件地址</label>
+        <input type="text" placeholder="台灣 xxx 縣市 xxx 路 xxx 號" id="orderAddress">
+
+        <label>備註（選填）</label>
+        <textarea placeholder="特別備注事項..." id="orderNote"></textarea>
+
+        <p style="font-size:9px;color:var(--grey);margin-top:16px;line-height:1.8;">
+          ✦ 目前接受 ATM 轉帳付款，下單後將以 Email 通知帳號<br>
+          ✦ 確認款項後 3–7 個工作日寄出<br>
+          ✦ 如有問題請聯繫 studio@rakuen-rr.com
+        </p>
+
+        <div class="modal-actions">
+          <button class="btn-primary" onclick="submitOrder('purchase')">送出訂單</button>
+          <button class="btn-secondary" onclick="closeModal()">取消</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success state -->
+    <div class="modal-success" id="modalSuccess">
+      <span class="modal-success-icon">✦</span>
+      <h3>訂單已收到</h3>
+      <p>我們會在 24 小時內以 Email 聯繫你，<br>提供付款資訊與出貨時程。<br><br>感謝你成為樂園的一部分。</p>
+      <div class="modal-actions" style="justify-content:center;margin-top:24px;">
+        <button class="btn-primary" style="max-width:200px;" onclick="closeModal()">關閉</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // CURSOR
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  function animCursor(){
+    cursor.style.left=mx+'px';cursor.style.top=my+'px';
+    rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;
+    ring.style.left=rx+'px';ring.style.top=ry+'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+
+  // FILTER
+  function filterItems(cat) {
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.filter === cat);
+    });
+    document.querySelectorAll('.item-card').forEach(card => {
+      const match = cat === 'all' || card.dataset.cat === cat;
+      card.classList.toggle('hidden', !match);
+    });
+  }
+
+  // Count items per category
+  function updateCounts() {
+    const cats = ['音樂','服飾','印刷','酷卡','字型','訂閱'];
+    cats.forEach(cat => {
+      const n = document.querySelectorAll(`.item-card[data-cat="${cat}"]`).length;
+      const el = document.getElementById('count-'+cat);
+      if(el) el.textContent = n;
+    });
+    document.getElementById('count-all').textContent =
+      document.querySelectorAll('.item-card').length;
+  }
+  updateCounts();
+
+  // REVEAL on scroll
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, {threshold: 0.1});
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // MODAL
+  let currentType = '';
+  function openModal(title, price, type) {
+    currentType = type;
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalPrice').textContent = price;
+
+    // Show/hide form sections
+    document.getElementById('formMusic').style.display = type==='music' ? 'block' : 'none';
+    document.getElementById('formTypeface').style.display = type==='typeface' ? 'block' : 'none';
+    document.getElementById('formSubscribe').style.display = type==='subscribe' ? 'block' : 'none';
+    document.getElementById('formPurchase').style.display =
+      (!['music','typeface','subscribe'].includes(type)) ? 'block' : 'none';
+    document.getElementById('sizeField').style.display = type==='apparel' ? 'block' : 'none';
+    document.getElementById('cardSongField').style.display = type==='coolcard-single' ? 'block' : 'none';
+    document.getElementById('modalSuccess').classList.remove('show');
+    document.getElementById('modalForm').style.display = 'block';
+
+    document.getElementById('modalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function closeModalOutside(e) {
+    if(e.target === document.getElementById('modalOverlay')) closeModal();
+  }
+
+  function submitOrder(type) {
+    // Collect form data and send to studio email via mailto fallback
+    // In production: replace with proper backend / ECPay API call
+    const name = document.getElementById('orderName')?.value || '';
+    const email = document.getElementById('orderEmail')?.value ||
+                  document.getElementById('subEmail')?.value || '';
+    const phone = document.getElementById('orderPhone')?.value || '';
+    const address = document.getElementById('orderAddress')?.value || '';
+    const size = document.getElementById('orderSize')?.value || '';
+    const song = document.getElementById('orderSong')?.value || '';
+    const note = document.getElementById('orderNote')?.value || '';
+    const title = document.getElementById('modalTitle').textContent;
+    const price = document.getElementById('modalPrice').textContent;
+
+    if(type==='purchase' && (!name || !email || !address)) {
+      alert('請填寫姓名、Email 與收件地址');
+      return;
+    }
+    if(type==='subscribe' && !email) {
+      alert('請填寫 Email');
+      return;
+    }
+
+    // Send email via mailto (temp solution until backend ready)
+    const subject = encodeURIComponent(`[R.R 訂單] ${title}`);
+    const body = encodeURIComponent(
+      `商品：${title}\n價格：${price}\n\n姓名：${name}\nEmail：${email}\n電話：${phone}\n${size?'尺寸：'+size+'\n':''}${song?'歌曲：'+song+'\n':''}地址：${address}\n備註：${note}`
+    );
+    window.open(`mailto:studio@rakuen-rr.com?subject=${subject}&body=${body}`, '_blank');
+
+    // Show success state
+    document.getElementById('modalForm').style.display = 'none';
+    document.getElementById('modalSuccess').classList.add('show');
+  }
+</script>
+</body>
+</html>
