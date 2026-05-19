@@ -1037,13 +1037,13 @@
   body { padding-bottom: 72px; }
 
 
-  /* Scroll-driven tile transition */
   .d-tile {
     position: absolute;
     background: #EAEAEC;
     opacity: 0;
-    will-change: opacity;
+    transition: opacity 0.35s ease;
   }
+  .d-tile.show { opacity: 1; }
 
 
   
@@ -1967,10 +1967,8 @@ gpLoad(gpIdx, false);
   var zone = document.getElementById('dissolveZone');
   if (!zone) return;
 
-  // Uniform tile size, 5 layers — bottom fills first, top last
-  // sqrt distribution gives 1→5→8→10 trickle per layer
   var TILE = 48, tw = TILE;
-  var ZONE_H = 300, N_LAYERS = 5;
+  var ZONE_H = 300;
   var cols = Math.ceil(window.innerWidth / tw);
   var rows = Math.ceil(ZONE_H / tw);
   var tiles = [];
@@ -1983,44 +1981,24 @@ gpLoad(gpIdx, false);
       el.style.height = (TILE + 1) + 'px';
       el.style.left = (c * tw) + 'px';
       el.style.top = (r * tw) + 'px';
-
-      // layerIdx 0 = bottom rows (fills first), N_LAYERS-1 = top (fills last)
-      var layerIdx = Math.min(N_LAYERS - 1,
-        Math.floor((rows - 1 - r) / rows * N_LAYERS));
-
-      // Each layer owns a progress window; windows overlap slightly
-      var lo = layerIdx * 0.12;       // 0 / 0.12 / 0.24 / 0.36 / 0.48
-      var hi = lo + 0.40;             // 0.40 / 0.52 / 0.64 / 0.76 / 0.88
-
-      // sqrt(U) biases thresholds toward hi → slow start, fast fill
-      // gives the 1, 5, 8, 10 trickle per scroll increment
-      el._thr = lo + Math.sqrt(Math.random()) * (hi - lo);
-
       zone.appendChild(el);
-      tiles.push(el);
+      tiles.push({el: el, row: r});
     }
   }
 
-  var _ticking = false;
-  function onScroll() {
-    if (_ticking) return;
-    _ticking = true;
-    requestAnimationFrame(function() {
-      _ticking = false;
-      var rect = zone.getBoundingClientRect();
-      var vh = window.innerHeight;
-      var p = Math.max(0, Math.min(1, (vh - rect.top) / (vh + rect.height)));
-      for (var i = 0; i < tiles.length; i++) {
-        tiles[i].style.opacity = p >= tiles[i]._thr ? '1' : '0';
-      }
-      if (p >= 1) {
-        window.removeEventListener('scroll', onScroll);
-      }
+  var observer = new IntersectionObserver(function(entries) {
+    if (!entries[0].isIntersecting) return;
+    observer.disconnect();
+    // Bottom rows appear first, random order within each row
+    var sorted = tiles.slice().sort(function(a, b) {
+      return b.row - a.row || Math.random() - 0.5;
     });
-  }
+    sorted.forEach(function(t, i) {
+      setTimeout(function() { t.el.classList.add('show'); }, i * 8);
+    });
+  }, {threshold: 0.1});
 
-  window.addEventListener('scroll', onScroll, {passive:true});
-  onScroll();
+  observer.observe(zone);
 })();
 </script>
 
