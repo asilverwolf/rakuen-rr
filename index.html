@@ -39,7 +39,7 @@
     position: fixed;
     top: 0; left: 0;
     width: 6px; height: 6px;
-    background: var(--white);
+    background: #F0F0F5;
     border-radius: 50%;
     pointer-events: none;
     z-index: 9999;
@@ -48,17 +48,12 @@
   .cursor-ring {
     position: fixed;
     top: 0; left: 0;
-    width: 32px; height: 32px;
+    width: 30px; height: 30px;
     border: 1px solid rgba(240,240,245,0.35);
     border-radius: 50%;
     pointer-events: none;
     z-index: 9998;
     will-change: transform;
-  }
-  body:has(a:hover) .cursor-ring,
-  body:has(button:hover) .cursor-ring {
-    width: 48px; height: 48px;
-    border-color: rgba(240,240,245,0.8);
   }
 
   /* NAVBAR */
@@ -858,12 +853,11 @@
     width: 100%; height: 100%;
     pointer-events: none;
     z-index: 5;
-    mix-blend-mode: screen;
   }
   .vine-zone {
     position: relative;
     height: 900px;
-    background: #04040A;
+    background: #E8E8EE;
     overflow: hidden;
   }
   
@@ -1039,21 +1033,22 @@
   body { padding-bottom: 72px; }
 
 
-  /* Pixel dissolve transition */
+  /* Tile dissolve transition */
   .dissolve-zone {
     position: relative;
-    height: 260px;
+    width: 100%;
+    height: 280px;
+    background: #04040A;
     overflow: hidden;
     pointer-events: none;
-    background: linear-gradient(to bottom, #04040A 0%, #04040A 50%, #C8C8CC 100%);
   }
-  .dissolve-px {
+  .dissolve-tile {
     position: absolute;
-    border-radius: 1px;
+    background: #C8C8CC;
     opacity: 0;
-    transition: opacity var(--dur, 0.5s) ease var(--del, 0s);
+    transition: opacity 0.4s ease;
   }
-  .dissolve-px.visible { opacity: 1; }
+  .dissolve-tile.show { opacity: 1; }
 
 
   
@@ -1072,8 +1067,24 @@
     border: none !important;
     outline: none !important;
   }
-  .vine-zone::after { display: none; }
-  .vine-zone::before { display: none; }
+  .vine-zone { border-top: none !important; border-bottom: none !important; }
+  .vine-zone::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 35%;
+    background: linear-gradient(to bottom, transparent, #04040A);
+    pointer-events: none;
+    z-index: 5;
+  }
+  .vine-zone::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 0;
+    background: transparent;
+    z-index: 5;
+  }
 
 </style>
 </head>
@@ -1132,7 +1143,7 @@
 <!-- SECTION 3: COLLAGE -->
 <section id="collage">
   <!-- Glass shatter transition: black shatters into grey-white -->
-  <div class="dissolve-zone"></div>
+  <div class="dissolve-zone" id="dissolveZone"></div>
 
   <div class="collage-space">
     <span class="collage-label">樂園 Rakuen — everything here can be yours</span>
@@ -1278,8 +1289,6 @@
     </div>
   </div>
 
-  <!-- INK EROSION: grey-white blobs eat through black -->
-  <div class="dissolve-zone"></div>
   </div>
 
   <!-- VINE ZONE -->
@@ -1480,51 +1489,21 @@
 
 <script>
   // ── CURSOR ──────────────────────────────────────────────
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-  let mx = 0, my = 0, rx = 0, ry = 0;
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    cursor.style.cssText = 'transform:translate3d(' + (mx - 3) + 'px,' + (my - 3) + 'px,0)';
-  });
-  (function animateRing() {
-    rx += (mx - rx) * 0.25; ry += (my - ry) * 0.25;
-    ring.style.transform = 'translate3d(' + (rx - 16) + 'px,' + (ry - 16) + 'px,0)';
-    requestAnimationFrame(animateRing);
-  })();
-
-  // ── PIXEL DISSOLVE ZONES ────────────────────────────────
-  function buildDissolveZone(zone) {
-    const colors = ['#888888','#AAAAAA','#BBBBBB','#CCCCCC','#DDDDDD'];
-    for (let i = 0; i < 200; i++) {
-      const el = document.createElement('div');
-      const size = 8 + Math.random() * 24;
-      const x = Math.random() * 100;
-      const y = Math.pow(Math.random(), 0.55) * 100;
-      const lightness = y / 100;
-      const r = Math.random();
-      let color;
-      if (lightness > 0.8)      color = r < 0.6 ? '#DDDDDD' : '#CCCCCC';
-      else if (lightness > 0.55) color = r < 0.5 ? '#CCCCCC' : '#BBBBBB';
-      else if (lightness > 0.35) color = r < 0.5 ? '#BBBBBB' : '#AAAAAA';
-      else                        color = r < 0.4 ? '#888888' : '#AAAAAA';
-      const delay = (Math.random() * 2).toFixed(2);
-      const dur   = (0.3 + Math.random() * 0.5).toFixed(2);
-      el.className = 'dissolve-px';
-      el.style.cssText = 'width:' + size.toFixed(0) + 'px;height:' + size.toFixed(0) + 'px;left:' + x.toFixed(1) + '%;top:' + y.toFixed(1) + '%;background:' + color + ';--del:' + delay + 's;--dur:' + dur + 's';
-      zone.appendChild(el);
-    }
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          zone.querySelectorAll('.dissolve-px').forEach(px => px.classList.add('visible'));
-          obs.unobserve(zone);
-        }
-      });
-    }, { threshold: 0.05 });
-    obs.observe(zone);
+  const _cur = document.getElementById('cursor');
+  const _ring = document.getElementById('cursorRing');
+  let _mx=0, _my=0, _rx=0, _ry=0;
+  if (_cur && _ring) {
+    document.addEventListener('mousemove', function(e) {
+      _mx = e.clientX; _my = e.clientY;
+      _cur.style.transform = 'translate3d(' + (_mx-3) + 'px,' + (_my-3) + 'px,0)';
+    }, {passive: true, capture: false});
+    (function _raf() {
+      _rx += (_mx - _rx) * 0.22;
+      _ry += (_my - _ry) * 0.22;
+      _ring.style.transform = 'translate3d(' + (_rx-15) + 'px,' + (_ry-15) + 'px,0)';
+      requestAnimationFrame(_raf);
+    })();
   }
-  document.querySelectorAll('.dissolve-zone').forEach(buildDissolveZone);
 
   // ═══════════════════════════════════════════════════════
   // LOGO FADE + GLITCH
@@ -1990,6 +1969,38 @@ gpAudio.addEventListener('ended', () => { gpNext(); setTimeout(()=>{gpAudio.play
 
 // Load first track on page (don't autoplay — wait for user click)
 gpLoad(gpIdx, false);
+</script>
+
+<script>
+(function(){
+  const zone = document.getElementById('dissolveZone');
+  if (!zone) return;
+  const TILE = 20;
+  const cols = Math.ceil(window.innerWidth / TILE);
+  const rows = Math.ceil(280 / TILE);
+  const tiles = [];
+
+  for (let r = 0; r < rows; r++) {
+    for (let co = 0; co < cols; co++) {
+      const d = document.createElement('div');
+      d.className = 'dissolve-tile';
+      d.style.cssText = 'width:' + TILE + 'px;height:' + TILE + 'px;left:' + (co*TILE) + 'px;top:' + (r*TILE) + 'px;';
+      zone.appendChild(d);
+      tiles.push({el: d, row: r, col: co});
+    }
+  }
+
+  const observer = new IntersectionObserver(function(entries) {
+    if (!entries[0].isIntersecting) return;
+    observer.disconnect();
+    const sorted = tiles.slice().sort(function(a, b) { return b.row - a.row || Math.random() - 0.5; });
+    sorted.forEach(function(t, i) {
+      setTimeout(function() { t.el.classList.add('show'); }, i * 8);
+    });
+  }, { threshold: 0.1 });
+
+  observer.observe(zone);
+})();
 </script>
 
 </body>
