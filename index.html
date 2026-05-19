@@ -1068,10 +1068,10 @@
     content: '';
     position: absolute;
     bottom: 0; left: 0; right: 0;
-    height: 35%;
+    height: 40%;
     background: linear-gradient(to bottom, transparent, #04040A);
     pointer-events: none;
-    z-index: 5;
+    z-index: 10;
   }
   .vine-zone::before {
     content: '';
@@ -1296,7 +1296,7 @@
 <!-- SECTION 4: WHO WE ARE -->
 
 <!-- SECTION: WHAT WE DO -->
-<section id="what-we-do-home" style="background:#04040A;padding:100px 48px;border-top:1px solid rgba(240,240,245,0.06);">
+<section id="what-we-do-home" style="background:#04040A;padding:100px 48px;">
   <div style="display:flex;align-items:baseline;gap:24px;margin-bottom:64px;">
     <span style="font-family:'EB Garamond',serif;font-size:clamp(32px,4vw,52px);color:var(--white);letter-spacing:0.02em;">What We Do</span>
     <span style="font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--grey);">三條線</span>
@@ -1973,10 +1973,10 @@ gpLoad(gpIdx, false);
 
   // Uniform tile size, 5 layers — bottom fills first, top last
   // sqrt distribution gives 1→5→8→10 trickle per layer
-  var TILE = 48, GAP = 4, tw = TILE + GAP;
+  var TILE = 48, tw = TILE;
   var ZONE_H = 300, N_LAYERS = 5;
-  var cols = Math.ceil((window.innerWidth + GAP) / tw);
-  var rows = Math.ceil((ZONE_H + GAP) / tw);
+  var cols = Math.ceil(window.innerWidth / tw);
+  var rows = Math.ceil(ZONE_H / tw);
   var tiles = [];
 
   for (var r = 0; r < rows; r++) {
