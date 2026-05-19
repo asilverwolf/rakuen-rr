@@ -44,7 +44,6 @@
     z-index: 9999;
     transform: translate(-50%, -50%);
     transition: width 0.2s, height 0.2s, opacity 0.2s;
-    mix-blend-mode: difference;
   }
   .cursor-ring {
     position: fixed;
@@ -55,7 +54,6 @@
     z-index: 9998;
     transform: translate(-50%, -50%);
     transition: all 0.12s ease;
-    mix-blend-mode: difference;
   }
   body:has(a:hover) .cursor-ring,
   body:has(button:hover) .cursor-ring { 
@@ -72,7 +70,6 @@
     align-items: center;
     justify-content: space-between;
     padding: 24px 48px;
-    mix-blend-mode: difference;
   }
   nav::before {
     content: '';
@@ -1101,7 +1098,7 @@
 <!-- NAVBAR -->
 <nav>
   <a href="index.html" class="nav-logo" style="display:flex;align-items:center;background:transparent;border:none;">
-  <img src="logo-main.png" alt="R.R" style="height:28px;opacity:0.9;"></a>
+  <img src="logo-main.png" alt="R.R" style="height:36px;opacity:1;"></a>
   <div class="nav-links">
     <a href="#collage" id="nav-whatwedo">what we do</a>
     <a href="#who" id="nav-whoweare">who we are</a>
@@ -1125,7 +1122,7 @@
   </div>
 
   <div class="hero-center">
-    <div id="heroLogo" style="background:transparent;isolation:auto;"><img src="logo-main.png" alt="R.R" style="height:28px;opacity:0.9;"></div>
+    <div id="heroLogo" style="background:transparent;isolation:auto;"><img src="logo-main.png" alt="R.R" style="width:clamp(180px,24vw,340px);display:block;margin:0 auto;opacity:0.95;"></div>
   </div>
 
   <div class="scroll-hint">
