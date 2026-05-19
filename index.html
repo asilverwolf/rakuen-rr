@@ -37,8 +37,10 @@
   /* CUSTOM CURSOR */
   .cursor {
     position: fixed;
-    top: 0; left: 0;
-    width: 6px; height: 6px;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 5px;
     background: #F0F0F5;
     border-radius: 50%;
     pointer-events: none;
@@ -47,9 +49,11 @@
   }
   .cursor-ring {
     position: fixed;
-    top: 0; left: 0;
-    width: 30px; height: 30px;
-    border: 1px solid rgba(240,240,245,0.35);
+    top: 0;
+    left: 0;
+    width: 28px;
+    height: 28px;
+    border: 1px solid rgba(240,240,245,0.4);
     border-radius: 50%;
     pointer-events: none;
     z-index: 9998;
@@ -343,7 +347,7 @@
   }
 
   .collage-space {
-    background: #C8C8CC;
+    background: #EAEAEC;
     padding: 80px 48px 120px;
     position: relative;
   }
@@ -857,7 +861,7 @@
   .vine-zone {
     position: relative;
     height: 900px;
-    background: #E8E8EE;
+    background: #EAEAEC;
     overflow: hidden;
   }
   
@@ -1033,22 +1037,14 @@
   body { padding-bottom: 72px; }
 
 
-  /* Tile dissolve transition */
-  .dissolve-zone {
-    position: relative;
-    width: 100%;
-    height: 280px;
-    background: #04040A;
-    overflow: hidden;
-    pointer-events: none;
-  }
-  .dissolve-tile {
+  /* Scroll-driven tile transition */
+  .d-tile {
     position: absolute;
-    background: #C8C8CC;
+    background: #EAEAEC;
+    border-radius: 2px;
     opacity: 0;
-    transition: opacity 0.4s ease;
+    will-change: opacity;
   }
-  .dissolve-tile.show { opacity: 1; }
 
 
   
@@ -1143,7 +1139,7 @@
 <!-- SECTION 3: COLLAGE -->
 <section id="collage">
   <!-- Glass shatter transition: black shatters into grey-white -->
-  <div class="dissolve-zone" id="dissolveZone"></div>
+  <div id="dissolveZone" style="position:relative;width:100%;height:300px;background:#04040A;overflow:hidden;pointer-events:none;"></div>
 
   <div class="collage-space">
     <span class="collage-label">樂園 Rakuen — everything here can be yours</span>
@@ -1489,21 +1485,20 @@
 
 <script>
   // ── CURSOR ──────────────────────────────────────────────
-  const _cur = document.getElementById('cursor');
-  const _ring = document.getElementById('cursorRing');
-  let _mx=0, _my=0, _rx=0, _ry=0;
-  if (_cur && _ring) {
-    document.addEventListener('mousemove', function(e) {
-      _mx = e.clientX; _my = e.clientY;
-      _cur.style.transform = 'translate3d(' + (_mx-3) + 'px,' + (_my-3) + 'px,0)';
-    }, {passive: true, capture: false});
-    (function _raf() {
-      _rx += (_mx - _rx) * 0.22;
-      _ry += (_my - _ry) * 0.22;
-      _ring.style.transform = 'translate3d(' + (_rx-15) + 'px,' + (_ry-15) + 'px,0)';
-      requestAnimationFrame(_raf);
-    })();
-  }
+  var _c=document.getElementById('cursor');
+  var _r=document.getElementById('cursorRing');
+  var _mx=0,_my=0,_rx=0,_ry=0;
+  document.addEventListener('mousemove',function(e){
+    _mx=e.clientX;
+    _my=e.clientY;
+    if(_c) _c.style.transform='translate3d('+(_mx-2)+'px,'+(_my-2)+'px,0)';
+  },{passive:true});
+  (function _loop(){
+    _rx+=(_mx-_rx)*0.22;
+    _ry+=(_my-_ry)*0.22;
+    if(_r) _r.style.transform='translate3d('+(_rx-14)+'px,'+(_ry-14)+'px,0)';
+    requestAnimationFrame(_loop);
+  })();
 
   // ═══════════════════════════════════════════════════════
   // LOGO FADE + GLITCH
@@ -1973,33 +1968,43 @@ gpLoad(gpIdx, false);
 
 <script>
 (function(){
-  const zone = document.getElementById('dissolveZone');
+  var zone = document.getElementById('dissolveZone');
   if (!zone) return;
-  const TILE = 20;
-  const cols = Math.ceil(window.innerWidth / TILE);
-  const rows = Math.ceil(280 / TILE);
-  const tiles = [];
+  var tiles = [];
+  var sizes = [40,48,56,64,72,80];
+  var y = 0;
+  while (y < 300) {
+    var h = sizes[Math.floor(Math.random()*sizes.length)];
+    var x = 0;
+    while (x < window.innerWidth + 100) {
+      var w = sizes[Math.floor(Math.random()*sizes.length)];
+      var el = document.createElement('div');
+      el.className = 'd-tile';
+      el.style.width = w + 'px';
+      el.style.height = h + 'px';
+      el.style.left = (x + (Math.random()-0.5)*12) + 'px';
+      el.style.top = (y + (Math.random()-0.5)*12) + 'px';
+      el._threshold = Math.random();
+      zone.appendChild(el);
+      tiles.push(el);
+      x += w + 3;
+    }
+    y += h + 3;
+  }
 
-  for (let r = 0; r < rows; r++) {
-    for (let co = 0; co < cols; co++) {
-      const d = document.createElement('div');
-      d.className = 'dissolve-tile';
-      d.style.cssText = 'width:' + TILE + 'px;height:' + TILE + 'px;left:' + (co*TILE) + 'px;top:' + (r*TILE) + 'px;';
-      zone.appendChild(d);
-      tiles.push({el: d, row: r, col: co});
+  function onScroll() {
+    var rect = zone.getBoundingClientRect();
+    var vh = window.innerHeight;
+    var entered = vh - rect.top;
+    var total = vh + rect.height;
+    var progress = Math.max(0, Math.min(1, entered / total));
+    for (var i = 0; i < tiles.length; i++) {
+      tiles[i].style.opacity = progress > tiles[i]._threshold ? '1' : '0';
     }
   }
 
-  const observer = new IntersectionObserver(function(entries) {
-    if (!entries[0].isIntersecting) return;
-    observer.disconnect();
-    const sorted = tiles.slice().sort(function(a, b) { return b.row - a.row || Math.random() - 0.5; });
-    sorted.forEach(function(t, i) {
-      setTimeout(function() { t.el.classList.add('show'); }, i * 8);
-    });
-  }, { threshold: 0.1 });
-
-  observer.observe(zone);
+  window.addEventListener('scroll', onScroll, {passive: true});
+  onScroll();
 })();
 </script>
 
