@@ -44,7 +44,6 @@
     pointer-events: none;
     z-index: 9999;
     will-change: transform;
-    transform: translate3d(-50%,-50%,0);
   }
   .cursor-ring {
     position: fixed;
@@ -55,12 +54,10 @@
     pointer-events: none;
     z-index: 9998;
     will-change: transform;
-    transform: translate3d(-50%,-50%,0);
-    transition: width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
   }
   body:has(a:hover) .cursor-ring,
-  body:has(button:hover) .cursor-ring { 
-    width: 48px; height: 48px; 
+  body:has(button:hover) .cursor-ring {
+    width: 48px; height: 48px;
     border-color: rgba(240,240,245,0.8);
   }
 
@@ -861,11 +858,12 @@
     width: 100%; height: 100%;
     pointer-events: none;
     z-index: 5;
+    mix-blend-mode: screen;
   }
   .vine-zone {
     position: relative;
     height: 900px;
-    background: #E8E8EE;
+    background: #04040A;
     overflow: hidden;
   }
   
@@ -1047,44 +1045,15 @@
     height: 260px;
     overflow: hidden;
     pointer-events: none;
-    background: var(--black);
+    background: linear-gradient(to bottom, #04040A 0%, #04040A 50%, #C8C8CC 100%);
   }
-  .dissolve-pixels {
+  .dissolve-px {
     position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(90deg, transparent 50%, rgba(220,220,225,0.08) 50%),
-      linear-gradient(180deg, transparent 50%, rgba(220,220,225,0.08) 50%);
-    background-size: 8px 8px;
-    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.15) 25%, rgba(0,0,0,0.5) 55%, rgba(0,0,0,0.85) 75%, black 100%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.15) 25%, rgba(0,0,0,0.5) 55%, rgba(0,0,0,0.85) 75%, black 100%);
-    animation: pixel-shimmer 3s ease-in-out infinite alternate;
+    border-radius: 1px;
+    opacity: 0;
+    transition: opacity var(--dur, 0.5s) ease var(--del, 0s);
   }
-  .dissolve-pixels-2 {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(90deg, transparent 50%, rgba(200,200,208,0.06) 50%),
-      linear-gradient(180deg, transparent 50%, rgba(200,200,208,0.06) 50%);
-    background-size: 16px 16px;
-    background-position: 8px 8px;
-    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.9) 85%, black 100%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.9) 85%, black 100%);
-  }
-  .dissolve-zone::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 55%;
-    background: linear-gradient(to bottom, transparent, #C8C8CC);
-    pointer-events: none;
-  }
-  @keyframes pixel-shimmer {
-    0% { opacity: 0.6; }
-    100% { opacity: 1; }
-  }
-    100% { transform: translateY(-8px); opacity: 1; }
-  }
+  .dissolve-px.visible { opacity: 1; }
 
 
   
@@ -1103,18 +1072,8 @@
     border: none !important;
     outline: none !important;
   }
-  .vine-zone::after { content:''; position:absolute; bottom:0; left:0; right:0; height:35%; background:linear-gradient(to bottom,transparent,#04040A); pointer-events:none; z-index:5;
-    pointer-events: none;
-    z-index: 5;
-  }
-  .vine-zone::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: transparent;
-    z-index: 5;
-  }
+  .vine-zone::after { display: none; }
+  .vine-zone::before { display: none; }
 
 </style>
 </head>
@@ -1173,7 +1132,7 @@
 <!-- SECTION 3: COLLAGE -->
 <section id="collage">
   <!-- Glass shatter transition: black shatters into grey-white -->
-  <div class="dissolve-zone"><div class="dissolve-pixels"></div><div class="dissolve-pixels-2"></div></div>
+  <div class="dissolve-zone"></div>
 
   <div class="collage-space">
     <span class="collage-label">樂園 Rakuen — everything here can be yours</span>
@@ -1320,7 +1279,7 @@
   </div>
 
   <!-- INK EROSION: grey-white blobs eat through black -->
-  <div class="dissolve-zone"><div class="dissolve-pixels"></div><div class="dissolve-pixels-2"></div></div>
+  <div class="dissolve-zone"></div>
   </div>
 
   <!-- VINE ZONE -->
@@ -1487,7 +1446,7 @@
       <div class="person-info">
         <a href="irene.html" style="text-decoration:none;"><span class="person-name-en" style="font-size:clamp(18px,2.5vw,28px);letter-spacing:0.15em;">Irene Zang</span>
         <span class="person-name-cn" style="font-size:13px;color:var(--grey-light);font-weight:300;">臧映然</span></a>
-        <p class="person-desc">23 · 視覺設計師 / 視覺表演者<br>直覺比邏輯快。性感不是表演，<br>是一種語言。</p>
+        <p class="person-desc">Visual Designer · Performer · Vocalist<br>Instinct moves faster than logic.<br>Sensuality is a language she was born speaking.</p>
         <div class="person-ig">
           <a href="https://instagram.com/zang.yingran" target="_blank" class="ig-handle">↗ @zang.yingran</a>
         </div>
@@ -1521,20 +1480,51 @@
 
 <script>
   // ── CURSOR ──────────────────────────────────────────────
-  // ═══════════════════════════════════════════════════════
-  // CURSOR
-  // ═══════════════════════════════════════════════════════
   const cursor = document.getElementById('cursor');
   const ring = document.getElementById('cursorRing');
   let mx = 0, my = 0, rx = 0, ry = 0;
-  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-  function animateCursor() {
-    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
-    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
-    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
-    requestAnimationFrame(animateCursor);
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.cssText = 'transform:translate3d(' + (mx - 3) + 'px,' + (my - 3) + 'px,0)';
+  });
+  (function animateRing() {
+    rx += (mx - rx) * 0.25; ry += (my - ry) * 0.25;
+    ring.style.transform = 'translate3d(' + (rx - 16) + 'px,' + (ry - 16) + 'px,0)';
+    requestAnimationFrame(animateRing);
+  })();
+
+  // ── PIXEL DISSOLVE ZONES ────────────────────────────────
+  function buildDissolveZone(zone) {
+    const colors = ['#888888','#AAAAAA','#BBBBBB','#CCCCCC','#DDDDDD'];
+    for (let i = 0; i < 200; i++) {
+      const el = document.createElement('div');
+      const size = 8 + Math.random() * 24;
+      const x = Math.random() * 100;
+      const y = Math.pow(Math.random(), 0.55) * 100;
+      const lightness = y / 100;
+      const r = Math.random();
+      let color;
+      if (lightness > 0.8)      color = r < 0.6 ? '#DDDDDD' : '#CCCCCC';
+      else if (lightness > 0.55) color = r < 0.5 ? '#CCCCCC' : '#BBBBBB';
+      else if (lightness > 0.35) color = r < 0.5 ? '#BBBBBB' : '#AAAAAA';
+      else                        color = r < 0.4 ? '#888888' : '#AAAAAA';
+      const delay = (Math.random() * 2).toFixed(2);
+      const dur   = (0.3 + Math.random() * 0.5).toFixed(2);
+      el.className = 'dissolve-px';
+      el.style.cssText = 'width:' + size.toFixed(0) + 'px;height:' + size.toFixed(0) + 'px;left:' + x.toFixed(1) + '%;top:' + y.toFixed(1) + '%;background:' + color + ';--del:' + delay + 's;--dur:' + dur + 's';
+      zone.appendChild(el);
+    }
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          zone.querySelectorAll('.dissolve-px').forEach(px => px.classList.add('visible'));
+          obs.unobserve(zone);
+        }
+      });
+    }, { threshold: 0.05 });
+    obs.observe(zone);
   }
-  animateCursor();
+  document.querySelectorAll('.dissolve-zone').forEach(buildDissolveZone);
 
   // ═══════════════════════════════════════════════════════
   // LOGO FADE + GLITCH
