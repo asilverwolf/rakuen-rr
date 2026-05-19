@@ -1485,11 +1485,16 @@
   // ── CURSOR ──────────────────────────────────────────────
   var _c=document.getElementById('cursor');
   var _r=document.getElementById('cursorRing');
+  var _mx=0,_my=0,_rx=0,_ry=0;
   document.addEventListener('mousemove',function(e){
-    var x=e.clientX,y=e.clientY;
-    if(_c) _c.style.transform='translate3d('+(x-2)+'px,'+(y-2)+'px,0)';
-    if(_r) _r.style.transform='translate3d('+(x-14)+'px,'+(y-14)+'px,0)';
+    _mx=e.clientX; _my=e.clientY;
+    if(_c) _c.style.transform='translate3d('+(_mx-2)+'px,'+(_my-2)+'px,0)';
   },{passive:true});
+  (function _loop(){
+    _rx+=(_mx-_rx)*0.25; _ry+=(_my-_ry)*0.25;
+    if(_r) _r.style.transform='translate3d('+(_rx-14)+'px,'+(_ry-14)+'px,0)';
+    requestAnimationFrame(_loop);
+  })();
 
   // ═══════════════════════════════════════════════════════
   // LOGO FADE + GLITCH
@@ -1996,13 +2001,22 @@ gpLoad(gpIdx, false);
     }
   }
 
+  var _ticking = false;
   function onScroll() {
-    var rect = zone.getBoundingClientRect();
-    var vh = window.innerHeight;
-    var p = Math.max(0, Math.min(1, (vh - rect.top) / (vh + rect.height)));
-    for (var i = 0; i < tiles.length; i++) {
-      tiles[i].style.opacity = p >= tiles[i]._thr ? '1' : '0';
-    }
+    if (_ticking) return;
+    _ticking = true;
+    requestAnimationFrame(function() {
+      _ticking = false;
+      var rect = zone.getBoundingClientRect();
+      var vh = window.innerHeight;
+      var p = Math.max(0, Math.min(1, (vh - rect.top) / (vh + rect.height)));
+      for (var i = 0; i < tiles.length; i++) {
+        tiles[i].style.opacity = p >= tiles[i]._thr ? '1' : '0';
+      }
+      if (p >= 1) {
+        window.removeEventListener('scroll', onScroll);
+      }
+    });
   }
 
   window.addEventListener('scroll', onScroll, {passive:true});
