@@ -1,273 +1,229 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BETWEEN｜R.R RakuenɒuyɘЯ</title>
+  
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BETWEEN — RakuenɒuyɘЯ</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400&family=Space+Mono:wght@400;700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap');
-  :root{--black:#04040A;--grey:#888899;--white:#F0F0F5;--accent:#888899;}
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:var(--black);color:var(--white);font-family:'Space Mono',monospace;overflow-x:hidden;cursor:none;}
-  .cursor{position:fixed;width:6px;height:6px;background:var(--white);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;}
-  .cursor-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(240,240,245,0.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all 0.12s;mix-blend-mode:difference;}
-  .grain{position:fixed;inset:-50%;width:200%;height:200%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");pointer-events:none;z-index:100;opacity:0.3;animation:gd 0.15s steps(1) infinite;}
-  @keyframes gd{0%{transform:translate(0,0)}50%{transform:translate(-1%,1%)}100%{transform:translate(0,0)}}
-
-  nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:24px 48px;background:linear-gradient(to bottom,rgba(4,4,10,0.85),transparent);}
-  .nav-logo img{height:26px;mix-blend-mode:screen;opacity:0.85;}
-  .nav-links{display:flex;gap:32px;}
-  .nav-links a{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--grey);text-decoration:none;transition:color 0.2s;}
-  .nav-links a:hover{color:var(--white);}
-
-  /* HERO */
-  .hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden;}
-  /* Glitch background for NO PROOF */
-  .hero-bg{position:absolute;inset:0;background:#04040A;z-index:0;}
-  .hero-bg::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(240,240,245,0.008) 2px,rgba(123,140,222,0.015) 4px);}
-  /* Occasional glitch line */
-  .glitch-line{position:absolute;left:0;right:0;height:1px;background:rgba(240,240,245,0.08);animation:glitch-move 8s infinite;}
-  @keyframes glitch-move{0%,90%,100%{top:-10%;opacity:0}92%{top:30%;opacity:1}94%{top:32%;opacity:0}96%{top:70%;opacity:0.5}98%{top:71%;opacity:0}}
-
-  .hero-cover{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;padding:120px 48px 80px;}
-  .cover-img{width:min(400px,80%);aspect-ratio:1;object-fit:cover;box-shadow:0 0 60px rgba(240,240,245,0.06);}
-
-  .hero-info{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:120px 64px 80px 32px;}
-  .track-label{font-size:8px;letter-spacing:0.5em;text-transform:uppercase;color:var(--accent);margin-bottom:24px;display:block;}
-  .track-title{font-family:'EB Garamond',serif;font-size:clamp(48px,6vw,88px);font-weight:400;line-height:1;margin-bottom:8px;letter-spacing:-0.01em;}
-  .track-artist{font-size:10px;letter-spacing:0.2em;color:var(--grey);margin-bottom:40px;}
-  .track-desc{font-family:'Noto Serif TC',serif;font-size:13px;line-height:2.2;color:rgba(240,240,245,0.55);max-width:360px;margin-bottom:48px;font-weight:300;}
-
-  /* Player bar */
-  .player{background:rgba(255,255,255,0.04);border:1px solid rgba(240,240,245,0.08);padding:20px 24px;max-width:400px;margin-bottom:32px;}
-  .player-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-  .player-title{font-size:10px;letter-spacing:0.1em;color:var(--white);}
-  .player-sub{font-size:9px;color:var(--grey);}
-  .player-controls{display:flex;align-items:center;gap:16px;}
-  .player-btn{background:none;border:none;color:var(--grey);cursor:none;font-size:14px;transition:color 0.2s;padding:4px;}
-  .player-btn:hover,.player-btn.active{color:var(--white);}
-  .player-btn.play{width:32px;height:32px;border:1px solid rgba(240,240,245,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;}
-  .player-btn.play:hover{border-color:var(--white);}
-  .progress-bar{width:100%;height:2px;background:rgba(240,240,245,0.1);position:relative;cursor:none;margin-bottom:8px;}
-  .progress-fill{height:100%;background:rgba(240,240,245,0.6);width:0%;transition:width 0.1s;}
-  .player-time{display:flex;justify-content:space-between;font-size:8px;color:var(--grey);}
-  .player-note{font-size:9px;color:var(--grey);letter-spacing:0.1em;margin-top:8px;opacity:0.6;}
-
-  /* Lyrics */
-  .lyrics-section{padding:80px 48px;}
-  .section-label{font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:var(--grey);margin-bottom:24px;display:block;border-bottom:1px solid rgba(240,240,245,0.06);padding-bottom:12px;}
-  .lyrics-toggle{display:flex;align-items:center;gap:12px;cursor:none;margin-bottom:0;}
-  .lyrics-toggle-btn{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--grey);background:none;border:1px solid rgba(240,240,245,0.15);padding:8px 16px;cursor:none;transition:all 0.2s;}
-  .lyrics-toggle-btn:hover{color:var(--white);border-color:rgba(240,240,245,0.4);}
-  .lyrics-content{max-height:0;overflow:hidden;transition:max-height 0.6s ease;}
-  .lyrics-content.open{max-height:2000px;}
-  .lyrics-text{font-family:'Noto Serif TC',serif;font-size:14px;line-height:3;color:rgba(240,240,245,0.7);padding:32px 0;font-weight:300;white-space:pre-line;}
-
-  /* BTS Photos */
-  .bts-section{padding:0 48px 80px;}
-  .bts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:3px;margin-top:24px;}
-  .bts-item{aspect-ratio:4/3;overflow:hidden;position:relative;}
-  .bts-item img{width:100%;height:100%;object-fit:cover;filter:grayscale(20%);transition:filter 0.4s,transform 0.5s;}
-  .bts-item:hover img{filter:grayscale(0%);transform:scale(1.04);}
-
-  /* Track nav */
-  .track-nav{padding:48px;display:flex;justify-content:space-between;border-top:1px solid rgba(240,240,245,0.06);}
-  .track-nav a{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--grey);text-decoration:none;transition:color 0.2s;display:flex;align-items:center;gap:8px;}
-  .track-nav a:hover{color:var(--white);}
-
-  footer{background:var(--black);padding:32px 48px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(240,240,245,0.06);}
-  .footer-logo img{height:24px;mix-blend-mode:screen;opacity:0.6;}
-  .footer-copy{font-size:9px;color:rgba(136,136,153,0.4);}
-
-  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 50%,rgba(4,4,10,0.6) 100%);pointer-events:none;z-index:99;}
-
-  @media(max-width:768px){
-    .hero{grid-template-columns:1fr;}
-    .hero-cover{padding:100px 24px 32px;}
-    .cover-img{width:min(280px,90%);}
-    .hero-info{padding:24px 24px 60px;}
-    nav{padding:16px 24px;}
-    .lyrics-section,.bts-section{padding:48px 24px;}
-    .track-nav{padding:32px 24px;}
-  }
-
-  #global-player{position:fixed;bottom:0;left:0;right:0;z-index:2000;background:rgba(4,4,10,0.96);backdrop-filter:blur(16px);border-top:1px solid rgba(240,240,245,0.08);padding:12px 32px;display:flex;align-items:center;gap:20px;transition:transform 0.3s;}
-  #global-player.hidden{transform:translateY(100%);}
-  .gp-cover{width:40px;height:40px;object-fit:cover;flex-shrink:0;}
-  .gp-info{flex:1;min-width:0;}
-  .gp-title{font-family:'EB Garamond',serif;font-size:13px;color:#F0F0F5;letter-spacing:0.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .gp-artist{font-size:9px;color:#888899;letter-spacing:0.15em;text-transform:uppercase;margin-top:2px;}
-  .gp-controls{display:flex;align-items:center;gap:16px;flex-shrink:0;}
-  .gp-btn{background:none;border:none;color:#888899;cursor:none;font-size:12px;padding:4px;transition:color 0.2s;}
-  .gp-btn:hover{color:#F0F0F5;}
-  .gp-btn.play{width:32px;height:32px;border:1px solid rgba(240,240,245,0.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;}
-  .gp-progress-wrap{flex:1;max-width:280px;display:flex;flex-direction:column;gap:4px;}
-  .gp-progress{width:100%;height:2px;background:rgba(240,240,245,0.1);position:relative;}
-  .gp-progress-fill{height:100%;background:rgba(240,240,245,0.5);width:0%;pointer-events:none;}
-  .gp-time{display:flex;justify-content:space-between;font-size:8px;color:#888899;}
-  .gp-page-link{font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:#888899;text-decoration:none;border-bottom:1px solid rgba(136,136,153,0.3);padding-bottom:1px;transition:color 0.2s;flex-shrink:0;}
-  .gp-page-link:hover{color:#F0F0F5;}
-  .gp-toggle{font-size:9px;color:#888899;background:none;border:none;cursor:none;padding:4px;}
-  .gp-toggle:hover{color:#F0F0F5;}
-  body{padding-bottom:72px;}
-
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:wght@400;700&family=Noto+Serif+TC:wght@200;300;400&display=swap');
+:root{--black:#04040A;--white:#F0F0F5;--grey:#888899;--line:rgba(240,240,245,0.07);}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'Space Mono',monospace;overflow-x:hidden;cursor:none;padding-bottom:72px;}
+.cursor{position:fixed;width:5px;height:5px;background:var(--white);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;}
+.cursor-ring{position:fixed;width:28px;height:28px;border:1px solid rgba(240,240,245,0.25);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all 0.1s;mix-blend-mode:difference;}
+.grain{position:fixed;inset:-50%;width:200%;height:200%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");pointer-events:none;z-index:100;opacity:0.25;animation:g 0.15s steps(1) infinite;}
+@keyframes g{0%{transform:translate(0,0)}50%{transform:translate(-1%,1%)}100%{transform:translate(0,0)}}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:20px 48px;background:linear-gradient(to bottom,rgba(4,4,10,0.9),transparent);}
+.nav-logo img{height:22px;mix-blend-mode:screen;opacity:0.9;}
+.nav-links{display:flex;gap:32px;}
+.nav-links a{font-size:11px;letter-spacing:0.25em;text-transform:uppercase;color:var(--grey);text-decoration:none;transition:color 0.2s;}
+.nav-links a:hover{color:var(--white);}
+.hero{min-height:100vh;position:relative;overflow:hidden;display:flex;align-items:flex-end;}
+.hero-bg{position:absolute;inset:0;}
+.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center center;}
+.hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(4,4,10,0.15) 0%,rgba(4,4,10,0.5) 50%,rgba(4,4,10,0.96) 100%);}
+.hero-info{position:relative;z-index:2;padding:0 64px 80px;max-width:680px;}
+.hero-num{font-size:11px;letter-spacing:0.5em;text-transform:uppercase;color:var(--grey);display:block;margin-bottom:16px;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(56px,8vw,112px);font-weight:300;line-height:0.95;letter-spacing:-0.02em;margin-bottom:6px;}
+.hero-title-sub{font-family:'Noto Serif TC',serif;font-size:13px;font-weight:200;color:var(--grey);letter-spacing:0.3em;display:block;margin-bottom:24px;}
+.hero-artist{font-size:11px;letter-spacing:0.2em;color:rgba(136,136,153,0.7);text-transform:uppercase;margin-bottom:4px;}
+.hero-meta{font-size:10px;letter-spacing:0.1em;color:rgba(136,136,153,0.4);}
+.words-section{padding:100px 64px 60px;max-width:720px;}
+.words-rule{width:1px;height:80px;background:linear-gradient(to bottom,transparent,rgba(240,240,245,0.15),transparent);margin-bottom:40px;}
+.words-label{font-size:10px;letter-spacing:0.5em;text-transform:uppercase;color:var(--grey);display:block;margin-bottom:32px;}
+.words-text{font-family:'Cormorant Garamond',serif;font-size:clamp(17px,2vw,22px);font-weight:300;font-style:italic;line-height:2;color:rgba(240,240,245,0.85);margin-bottom:36px;}
+.words-echo{display:flex;flex-direction:column;gap:6px;margin-bottom:32px;padding-left:1px;border-left:1px solid rgba(240,240,245,0.1);padding-left:20px;}
+.words-echo span{font-family:'Noto Serif TC',serif;font-size:12px;font-weight:200;color:rgba(240,240,245,0.4);letter-spacing:0.05em;line-height:1.8;}
+.words-sig{font-size:11px;letter-spacing:0.2em;color:var(--grey);display:block;}
+.stream-section{padding:0 64px 60px;}
+.stream-link{display:inline-flex;align-items:center;gap:12px;font-size:11px;letter-spacing:0.25em;text-transform:uppercase;color:var(--grey);text-decoration:none;border:1px solid rgba(240,240,245,0.1);padding:12px 20px;transition:all 0.3s;}
+.stream-link:hover{color:var(--white);border-color:rgba(240,240,245,0.3);}
+.lyrics-section{padding:0 64px 80px;max-width:720px;}
+.section-line{display:flex;align-items:center;gap:20px;margin-bottom:24px;}
+.section-line-label{font-size:10px;letter-spacing:0.4em;text-transform:uppercase;color:var(--grey);white-space:nowrap;}
+.section-line-rule{flex:1;height:1px;background:var(--line);}
+.lyrics-btn{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--grey);background:none;border:1px solid rgba(240,240,245,0.1);padding:8px 16px;cursor:none;transition:all 0.2s;font-family:'Space Mono',monospace;}
+.lyrics-btn:hover{color:var(--white);border-color:rgba(240,240,245,0.3);}
+.lyrics-body{overflow:hidden;max-height:0;transition:max-height 0.7s ease;}
+.lyrics-body.open{max-height:4000px;}
+.lyrics-text{font-family:'Noto Serif TC',serif;font-size:13px;font-weight:300;line-height:3;color:rgba(240,240,245,0.5);padding:40px 0;white-space:pre-line;}
+.music-nav{padding:60px 64px;display:flex;justify-content:space-between;border-top:1px solid var(--line);}
+.music-nav a{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--grey);text-decoration:none;transition:color 0.2s;}
+.music-nav a:hover{color:var(--white);}
+footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);}
+.footer-logo img{height:20px;mix-blend-mode:screen;opacity:0.55;}
+.footer-copy{font-size:10px;color:rgba(136,136,153,0.25);}
+#gp{position:fixed;bottom:0;left:0;right:0;z-index:2000;background:rgba(4,4,10,0.97);backdrop-filter:blur(20px);border-top:1px solid rgba(240,240,245,0.06);padding:10px 40px;display:flex;align-items:center;gap:20px;transition:transform 0.3s;}
+#gp.hidden{transform:translateY(100%);}
+.gp-cover{width:36px;height:36px;object-fit:cover;flex-shrink:0;}
+.gp-info{flex:1;min-width:0;}
+.gp-title{font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gp-artist{font-size:10px;color:var(--grey);letter-spacing:0.12em;text-transform:uppercase;margin-top:2px;}
+.gp-pw{flex:1;max-width:280px;}
+.gp-bar{width:100%;height:1px;background:rgba(240,240,245,0.08);margin-bottom:4px;cursor:none;}
+.gp-fill{height:100%;background:rgba(240,240,245,0.4);width:0%;}
+.gp-time{display:flex;justify-content:space-between;font-size:10px;color:var(--grey);}
+.gp-ctrl{display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.gp-btn{background:none;border:none;color:var(--grey);cursor:none;font-size:11px;padding:4px;transition:color 0.2s;font-family:'Space Mono',monospace;}
+.gp-btn:hover{color:var(--white);}
+.gp-btn.play{width:30px;height:30px;border:1px solid rgba(240,240,245,0.18);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.gp-link{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--grey);text-decoration:none;border-bottom:1px solid rgba(136,136,153,0.2);padding-bottom:1px;flex-shrink:0;transition:color 0.2s;}
+.gp-link:hover{color:var(--white);}
+.gp-x{font-size:11px;color:rgba(136,136,153,0.3);background:none;border:none;cursor:none;padding:4px;font-family:'Space Mono',monospace;}
+@media(max-width:768px){
+  nav{padding:16px 24px;}
+  .hero-info{padding:0 24px 60px;}
+  .words-section,.lyrics-section,.stream-section{padding-left:24px;padding-right:24px;}
+  .music-nav{padding:40px 24px;}
+  footer{padding:24px;flex-direction:column;gap:12px;}
+  #gp{padding:10px 16px;gap:12px;}
+  .gp-pw{display:none;}
+}
 </style>
 </head>
 <body>
 <div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
+<div class="cursor-ring" id="cring"></div>
 <div class="grain"></div>
-
 <nav>
   <a href="index.html" class="nav-logo"><img src="logo-main.png" alt="R.R"></a>
   <div class="nav-links">
-    <a href="what-we-do.html">what we do</a>
-    <a href="index.html#who">who we are</a>
+    <a href="what-we-do.html">Music</a>
+    <a href="index.html">Home</a>
   </div>
 </nav>
-
 <section class="hero">
-  <div class="hero-bg"><div class="glitch-line"></div></div>
-  <div class="hero-cover">
-    <img src="cover-between.jpg" class="cover-img" alt="NO PROOF">
-  </div>
+  <div class="hero-bg"><img src="cover-between.jpg" alt="BETWEEN"></div>
   <div class="hero-info">
-    <span class="track-label">R.R · 2026 · Luna Liu</span>
-    <h1 class="track-title">BETWEEN</h1>
-    <p class="track-artist">Luna Liu 劉若玥</p>
-    <p class="track-desc">在之間的地方，我還是我。<br>沒有出口，但我學會在裡面呼吸。</p>
-
-    <div class="player" id="player" style="filter:grayscale(30%)">
-      <div class="player-top">
-        <div>
-          <div class="player-title">NO PROOF</div>
-          <div class="player-sub">Luna · Ari · Irene</div>
-        </div>
-      </div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="progressFill"></div>
-      </div>
-      <div class="player-time">
-        <span id="currentTime">0:00</span>
-        <span id="duration">—</span>
-      </div>
-      <div class="player-controls" style="margin-top:12px;">
-        <button class="player-btn play" id="playBtn" onclick="togglePlay()">▶</button>
-        <span style="font-size:9px;color:var(--grey);letter-spacing:0.1em;">NO PROOF</span>
-      </div>
-      <audio id="audioEl" src="music-between.mp3" preload="metadata"></audio>
-      <p class="player-note">音檔即將上線 · 串流平台敬請期待</p>
-    </div>
+    <span class="hero-num">R.R · 04</span>
+    <h1 class="hero-title">BETWEEN</h1>
+    <span class="hero-title-sub"></span>
+    <p class="hero-artist">Luna Liu</p>
+    <p class="hero-meta">2026 · Dark Indie Pop · C minor · BPM 84</p>
   </div>
 </section>
+<section class="words-section">
+  <div class="words-rule"></div>
+  <span class="words-label">— Why we made this</span>
+  <p class="words-text">"Which side are you on?"
+I've been asked this too many times.
 
+Not moving is also an answer.
+I'm between.
+There's weight in that place.
+And I've learned to live in it.</p>
+  <div class="words-echo">
+    <span>不動，也是一種回答。我在之間。</span>
+    <span>動かないことも、答えのひとつ。わたしは、その間にいる。</span>
+    <span>움직이지 않는 것도 하나의 답이야. 나는 그 사이에 있어.</span>
+  </div>
+  <span class="words-sig">— Luna Liu</span>
+</section>
+<section class="stream-section">
+  <a href="#" class="stream-link">▶&nbsp;&nbsp;Stream on Spotify · Coming Soon</a>
+</section>
 <section class="lyrics-section">
-  <span class="section-label">歌詞 Lyrics</span>
-  <div class="lyrics-toggle">
-    <button class="lyrics-toggle-btn" onclick="toggleLyrics()">展開歌詞</button>
+  <div class="section-line">
+    <span class="section-line-label">Lyrics</span>
+    <div class="section-line-rule"></div>
   </div>
-  <div class="lyrics-content" id="lyricsContent">
-    <div class="lyrics-text">歌詞即將釋出。</div>
+  <button class="lyrics-btn" id="lyricsBtn" onclick="toggleLyrics()">+ Show</button>
+  <div class="lyrics-body" id="lyricsBody">
+    <div class="lyrics-text">[ Intro ]
+I thought I knew
+where I was
+
+[ Verse 1 ]
+something on each side
+pulling without asking
+I stopped moving a long time ago
+not because I couldn't
+because the middle
+had a different kind of weight
+
+[ Chorus ]
+I'm between
+wherever you think I should be
+I'm between
+not waiting — just here
+我在這裡
+
+[ Bridge ]
+I never belonged anywhere
+and somehow
+that's the most honest thing
+I've ever said out loud
+不需要選邊
+
+[ Peak ]
+and I'm
+still
+HERE ———
+
+[ Outro ]
+I thought I knew where I was
+……I do</div>
   </div>
 </section>
-
-<section class="bts-section">
-  <span class="section-label">拍攝側記 Behind the Scenes</span>
-  <div class="bts-grid">
-    <div class="bts-item"><img src="between-bts0.jpg" alt="BETWEEN BTS"></div>
-    <div class="bts-item"><img src="between-bts1.jpg" alt="BETWEEN BTS"></div>
-    <div class="bts-item"><img src="between-bts2.jpg" alt="BETWEEN BTS"></div>
-    <div class="bts-item"><img src="between-bts3.jpg" alt="BETWEEN BTS"></div>
-  </div>
-</section>
-
-<div class="track-nav">
-  <a href="what-we-do.html">← 全部創作</a>
-  <a href="music-signal.html">Signal →</a>
+<div class="music-nav">
+  <a href="music-jiexian.html">← 界線</a>
+  <a href="music-heydirtyboy.html">Hey Dirty Boy →</a>
 </div>
-
 <footer>
   <a href="index.html" class="footer-logo"><img src="logo-main.png" alt="R.R"></a>
-  <span class="footer-copy">© 2026 R.R｜RakuenɒuyɘЯ</span>
+  <span class="footer-copy">© 2026 RakuenɒuyɘЯ</span>
 </footer>
-
-<script>
-  const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
-  let mx=0,my=0,rx=0,ry=0;
-  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
-  (function anim(){cursor.style.left=mx+'px';cursor.style.top=my+'px';rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);})();
-
-  const audio=document.getElementById('audioEl');
-  const playBtn=document.getElementById('playBtn');
-  const fill=document.getElementById('progressFill');
-  const currT=document.getElementById('currentTime');
-  const durEl=document.getElementById('duration');
-  let playing=false;
-
-  function fmt(s){const m=Math.floor(s/60);return m+':'+(Math.floor(s%60)+'').padStart(2,'0');}
-  audio.addEventListener('loadedmetadata',()=>{durEl.textContent=fmt(audio.duration);});
-  audio.addEventListener('timeupdate',()=>{
-    if(audio.duration){fill.style.width=(audio.currentTime/audio.duration*100)+'%';currT.textContent=fmt(audio.currentTime);}
-  });
-  function togglePlay(){
-    if(playing){audio.pause();playBtn.textContent='▶';}
-    else{audio.play().catch(()=>{});playBtn.textContent='❚❚';}
-    playing=!playing;
-  }
-  audio.addEventListener('ended',()=>{playing=false;playBtn.textContent='▶';fill.style.width='0%';});
-
-  function toggleLyrics(){
-    const c=document.getElementById('lyricsContent');
-    const btn=document.querySelector('.lyrics-toggle-btn');
-    c.classList.toggle('open');
-    btn.textContent=c.classList.contains('open')?'收起歌詞':'展開歌詞';
-  }
-</script>
-<div id="global-player">
-  <img class="gp-cover" id="gp-cover" src="cover-noproof.jpg" alt="cover">
+<div id="gp">
+  <img class="gp-cover" id="gpCover" src="cover-between.jpg" alt="">
   <div class="gp-info">
-    <div class="gp-title" id="gp-title">NO PROOF</div>
-    <div class="gp-artist" id="gp-artist">Luna Liu · Irene Zang · Ari Lin</div>
+    <div class="gp-title" id="gpTitle">BETWEEN</div>
+    <div class="gp-artist" id="gpArtist">Luna Liu</div>
   </div>
-  <div class="gp-progress-wrap">
-    <div class="gp-progress" id="gp-progress" onclick="gpSeek(event)">
-      <div class="gp-progress-fill" id="gp-fill"></div>
-    </div>
-    <div class="gp-time"><span id="gp-cur">0:00</span><span id="gp-dur">—</span></div>
+  <div class="gp-pw">
+    <div class="gp-bar" onclick="gpSeek(event)"><div class="gp-fill" id="gpFill"></div></div>
+    <div class="gp-time"><span id="gpCur">0:00</span><span id="gpDur">—</span></div>
   </div>
-  <div class="gp-controls">
+  <div class="gp-ctrl">
     <button class="gp-btn" onclick="gpPrev()">&#9664;&#9664;</button>
-    <button class="gp-btn play" id="gp-play" onclick="gpToggle()">&#9654;</button>
+    <button class="gp-btn play" id="gpPlay" onclick="gpToggle()">&#9654;</button>
     <button class="gp-btn" onclick="gpNext()">&#9654;&#9654;</button>
   </div>
-  <a class="gp-page-link" id="gp-link" href="music-noproof.html">Lyrics ↗</a>
-  <button class="gp-toggle" onclick="gpHide()">✕</button>
+  <a class="gp-link" id="gpLink" href="music-between.html">Lyrics ↗</a>
+  <button class="gp-x" onclick="document.getElementById('gp').classList.add('hidden')">✕</button>
 </div>
-<audio id="gp-audio" preload="none"></audio>
+<audio id="gpAudio" preload="none"></audio>
 <script>
-const GP_TRACKS=[
-  {title:'NO PROOF',artist:'Luna Liu · Irene Zang · Ari Lin',src:'NO PROOF.mp3',cover:'cover-noproof.jpg',page:'music-noproof.html'},
-  {title:'SIGNAL',artist:'Irene Zang',src:'SIGNAL.mp3',cover:'cover-signal.jpg',page:'music-signal.html'},
-  {title:'界線',artist:'Ari Lin',src:'界線.mp3',cover:'cover-jiexian.jpg',page:'music-jiexian.html'},
-  {title:'BETWEEN',artist:'Luna Liu',src:'BETWEEN.mp3',cover:'cover-between.jpg',page:'music-between.html'},
-  {title:'Hey Dirty Boy',artist:'Irene Zang',src:'Hey Dirty Boy.mp3',cover:'cover-noproof.jpg',page:'music-signal.html'},
-  {title:'自由のままで',artist:'Ari Lin',src:'自由のままで.mp3',cover:'cover-jiexian.jpg',page:'music-jiexian.html'},
-  {title:'STILL HERE',artist:'Luna Liu',src:'STILL HERE.mp3',cover:'cover-between.jpg',page:'music-between.html'},
+const cur=document.getElementById('cursor'),cring=document.getElementById('cring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function t(){cur.style.left=mx+'px';cur.style.top=my+'px';rx+=(mx-rx)*0.11;ry+=(my-ry)*0.11;cring.style.left=rx+'px';cring.style.top=ry+'px';requestAnimationFrame(t);})();
+let lo=false;
+function toggleLyrics(){lo=!lo;document.getElementById('lyricsBody').classList.toggle('open',lo);document.getElementById('lyricsBtn').textContent=(lo?'− Hide':'+ Show');}
+const GP=[
+  {title:'NO PROOF',artist:'Luna · Irene · Ari',src:'',cover:'cover-noproof.jpg',page:'music-noproof.html'},
+  {title:'SIGNAL',artist:'Irene Zang',src:'',cover:'cover-signal.jpg',page:'music-signal.html'},
+  {title:'界線',artist:'Ari Lin',src:'',cover:'cover-jiexian.jpg',page:'music-jiexian.html'},
+  {title:'BETWEEN',artist:'Luna Liu',src:'',cover:'cover-between.jpg',page:'music-between.html'},
+  {title:'Hey Dirty Boy',artist:'Irene Zang',src:'',cover:'cover-signal.jpg',page:'music-heydirtyboy.html'},
+  {title:'自由のままで',artist:'Ari Lin',src:'',cover:'cover-jiexian.jpg',page:'music-jiyuu.html'},
+  {title:'STILL HERE',artist:'Luna Liu',src:'',cover:'cover-between.jpg',page:'music-stillhere.html'},
 ];
-let gpIdx=Math.floor(Math.random()*GP_TRACKS.length),gpPlaying=false;
-const gpAudio=document.getElementById('gp-audio');
-const gpFmt=s=>{const m=Math.floor(s/60);return m+':'+String(Math.floor(s%60)).padStart(2,'0');};
-function gpLoad(idx,play){const t=GP_TRACKS[idx];document.getElementById('gp-title').textContent=t.title;document.getElementById('gp-artist').textContent=t.artist;document.getElementById('gp-cover').src=t.cover;document.getElementById('gp-link').href=t.page;document.getElementById('gp-fill').style.width='0%';document.getElementById('gp-cur').textContent='0:00';document.getElementById('gp-dur').textContent='—';gpAudio.src=t.src;if(play){gpAudio.play().catch(()=>{});gpPlaying=true;gpUpdateBtn();}}
-function gpToggle(){if(!gpAudio.src||gpAudio.src===window.location.href){gpLoad(gpIdx,true);return;}if(gpPlaying){gpAudio.pause();gpPlaying=false;}else{gpAudio.play().catch(()=>{});gpPlaying=true;}gpUpdateBtn();}
-function gpNext(){gpIdx=(gpIdx+1)%GP_TRACKS.length;gpLoad(gpIdx,true);}
-function gpPrev(){gpIdx=(gpIdx-1+GP_TRACKS.length)%GP_TRACKS.length;gpLoad(gpIdx,true);}
-function gpUpdateBtn(){document.getElementById('gp-play').innerHTML=gpPlaying?'&#9646;&#9646;':'&#9654;';}
-function gpHide(){document.getElementById('global-player').classList.add('hidden');}
-function gpSeek(e){if(!gpAudio.duration)return;const r=e.currentTarget.getBoundingClientRect();gpAudio.currentTime=((e.clientX-r.left)/r.width)*gpAudio.duration;}
-gpAudio.addEventListener('timeupdate',()=>{if(!gpAudio.duration)return;document.getElementById('gp-fill').style.width=(gpAudio.currentTime/gpAudio.duration*100)+'%';document.getElementById('gp-cur').textContent=gpFmt(gpAudio.currentTime);});
-gpAudio.addEventListener('loadedmetadata',()=>{document.getElementById('gp-dur').textContent=gpFmt(gpAudio.duration);});
-gpAudio.addEventListener('ended',()=>{gpNext();setTimeout(()=>{gpAudio.play().catch(()=>{});gpPlaying=true;gpUpdateBtn();},300);});
-gpLoad(gpIdx,false);
+let gi=Math.floor(Math.random()*GP.length),gp=false;
+const ga=document.getElementById('gpAudio');
+const fmt=s=>Math.floor(s/60)+':'+(~~(s%60)+'').padStart(2,'0');
+function gpLoad(i,play){const t=GP[i];document.getElementById('gpTitle').textContent=t.title;document.getElementById('gpArtist').textContent=t.artist;document.getElementById('gpCover').src=t.cover;document.getElementById('gpLink').href=t.page;document.getElementById('gpFill').style.width='0%';document.getElementById('gpCur').textContent='0:00';document.getElementById('gpDur').textContent='—';if(play&&t.src){ga.src=t.src;ga.play().catch(()=>{});gp=true;gpU();}}
+function gpToggle(){if(gp){ga.pause();gp=false;}else{ga.play().catch(()=>{});gp=true;}gpU();}
+function gpNext(){gi=(gi+1)%GP.length;gpLoad(gi,gp);}
+function gpPrev(){gi=(gi-1+GP.length)%GP.length;gpLoad(gi,gp);}
+function gpU(){document.getElementById('gpPlay').innerHTML=gp?'&#9646;&#9646;':'&#9654;';}
+function gpSeek(e){if(!ga.duration)return;const r=e.currentTarget.getBoundingClientRect();ga.currentTime=((e.clientX-r.left)/r.width)*ga.duration;}
+ga.addEventListener('timeupdate',()=>{if(!ga.duration)return;document.getElementById('gpFill').style.width=(ga.currentTime/ga.duration*100)+'%';document.getElementById('gpCur').textContent=fmt(ga.currentTime);});
+ga.addEventListener('loadedmetadata',()=>{document.getElementById('gpDur').textContent=fmt(ga.duration);});
+ga.addEventListener('ended',()=>{gpNext();});
+gpLoad(gi,false);
 </script>
 </body>
 </html>
