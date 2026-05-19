@@ -1298,7 +1298,6 @@
 <section id="what-we-do-home" style="background:#04040A;padding:100px 48px;">
   <div style="display:flex;align-items:baseline;gap:24px;margin-bottom:64px;">
     <span style="font-family:'EB Garamond',serif;font-size:clamp(32px,4vw,52px);color:var(--white);letter-spacing:0.02em;">What We Do</span>
-    <span style="font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--grey);">三條線</span>
   </div>
 
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(240,240,245,0.06);">
@@ -1486,18 +1485,11 @@
   // ── CURSOR ──────────────────────────────────────────────
   var _c=document.getElementById('cursor');
   var _r=document.getElementById('cursorRing');
-  var _mx=0,_my=0,_rx=0,_ry=0;
   document.addEventListener('mousemove',function(e){
-    _mx=e.clientX;
-    _my=e.clientY;
-    if(_c) _c.style.transform='translate3d('+(_mx-2)+'px,'+(_my-2)+'px,0)';
+    var x=e.clientX,y=e.clientY;
+    if(_c) _c.style.transform='translate3d('+(x-2)+'px,'+(y-2)+'px,0)';
+    if(_r) _r.style.transform='translate3d('+(x-14)+'px,'+(y-14)+'px,0)';
   },{passive:true});
-  (function _loop(){
-    _rx+=(_mx-_rx)*0.22;
-    _ry+=(_my-_ry)*0.22;
-    if(_r) _r.style.transform='translate3d('+(_rx-14)+'px,'+(_ry-14)+'px,0)';
-    requestAnimationFrame(_loop);
-  })();
 
   // ═══════════════════════════════════════════════════════
   // LOGO FADE + GLITCH
