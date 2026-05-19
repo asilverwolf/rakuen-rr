@@ -1296,7 +1296,7 @@
 <!-- SECTION 4: WHO WE ARE -->
 
 <!-- SECTION: WHAT WE DO -->
-<section id="what-we-do-home" style="background:var(--black);padding:100px 48px;border-top:1px solid rgba(240,240,245,0.06);">
+<section id="what-we-do-home" style="background:#04040A;padding:100px 48px;border-top:1px solid rgba(240,240,245,0.06);">
   <div style="display:flex;align-items:baseline;gap:24px;margin-bottom:64px;">
     <span style="font-family:'EB Garamond',serif;font-size:clamp(32px,4vw,52px);color:var(--white);letter-spacing:0.02em;">What We Do</span>
     <span style="font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--grey);">三條線</span>
@@ -1305,7 +1305,7 @@
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(240,240,245,0.06);">
 
     <!-- MUSIC -->
-    <div style="background:var(--black);padding:48px 40px;position:relative;overflow:hidden;transition:background 0.3s;"
+    <div style="background:#04040A;padding:48px 40px;position:relative;overflow:hidden;transition:background 0.3s;"
          onmouseover="this.style.background='rgba(240,240,245,0.02)'"
          onmouseout="this.style.background='var(--black)'">
       <span style="font-size:11px;letter-spacing:0.4em;text-transform:uppercase;color:var(--grey);display:block;margin-bottom:32px;">01</span>
@@ -1327,7 +1327,7 @@
     </div>
 
     <!-- DESIGN -->
-    <div style="background:var(--black);padding:48px 40px;position:relative;overflow:hidden;transition:background 0.3s;"
+    <div style="background:#04040A;padding:48px 40px;position:relative;overflow:hidden;transition:background 0.3s;"
          onmouseover="this.style.background='rgba(240,240,245,0.02)'"
          onmouseout="this.style.background='var(--black)'">
       <span style="font-size:11px;letter-spacing:0.4em;text-transform:uppercase;color:var(--grey);display:block;margin-bottom:32px;">02</span>
@@ -1349,7 +1349,7 @@
     </div>
 
     <!-- COLLABORATION -->
-    <div style="background:var(--black);padding:48px 40px;position:relative;overflow:hidden;transition:background 0.3s;"
+    <div style="background:#04040A;padding:48px 40px;position:relative;overflow:hidden;transition:background 0.3s;"
          onmouseover="this.style.background='rgba(240,240,245,0.02)'"
          onmouseout="this.style.background='var(--black)'">
       <span style="font-size:11px;letter-spacing:0.4em;text-transform:uppercase;color:var(--grey);display:block;margin-bottom:32px;">03</span>
@@ -1970,40 +1970,51 @@ gpLoad(gpIdx, false);
 (function(){
   var zone = document.getElementById('dissolveZone');
   if (!zone) return;
+
+  // Uniform tile size, 5 layers — bottom fills first, top last
+  // sqrt distribution gives 1→5→8→10 trickle per layer
+  var TILE = 48, GAP = 4, tw = TILE + GAP;
+  var ZONE_H = 300, N_LAYERS = 5;
+  var cols = Math.ceil((window.innerWidth + GAP) / tw);
+  var rows = Math.ceil((ZONE_H + GAP) / tw);
   var tiles = [];
-  var sizes = [40,48,56,64,72,80];
-  var y = 0;
-  while (y < 300) {
-    var h = sizes[Math.floor(Math.random()*sizes.length)];
-    var x = 0;
-    while (x < window.innerWidth + 100) {
-      var w = sizes[Math.floor(Math.random()*sizes.length)];
+
+  for (var r = 0; r < rows; r++) {
+    for (var c = 0; c < cols; c++) {
       var el = document.createElement('div');
       el.className = 'd-tile';
-      el.style.width = w + 'px';
-      el.style.height = h + 'px';
-      el.style.left = (x + (Math.random()-0.5)*12) + 'px';
-      el.style.top = (y + (Math.random()-0.5)*12) + 'px';
-      el._threshold = Math.random();
+      el.style.width = TILE + 'px';
+      el.style.height = TILE + 'px';
+      el.style.left = (c * tw) + 'px';
+      el.style.top = (r * tw) + 'px';
+
+      // layerIdx 0 = bottom rows (fills first), N_LAYERS-1 = top (fills last)
+      var layerIdx = Math.min(N_LAYERS - 1,
+        Math.floor((rows - 1 - r) / rows * N_LAYERS));
+
+      // Each layer owns a progress window; windows overlap slightly
+      var lo = layerIdx * 0.12;       // 0 / 0.12 / 0.24 / 0.36 / 0.48
+      var hi = lo + 0.40;             // 0.40 / 0.52 / 0.64 / 0.76 / 0.88
+
+      // sqrt(U) biases thresholds toward hi → slow start, fast fill
+      // gives the 1, 5, 8, 10 trickle per scroll increment
+      el._thr = lo + Math.sqrt(Math.random()) * (hi - lo);
+
       zone.appendChild(el);
       tiles.push(el);
-      x += w + 3;
     }
-    y += h + 3;
   }
 
   function onScroll() {
     var rect = zone.getBoundingClientRect();
     var vh = window.innerHeight;
-    var entered = vh - rect.top;
-    var total = vh + rect.height;
-    var progress = Math.max(0, Math.min(1, entered / total));
+    var p = Math.max(0, Math.min(1, (vh - rect.top) / (vh + rect.height)));
     for (var i = 0; i < tiles.length; i++) {
-      tiles[i].style.opacity = progress > tiles[i]._threshold ? '1' : '0';
+      tiles[i].style.opacity = p >= tiles[i]._thr ? '1' : '0';
     }
   }
 
-  window.addEventListener('scroll', onScroll, {passive: true});
+  window.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
 })();
 </script>
