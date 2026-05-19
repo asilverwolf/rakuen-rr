@@ -1041,7 +1041,6 @@
   .d-tile {
     position: absolute;
     background: #EAEAEC;
-    border-radius: 2px;
     opacity: 0;
     will-change: opacity;
   }
@@ -1983,8 +1982,8 @@ gpLoad(gpIdx, false);
     for (var c = 0; c < cols; c++) {
       var el = document.createElement('div');
       el.className = 'd-tile';
-      el.style.width = TILE + 'px';
-      el.style.height = TILE + 'px';
+      el.style.width = (TILE + 1) + 'px';
+      el.style.height = (TILE + 1) + 'px';
       el.style.left = (c * tw) + 'px';
       el.style.top = (r * tw) + 'px';
 
