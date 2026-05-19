@@ -2,9 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Luna Liu｜R.R RakuenɒuyɘЯ</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400&family=Space+Mono:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap');
@@ -29,7 +27,7 @@
   .hero-photo img{width:100%;height:100%;object-fit:cover;object-position:center top;transition:opacity 0.6s;}
   .hero-photo-overlay{position:absolute;inset:0;background:linear-gradient(to right,transparent 50%,var(--black) 100%);}
   .hero-info{display:flex;flex-direction:column;justify-content:center;padding:120px 64px 80px 48px;}
-  .hero-label{font-size:11px;letter-spacing:0.4em;text-transform:uppercase;color:var(--grey);margin-bottom:24px;display:block;}
+  .hero-label{font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:var(--grey);margin-bottom:24px;display:block;}
   .hero-name-en{font-family:'EB Garamond',serif;font-size:clamp(48px,6vw,80px);font-weight:400;line-height:1;margin-bottom:6px;letter-spacing:0.02em;}
   .hero-name-cn{font-family:'Noto Serif TC',serif;font-size:16px;color:var(--grey-light);font-weight:300;letter-spacing:0.2em;margin-bottom:32px;display:block;}
   .hero-role{font-size:10px;letter-spacing:0.12em;color:var(--grey);line-height:2.2;margin-bottom:36px;}
@@ -39,27 +37,27 @@
 
   /* FILM STRIP */
   .film-section{padding:80px 0 60px;}
-  .film-label{font-size:11px;letter-spacing:0.4em;text-transform:uppercase;color:var(--grey);margin-bottom:24px;padding:0 48px;display:block;border-bottom:1px solid rgba(240,240,245,0.06);padding-bottom:16px;}
+  .film-label{font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:var(--grey);margin-bottom:24px;padding:0 48px;display:block;border-bottom:1px solid rgba(240,240,245,0.06);padding-bottom:16px;}
   .film-strip{display:flex;gap:4px;overflow-x:auto;padding:0 48px 16px;scrollbar-width:none;cursor:grab;}
   .film-strip::-webkit-scrollbar{display:none;}
   .film-strip.grabbing{cursor:grabbing;}
   .film-item{flex:0 0 260px;height:360px;overflow:hidden;position:relative;}
   .film-item img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:grayscale(15%);transition:filter 0.4s,transform 0.5s;}
   .film-item:hover img{filter:grayscale(0%);transform:scale(1.04);}
-  .film-num{position:absolute;bottom:12px;left:12px;font-size:10px;letter-spacing:0.2em;color:rgba(240,240,245,0.4);}
+  .film-num{position:absolute;bottom:12px;left:12px;font-size:8px;letter-spacing:0.2em;color:rgba(240,240,245,0.4);}
 
   /* MUSIC */
   .music-section{padding:60px 48px 80px;}
-  .music-label{font-size:11px;letter-spacing:0.4em;text-transform:uppercase;color:var(--grey);margin-bottom:32px;display:block;border-bottom:1px solid rgba(240,240,245,0.06);padding-bottom:16px;}
+  .music-label{font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:var(--grey);margin-bottom:32px;display:block;border-bottom:1px solid rgba(240,240,245,0.06);padding-bottom:16px;}
   .music-cards{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
   .music-card{display:flex;gap:16px;align-items:center;padding:20px;border:1px solid rgba(240,240,245,0.06);text-decoration:none;transition:border-color 0.3s,background 0.3s;}
   .music-card:hover{border-color:rgba(240,240,245,0.2);background:rgba(240,240,245,0.03);}
   .music-card-cover{width:64px;height:64px;object-fit:cover;flex-shrink:0;}
-  .music-card-cover-placeholder{width:64px;height:64px;background:rgba(240,240,245,0.06);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--grey);letter-spacing:0.1em;flex-shrink:0;}
+  .music-card-cover-placeholder{width:64px;height:64px;background:rgba(240,240,245,0.06);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--grey);letter-spacing:0.1em;flex-shrink:0;}
   .music-card-info{flex:1;}
   .music-card-title{font-family:'EB Garamond',serif;font-size:18px;color:var(--white);display:block;margin-bottom:4px;}
-  .music-card-meta{font-size:11px;color:var(--grey);letter-spacing:0.1em;display:block;}
-  .music-card-link{font-size:11px;color:var(--grey);letter-spacing:0.15em;margin-top:8px;display:block;}
+  .music-card-meta{font-size:9px;color:var(--grey);letter-spacing:0.1em;display:block;}
+  .music-card-link{font-size:9px;color:var(--grey);letter-spacing:0.15em;margin-top:8px;display:block;}
 
   /* CHAR NAV */
   .char-nav{padding:0 48px 80px;display:flex;justify-content:space-between;border-top:1px solid rgba(240,240,245,0.06);padding-top:48px;}
@@ -68,7 +66,7 @@
 
   footer{background:var(--black);border-top:1px solid rgba(240,240,245,0.06);padding:40px 48px;display:flex;justify-content:space-between;align-items:center;}
   .footer-logo img{height:24px;mix-blend-mode:screen;opacity:0.7;}
-  .footer-copy{font-size:11px;color:rgba(136,136,153,0.4);}
+  .footer-copy{font-size:9px;color:rgba(136,136,153,0.4);}
 
   /* GLOBAL PLAYER */
   #global-player{position:fixed;bottom:0;left:0;right:0;z-index:2000;background:rgba(4,4,10,0.96);backdrop-filter:blur(16px);border-top:1px solid rgba(240,240,245,0.08);padding:12px 32px;display:flex;align-items:center;gap:20px;transition:transform 0.3s;}
@@ -76,7 +74,7 @@
   .gp-cover{width:40px;height:40px;object-fit:cover;flex-shrink:0;}
   .gp-info{flex:1;min-width:0;}
   .gp-title{font-family:'EB Garamond',serif;font-size:13px;color:#F0F0F5;letter-spacing:0.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .gp-artist{font-size:11px;color:#888899;letter-spacing:0.15em;text-transform:uppercase;margin-top:2px;}
+  .gp-artist{font-size:9px;color:#888899;letter-spacing:0.15em;text-transform:uppercase;margin-top:2px;}
   .gp-controls{display:flex;align-items:center;gap:16px;flex-shrink:0;}
   .gp-btn{background:none;border:none;color:#888899;cursor:none;font-size:12px;padding:4px;transition:color 0.2s;}
   .gp-btn:hover{color:#F0F0F5;}
@@ -84,10 +82,10 @@
   .gp-progress-wrap{flex:1;max-width:280px;display:flex;flex-direction:column;gap:4px;}
   .gp-progress{width:100%;height:2px;background:rgba(240,240,245,0.1);position:relative;}
   .gp-progress-fill{height:100%;background:rgba(240,240,245,0.5);width:0%;}
-  .gp-time{display:flex;justify-content:space-between;font-size:10px;color:#888899;}
-  .gp-page-link{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#888899;text-decoration:none;border-bottom:1px solid rgba(136,136,153,0.3);padding-bottom:1px;transition:color 0.2s;flex-shrink:0;}
+  .gp-time{display:flex;justify-content:space-between;font-size:8px;color:#888899;}
+  .gp-page-link{font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:#888899;text-decoration:none;border-bottom:1px solid rgba(136,136,153,0.3);padding-bottom:1px;transition:color 0.2s;flex-shrink:0;}
   .gp-page-link:hover{color:#F0F0F5;}
-  .gp-toggle{font-size:11px;color:#888899;background:none;border:none;cursor:none;padding:4px;}
+  .gp-toggle{font-size:9px;color:#888899;background:none;border:none;cursor:none;padding:4px;}
 
   @media(max-width:768px){
     .hero{grid-template-columns:1fr;}
@@ -212,19 +210,18 @@ strip.addEventListener('mousemove',e=>{if(!isDragging)return;e.preventDefault();
 
 // Global player
 const GP_TRACKS=[
-  {title:'NO PROOF',artist:'Luna Liu · Irene Zang · Ari Lin',src: '',cover:'cover-noproof.jpg',page:'music-noproof.html'},
-  {title:'SIGNAL',artist:'Irene Zang',src: '',cover:'cover-signal.jpg',page:'music-signal.html'},
-  {title:'界線',artist:'Ari Lin',src: '',cover:'cover-jiexian.jpg',page:'music-jiexian.html'},
-  {title:'BETWEEN',artist:'Luna Liu',src: '',cover:'cover-between.jpg',page:'music-between.html'},
-  {title:'Hey Dirty Boy',artist:'Irene Zang',src: '',cover:'cover-signal.jpg',page:'music-signal.html'},
-  {title:'自由のままで',artist:'Ari Lin',src: '',cover:'cover-jiexian.jpg',page:'music-jiexian.html'},
-  {title:'STILL HERE',artist:'Luna Liu',src: '',cover:'cover-between.jpg',page:'music-between.html'},
-  {title:'我一個人',artist:'Luna Liu · Irene Zang · Ari Lin',src: '',cover:'cover-noproof.jpg',page:'music-noproof.html'},
+  {title:'NO PROOF',artist:'Luna Liu · Irene Zang · Ari Lin',src:'NO PROOF.mp3',cover:'cover-noproof.jpg',page:'music-noproof.html'},
+  {title:'SIGNAL',artist:'Irene Zang',src:'SIGNAL.mp3',cover:'cover-signal.jpg',page:'music-signal.html'},
+  {title:'界線',artist:'Ari Lin',src:'界線.mp3',cover:'cover-jiexian.jpg',page:'music-jiexian.html'},
+  {title:'BETWEEN',artist:'Luna Liu',src:'BETWEEN.mp3',cover:'cover-between.jpg',page:'music-between.html'},
+  {title:'Hey Dirty Boy',artist:'Irene Zang',src:'Hey Dirty Boy.mp3',cover:'cover-signal.jpg',page:'music-signal.html'},
+  {title:'自由のままで',artist:'Ari Lin',src:'自由のままで.mp3',cover:'cover-jiexian.jpg',page:'music-jiexian.html'},
+  {title:'STILL HERE',artist:'Luna Liu',src:'STILL HERE.mp3',cover:'cover-between.jpg',page:'music-between.html'},
 ];
 let gpIdx=Math.floor(Math.random()*GP_TRACKS.length),gpPlaying=false;
 const gpAudio=document.getElementById('gp-audio');
 const gpFmt=s=>{const m=Math.floor(s/60);return m+':'+String(Math.floor(s%60)).padStart(2,'0');};
-function gpLoad(idx,play){const t=GP_TRACKS[idx];document.getElementById('gp-title').textContent=t.title;document.getElementById('gp-artist').textContent=t.artist;document.getElementById('gp-cover').src=t.cover;document.getElementById('gp-link').href=t.page;document.getElementById('gp-fill').style.width='0%';document.getElementById('gp-cur').textContent='0:00';document.getElementById('gp-dur').textContent='—';// streaming only - no direct srcif(play){gpAudio.play().catch(()=>{});gpPlaying=true;gpUpdateBtn();}}
+function gpLoad(idx,play){const t=GP_TRACKS[idx];document.getElementById('gp-title').textContent=t.title;document.getElementById('gp-artist').textContent=t.artist;document.getElementById('gp-cover').src=t.cover;document.getElementById('gp-link').href=t.page;document.getElementById('gp-fill').style.width='0%';document.getElementById('gp-cur').textContent='0:00';document.getElementById('gp-dur').textContent='—';gpAudio.src=t.src;if(play){gpAudio.play().catch(()=>{});gpPlaying=true;gpUpdateBtn();}}
 function gpToggle(){if(!gpAudio.src||gpAudio.src===window.location.href){gpLoad(gpIdx,true);return;}if(gpPlaying){gpAudio.pause();gpPlaying=false;}else{gpAudio.play().catch(()=>{});gpPlaying=true;}gpUpdateBtn();}
 function gpNext(){gpIdx=(gpIdx+1)%GP_TRACKS.length;gpLoad(gpIdx,true);}
 function gpPrev(){gpIdx=(gpIdx-1+GP_TRACKS.length)%GP_TRACKS.length;gpLoad(gpIdx,true);}
