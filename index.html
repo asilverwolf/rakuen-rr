@@ -1041,9 +1041,7 @@
     position: absolute;
     background: #EAEAEC;
     opacity: 0;
-    transition: opacity 0.35s ease;
   }
-  .d-tile.show { opacity: 1; }
 
 
   
@@ -1968,7 +1966,7 @@ gpLoad(gpIdx, false);
   if (!zone) return;
 
   var TILE = 48, tw = TILE;
-  var ZONE_H = 300;
+  var ZONE_H = 300, N_LAYERS = 5;
   var cols = Math.ceil(window.innerWidth / tw);
   var rows = Math.ceil(ZONE_H / tw);
   var tiles = [];
@@ -1982,23 +1980,45 @@ gpLoad(gpIdx, false);
       el.style.left = (c * tw) + 'px';
       el.style.top = (r * tw) + 'px';
       zone.appendChild(el);
-      tiles.push({el: el, row: r});
+
+      // Bottom rows fill first (layerIdx 0), top rows last (N_LAYERS-1)
+      var layerIdx = Math.min(N_LAYERS - 1,
+        Math.floor((rows - 1 - r) / rows * N_LAYERS));
+      var lo = layerIdx * 0.12;
+      var hi = lo + 0.40;
+      tiles.push({el: el, thr: lo + Math.sqrt(Math.random()) * (hi - lo)});
     }
   }
 
-  var observer = new IntersectionObserver(function(entries) {
-    if (!entries[0].isIntersecting) return;
-    observer.disconnect();
-    // Bottom rows appear first, random order within each row
-    var sorted = tiles.slice().sort(function(a, b) {
-      return b.row - a.row || Math.random() - 0.5;
-    });
-    sorted.forEach(function(t, i) {
-      setTimeout(function() { t.el.classList.add('show'); }, i * 8);
-    });
-  }, {threshold: 0.1});
+  // Sort once by threshold — updates become O(k) not O(N)
+  tiles.sort(function(a, b) { return a.thr - b.thr; });
 
-  observer.observe(zone);
+  var ptr = 0;   // tiles[0..ptr-1] are currently visible
+  var lastP = -1;
+  var pending = false;
+
+  function update() {
+    pending = false;
+    var rect = zone.getBoundingClientRect();
+    var vh = window.innerHeight;
+    var p = Math.max(0, Math.min(1, (vh - rect.top) / (vh + rect.height)));
+    if (p > lastP) {
+      while (ptr < tiles.length && tiles[ptr].thr <= p) {
+        tiles[ptr++].el.style.opacity = '1';
+      }
+    } else if (p < lastP) {
+      while (ptr > 0 && tiles[ptr - 1].thr > p) {
+        tiles[--ptr].el.style.opacity = '0';
+      }
+    }
+    lastP = p;
+  }
+
+  window.addEventListener('scroll', function() {
+    if (!pending) { pending = true; requestAnimationFrame(update); }
+  }, {passive: true});
+
+  update();
 })();
 </script>
 
