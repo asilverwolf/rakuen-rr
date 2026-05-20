@@ -1797,6 +1797,12 @@
   let rafId = null;
   let lastScrollY = -1;
 
+  // Cache static element lists — no repeated DOM queries
+  const revealEls = Array.from(document.querySelectorAll('.reveal, .slogan-text, .who-label'));
+  const shatterZone = document.getElementById('shatterZone');
+  const vineZone    = document.getElementById('vineZone');
+  let lastVineP = -1, lastShatterP = -1, lastLoopY = -1;
+
   function onScroll() {
     const scrollY = window.scrollY;
     const vh = window.innerHeight;
@@ -1804,37 +1810,40 @@
     // Logo fade
     heroLogo.style.opacity = Math.max(0, 1 - scrollY / (vh * 0.5));
 
-    // Reveal on-scroll elements
-    document.querySelectorAll('.reveal, .slogan-text, .who-label').forEach(el => {
-      if (el.getBoundingClientRect().top < vh * 0.88) el.classList.add('visible');
-      // Un-reveal when scrolled back up past threshold
-      else if (el.getBoundingClientRect().top > vh * 1.05) el.classList.remove('visible');
+    // Reveal elements (cached list, single getBCR each)
+    revealEls.forEach(el => {
+      const top = el.getBoundingClientRect().top;
+      if (top < vh * 0.88) el.classList.add('visible');
+      else if (top > vh * 1.05) el.classList.remove('visible');
     });
 
-    // ── SHATTER: scroll-driven, reversible ──
-    const shatterZone = document.getElementById('shatterZone');
+    // ── SHATTER: only draw when near viewport ──
     if (shatterZone) {
-      if (!shardsBuilt) buildShards();
-      // Progress: 0 when zone top at 90% vh, 1 when zone top at -20% vh
-      const shatterP = getScrollProgress(shatterZone, 0.9, -0.2);
-      drawShatter(shatterP);
+      const r = shatterZone.getBoundingClientRect();
+      if (r.bottom > -200 && r.top < vh + 200) {
+        if (!shardsBuilt) buildShards();
+        const shatterP = getScrollProgress(shatterZone, 0.9, -0.2);
+        if (shatterP !== lastShatterP) { drawShatter(shatterP); lastShatterP = shatterP; }
+      }
     }
 
-    // ── VINES: scroll-driven, reversible ──
-    const vineZone = document.getElementById('vineZone');
+    // ── VINES: only draw when near viewport ──
     if (vineZone) {
-      if (!vinesBuilt) buildVines();
-      // Progress: 0 when zone top at 95% vh, 1 when zone top at 120% vh (long scroll range)
-      const vineP = getScrollProgress(vineZone, 0.98, -1.2);
-      drawVines(vineP);
+      const r = vineZone.getBoundingClientRect();
+      if (r.bottom > -200 && r.top < vh + 200) {
+        if (!vinesBuilt) buildVines();
+        const vineP = getScrollProgress(vineZone, 0.98, -1.2);
+        if (vineP !== lastVineP) { drawVines(vineP); lastVineP = vineP; }
+      }
     }
 
     lastScrollY = scrollY;
   }
 
-  // Use RAF for smooth rendering tied to display refresh
+  // Only run onScroll when scrollY actually changed
   function scrollLoop() {
-    onScroll();
+    const y = window.scrollY;
+    if (y !== lastLoopY) { lastLoopY = y; onScroll(); }
     requestAnimationFrame(scrollLoop);
   }
 
