@@ -82,15 +82,16 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
   #gp{padding:10px 16px;gap:12px;}
   .gp-pw{display:none;}
 }
-.cover-section{padding:90px 64px 10px;display:flex;justify-content:center;}
-.cover-section img{width:min(520px,82vw);aspect-ratio:1/1;object-fit:cover;display:block;box-shadow:0 30px 90px rgba(0,0,0,0.55);transition:transform 0.4s;}
+.cover-section{padding:44px 64px 0;display:flex;justify-content:flex-start;}
+.words-section{padding-top:32px;}
+.cover-section img{width:min(320px,70vw);aspect-ratio:1/1;object-fit:cover;display:block;box-shadow:0 30px 90px rgba(0,0,0,0.55);transition:transform 0.4s;}
 .cover-section img:hover{transform:scale(1.015);}
 #lightbox{position:fixed;inset:0;z-index:3000;background:rgba(4,4,10,0.94);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;}
 #lightbox.open{opacity:1;pointer-events:all;}
 #lightbox img{max-width:92vw;max-height:86vh;object-fit:contain;}
 .lb-x{position:absolute;top:20px;right:28px;font-size:20px;color:#888899;background:none;border:none;cursor:none;font-family:'Space Mono',monospace;}
 .lb-x:hover{color:#F0F0F5;}
-@media(max-width:768px){.cover-section{padding:60px 24px 0;}}
+@media(max-width:768px){.cover-section{padding:36px 24px 0;}}
 </style>
 </head>
 <body>
@@ -318,7 +319,7 @@ else{gi=Math.floor(Math.random()*GP.length);userPaused=false;}
 function gpSave(){try{localStorage.setItem('rr_gp',JSON.stringify({i:gi,t:ga.currentTime||0,u:userPaused,ts:Date.now()}))}catch(e){}}
 function gpUpd(){if(ge.p)ge.p.innerHTML=gp?'&#9646;&#9646;':'&#9654;';}
 function gpArm(){if(gpArmed)return;gpArmed=true;
-  const h=()=>{document.removeEventListener('pointerdown',h,true);document.removeEventListener('keydown',h,true);if(!userPaused)gpTry();};
+  const h=()=>{gpArmed=false;document.removeEventListener('pointerdown',h,true);document.removeEventListener('keydown',h,true);if(!userPaused)gpTry();};
   document.addEventListener('pointerdown',h,true);document.addEventListener('keydown',h,true);}
 function gpTry(){ga.play().then(()=>{gp=true;userPaused=false;gpUpd();gpSave();}).catch(()=>{gp=false;gpUpd();gpArm();});}
 function gpLoad(i,play){gi=(i+GP.length)%GP.length;const t=GP[gi];
@@ -343,6 +344,7 @@ ga.addEventListener('timeupdate',()=>{if(!ga.duration)return;
 ga.addEventListener('loadedmetadata',()=>{if(ge.d)ge.d.textContent=gpFmt(ga.duration);});
 ga.addEventListener('ended',()=>{gpNext();});
 window.addEventListener('pagehide',gpSave);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!gp&&!userPaused)gpTry();});
 gpLoad(gi,!userPaused);
 // Cover lightbox
 const lb=document.getElementById('lightbox'),lbImg=document.getElementById('lbImg');

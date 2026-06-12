@@ -1165,7 +1165,7 @@ else{gi=Math.floor(Math.random()*GP.length);userPaused=false;}
 function gpSave(){try{localStorage.setItem('rr_gp',JSON.stringify({i:gi,t:ga.currentTime||0,u:userPaused,ts:Date.now()}))}catch(e){}}
 function gpUpd(){if(ge.p)ge.p.innerHTML=gp?'&#9646;&#9646;':'&#9654;';}
 function gpArm(){if(gpArmed)return;gpArmed=true;
-  const h=()=>{document.removeEventListener('pointerdown',h,true);document.removeEventListener('keydown',h,true);if(!userPaused)gpTry();};
+  const h=()=>{gpArmed=false;document.removeEventListener('pointerdown',h,true);document.removeEventListener('keydown',h,true);if(!userPaused)gpTry();};
   document.addEventListener('pointerdown',h,true);document.addEventListener('keydown',h,true);}
 function gpTry(){ga.play().then(()=>{gp=true;userPaused=false;gpUpd();gpSave();}).catch(()=>{gp=false;gpUpd();gpArm();});}
 function gpLoad(i,play){gi=(i+GP.length)%GP.length;const t=GP[gi];
@@ -1190,6 +1190,7 @@ ga.addEventListener('timeupdate',()=>{if(!ga.duration)return;
 ga.addEventListener('loadedmetadata',()=>{if(ge.d)ge.d.textContent=gpFmt(ga.duration);});
 ga.addEventListener('ended',()=>{gpNext();});
 window.addEventListener('pagehide',gpSave);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!gp&&!userPaused)gpTry();});
 gpLoad(gi,!userPaused);
 </script>
 </body>

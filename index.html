@@ -1943,7 +1943,7 @@ else{gi=Math.floor(Math.random()*GP.length);userPaused=false;}
 function gpSave(){try{localStorage.setItem('rr_gp',JSON.stringify({i:gi,t:ga.currentTime||0,u:userPaused,ts:Date.now()}))}catch(e){}}
 function gpUpd(){if(ge.p)ge.p.innerHTML=gp?'&#9646;&#9646;':'&#9654;';}
 function gpArm(){if(gpArmed)return;gpArmed=true;
-  const h=()=>{document.removeEventListener('pointerdown',h,true);document.removeEventListener('keydown',h,true);if(!userPaused)gpTry();};
+  const h=()=>{gpArmed=false;document.removeEventListener('pointerdown',h,true);document.removeEventListener('keydown',h,true);if(!userPaused)gpTry();};
   document.addEventListener('pointerdown',h,true);document.addEventListener('keydown',h,true);}
 function gpTry(){ga.play().then(()=>{gp=true;userPaused=false;gpUpd();gpSave();}).catch(()=>{gp=false;gpUpd();gpArm();});}
 function gpLoad(i,play){gi=(i+GP.length)%GP.length;const t=GP[gi];
@@ -1968,6 +1968,7 @@ ga.addEventListener('timeupdate',()=>{if(!ga.duration)return;
 ga.addEventListener('loadedmetadata',()=>{if(ge.d)ge.d.textContent=gpFmt(ga.duration);});
 ga.addEventListener('ended',()=>{gpNext();});
 window.addEventListener('pagehide',gpSave);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!gp&&!userPaused)gpTry();});
 gpLoad(gi,!userPaused);
 </script>
 
@@ -2068,7 +2069,7 @@ void main(){
   float dd=distance(p,uD.xy*asp);
   float ink=exp(-dd*dd/(uD.z*uD.z))*uD.w;
   s.r+=ink*(1.-uDC);s.g+=ink*uDC;}
- float mi=exp(-md*md*200.)*min(length(uM.zw)*10.,.10);
+ float mi=exp(-md*md*340.)*min(length(uM.zw)*9.,.07);
  s.r+=mi*.65;s.g+=mi*.35;
  gl_FragColor=clamp(s,0.,1.);}`;
 const DRAW=`precision highp float;varying vec2 v;uniform sampler2D uP;
@@ -2107,7 +2108,7 @@ function pt(e){const r=cv.getBoundingClientRect();
  lastX=x;lastY=y;mx=x;my=y;}
 hero.addEventListener('pointermove',pt,{passive:true});
 hero.addEventListener('pointerdown',e=>{pt(e);
- drop={x:mx,y:my,r:.05+Math.random()*.05,s:.6,ch:Math.random()<.55?0:1,life:20};},{passive:true});
+ drop={x:mx,y:my,r:.028+Math.random()*.028,s:.6,ch:Math.random()<.55?0:1,life:20};},{passive:true});
 hero.addEventListener('pointerleave',()=>{lastX=lastY=null;});
 let drop=null,nextDrop=500;
 function schedule(){nextDrop=performance.now()+1400+Math.random()*2200;}
@@ -2115,7 +2116,7 @@ const t0=performance.now();
 function frame(now){
  const t=(now-t0)/1000;
  if(!drop&&now>nextDrop){
-  drop={x:.08+Math.random()*.84,y:.12+Math.random()*.76,r:.04+Math.random()*.07,
+  drop={x:.08+Math.random()*.84,y:.12+Math.random()*.76,r:.022+Math.random()*.035,
         s:.45+Math.random()*.35,ch:Math.random()<.55?0:1,life:24};
   schedule();}
  gl.bindFramebuffer(gl.FRAMEBUFFER,fb);
@@ -2142,9 +2143,9 @@ function frame(now){
  const tmp=tA;tA=tB;tB=tmp;
  mdx*=.84;mdy*=.84;
  requestAnimationFrame(frame);}
-drop={x:.5,y:.5,r:.08,s:.6,ch:0,life:26};
-setTimeout(()=>{if(!drop)drop={x:.28,y:.34,r:.06,s:.5,ch:1,life:22};},800);
-setTimeout(()=>{if(!drop)drop={x:.72,y:.62,r:.055,s:.5,ch:0,life:22};},1700);
+drop={x:.5,y:.5,r:.045,s:.6,ch:0,life:26};
+setTimeout(()=>{if(!drop)drop={x:.28,y:.34,r:.038,s:.5,ch:1,life:22};},800);
+setTimeout(()=>{if(!drop)drop={x:.72,y:.62,r:.035,s:.5,ch:0,life:22};},1700);
 schedule();
 requestAnimationFrame(frame);
 })();
