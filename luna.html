@@ -136,31 +136,68 @@
 <section class="film-section">
   <span class="film-label">Photos</span>
   <div class="film-strip" id="filmStrip">
-    <div class="film-item"><img src="luna-main.jpg" alt="Luna 1"><span class="film-num">01</span></div>
-    <div class="film-item"><img src="luna-alt.jpg" alt="Luna 2"><span class="film-num">02</span></div>
-    <div class="film-item"><img src="luna-p3.jpg" alt="Luna 3"><span class="film-num">03</span></div>
-    <div class="film-item"><img src="luna-p4.jpg" alt="Luna 4"><span class="film-num">04</span></div>
-    <div class="film-item"><img src="luna-p5.jpg" alt="Luna 5"><span class="film-num">05</span></div>
+    <div class="film-item"><img src="luna-main.jpg" alt="Luna 1" loading="lazy"><span class="film-num">01</span></div>
+    <div class="film-item"><img src="luna-alt.jpg" alt="Luna 2" loading="lazy"><span class="film-num">02</span></div>
+    <div class="film-item"><img src="luna-p3.jpg" alt="Luna 3" loading="lazy"><span class="film-num">03</span></div>
+    <div class="film-item"><img src="luna-p4.jpg" alt="Luna 4" loading="lazy"><span class="film-num">04</span></div>
+    <div class="film-item"><img src="luna-p5.jpg" alt="Luna 5" loading="lazy"><span class="film-num">05</span></div>
+    <div class="film-item"><img src="bts-luna-01.jpg" alt="Luna 6" loading="lazy"><span class="film-num">06</span></div>
+    <div class="film-item"><img src="bts-luna-02.jpg" alt="Luna 7" loading="lazy"><span class="film-num">07</span></div>
+    <div class="film-item"><img src="bts-luna-03.jpg" alt="Luna 8" loading="lazy"><span class="film-num">08</span></div>
+    <div class="film-item"><img src="bts-luna-04.jpg" alt="Luna 9" loading="lazy"><span class="film-num">09</span></div>
+    <div class="film-item"><img src="bts-luna-05.jpg" alt="Luna 10" loading="lazy"><span class="film-num">10</span></div>
+    <div class="film-item"><img src="bts-luna-06.jpg" alt="Luna 11" loading="lazy"><span class="film-num">11</span></div>
+    <div class="film-item"><img src="bts-luna-07.jpg" alt="Luna 12" loading="lazy"><span class="film-num">12</span></div>
+    <div class="film-item"><img src="bts-luna-08.jpg" alt="Luna 13" loading="lazy"><span class="film-num">13</span></div>
+    <div class="film-item"><img src="bts-luna-09.jpg" alt="Luna 14" loading="lazy"><span class="film-num">14</span></div>
+    <div class="film-item"><img src="bts-luna-10.jpg" alt="Luna 15" loading="lazy"><span class="film-num">15</span></div>
+    <div class="film-item"><img src="bts-luna-11.jpg" alt="Luna 16" loading="lazy"><span class="film-num">16</span></div>
+    <div class="film-item"><img src="bts-luna-12.jpg" alt="Luna 17" loading="lazy"><span class="film-num">17</span></div>
+    <div class="film-item"><img src="bts-luna-13.jpg" alt="Luna 18" loading="lazy"><span class="film-num">18</span></div>
   </div>
 </section>
 
 <section class="music-section">
   <span class="music-label">Music</span>
   <div class="music-cards">
+    <a href="music-noproof.html" class="music-card">
+      <img src="cover-noproof.jpg" class="music-card-cover" alt="NO PROOF" loading="lazy">
+      <div class="music-card-info">
+        <span class="music-card-title">NO PROOF</span>
+        <span class="music-card-meta">Luna · Irene · Ari · 2026</span>
+        <span class="music-card-link">Lyrics + Stream ↗</span>
+      </div>
+    </a>
     <a href="music-between.html" class="music-card">
-      <img src="cover-between.jpg" class="music-card-cover" alt="BETWEEN">
+      <img src="cover-between.jpg" class="music-card-cover" alt="BETWEEN" loading="lazy">
       <div class="music-card-info">
         <span class="music-card-title">BETWEEN</span>
         <span class="music-card-meta">Luna Liu · 2026</span>
         <span class="music-card-link">Lyrics + Stream ↗</span>
       </div>
     </a>
-    <a href="music-between.html" class="music-card">
-      <div class="music-card-cover-placeholder">Soon</div>
+    <a href="music-stillhere.html" class="music-card">
+      <img src="cover-stillhere.jpg" class="music-card-cover" alt="STILL HERE" loading="lazy">
       <div class="music-card-info">
         <span class="music-card-title">STILL HERE</span>
-        <span class="music-card-meta">Luna Liu · Coming Soon</span>
-        <span class="music-card-link">Stay tuned</span>
+        <span class="music-card-meta">Luna Liu · 2026</span>
+        <span class="music-card-link">Lyrics + Stream ↗</span>
+      </div>
+    </a>
+    <a href="music-areyousure.html" class="music-card">
+      <img src="cover-areyousure.jpg" class="music-card-cover" alt="ARE YOU SURE" loading="lazy">
+      <div class="music-card-info">
+        <span class="music-card-title">ARE YOU SURE</span>
+        <span class="music-card-meta">Luna Liu · 2026</span>
+        <span class="music-card-link">Lyrics + Stream ↗</span>
+      </div>
+    </a>
+    <a href="music-aida.html" class="music-card">
+      <img src="cover-aida.jpg" class="music-card-cover" alt="AIDA" loading="lazy">
+      <div class="music-card-info">
+        <span class="music-card-title">AIDA</span>
+        <span class="music-card-meta">Luna Liu · 2026</span>
+        <span class="music-card-link">Lyrics + Stream ↗</span>
       </div>
     </a>
   </div>
@@ -212,30 +249,57 @@ document.addEventListener('mouseup',()=>{isDragging=false;strip.classList.remove
 strip.addEventListener('mousemove',e=>{if(!isDragging)return;e.preventDefault();const x=e.pageX-strip.offsetLeft;strip.scrollLeft=scrollLeft-(x-startX);});
 
 // Global player
-const GP_TRACKS=[
-  {title:'NO PROOF',artist:'Luna Liu · Irene Zang · Ari Lin',src: '',cover:'cover-noproof.jpg',page:'music-noproof.html'},
-  {title:'SIGNAL',artist:'Irene Zang',src: '',cover:'cover-signal.jpg',page:'music-signal.html'},
-  {title:'界線',artist:'Ari Lin',src: '',cover:'cover-jiexian.jpg',page:'music-jiexian.html'},
-  {title:'BETWEEN',artist:'Luna Liu',src: '',cover:'cover-between.jpg',page:'music-between.html'},
-  {title:'Hey Dirty Boy',artist:'Irene Zang',src: '',cover:'cover-signal.jpg',page:'music-signal.html'},
-  {title:'自由のままで',artist:'Ari Lin',src: '',cover:'cover-jiexian.jpg',page:'music-jiexian.html'},
-  {title:'STILL HERE',artist:'Luna Liu',src: '',cover:'cover-between.jpg',page:'music-between.html'},
-  {title:'我一個人',artist:'Luna Liu · Irene Zang · Ari Lin',src: '',cover:'cover-noproof.jpg',page:'music-noproof.html'},
+const GP=[
+  {title:'NO PROOF',artist:'Luna Liu · Irene Zang · Ari Lin',src:'audio/noproof.mp3',cover:'cover-noproof.jpg',page:'music-noproof.html'},
+  {title:'SIGNAL',artist:'Irene Zang',src:'audio/signal.mp3',cover:'cover-signal.jpg',page:'music-signal.html'},
+  {title:'界線',artist:'Ari Lin',src:'audio/jiexian.mp3',cover:'cover-jiexian.jpg',page:'music-jiexian.html'},
+  {title:'BETWEEN',artist:'Luna Liu',src:'audio/between.mp3',cover:'cover-between.jpg',page:'music-between.html'},
+  {title:'Hey Dirty Boy',artist:'Irene Zang',src:'audio/heydirtyboy.mp3',cover:'cover-heydirtyboy.jpg',page:'music-heydirtyboy.html'},
+  {title:'自由のままで',artist:'Ari Lin',src:'audio/jiyuu.mp3',cover:'cover-jiyuu.jpg',page:'music-jiyuu.html'},
+  {title:'STILL HERE',artist:'Luna Liu',src:'audio/stillhere.mp3',cover:'cover-stillhere.jpg',page:'music-stillhere.html'},
+  {title:'ARE YOU SURE',artist:'Luna Liu',src:'audio/areyousure.mp3',cover:'cover-areyousure.jpg',page:'music-areyousure.html'},
+  {title:'SAY IT',artist:'Irene Zang',src:'audio/sayit.mp3',cover:'cover-sayit.jpg',page:'music-sayit.html'},
+  {title:'またね',artist:'Ari Lin',src:'audio/matane.mp3',cover:'cover-matane.jpg',page:'music-matane.html'},
+  {title:'비의 밤',artist:'Irene Zang',src:'audio/rainnight.mp3',cover:'cover-rainnight.jpg',page:'music-rainnight.html'},
+  {title:'AIDA',artist:'Luna Liu',src:'audio/aida.mp3',cover:'cover-aida.jpg',page:'music-aida.html'},
+  {title:'金魚が漂う',artist:'Ari Lin',src:'audio/kingyo.mp3',cover:'cover-kingyo.jpg',page:'music-kingyo.html'},
 ];
-let gpIdx=Math.floor(Math.random()*GP_TRACKS.length),gpPlaying=false;
-const gpAudio=document.getElementById('gp-audio');
-const gpFmt=s=>{const m=Math.floor(s/60);return m+':'+String(Math.floor(s%60)).padStart(2,'0');};
-function gpLoad(idx,play){const t=GP_TRACKS[idx];document.getElementById('gp-title').textContent=t.title;document.getElementById('gp-artist').textContent=t.artist;document.getElementById('gp-cover').src=t.cover;document.getElementById('gp-link').href=t.page;document.getElementById('gp-fill').style.width='0%';document.getElementById('gp-cur').textContent='0:00';document.getElementById('gp-dur').textContent='—';// streaming only - no direct srcif(play){gpAudio.play().catch(()=>{});gpPlaying=true;gpUpdateBtn();}}
-function gpToggle(){if(!gpAudio.src||gpAudio.src===window.location.href){gpLoad(gpIdx,true);return;}if(gpPlaying){gpAudio.pause();gpPlaying=false;}else{gpAudio.play().catch(()=>{});gpPlaying=true;}gpUpdateBtn();}
-function gpNext(){gpIdx=(gpIdx+1)%GP_TRACKS.length;gpLoad(gpIdx,true);}
-function gpPrev(){gpIdx=(gpIdx-1+GP_TRACKS.length)%GP_TRACKS.length;gpLoad(gpIdx,true);}
-function gpUpdateBtn(){document.getElementById('gp-play').innerHTML=gpPlaying?'&#9646;&#9646;':'&#9654;';}
-function gpHide(){document.getElementById('global-player').classList.add('hidden');}
-function gpSeek(e){if(!gpAudio.duration)return;const r=e.currentTarget.getBoundingClientRect();gpAudio.currentTime=((e.clientX-r.left)/r.width)*gpAudio.duration;}
-gpAudio.addEventListener('timeupdate',()=>{if(!gpAudio.duration)return;document.getElementById('gp-fill').style.width=(gpAudio.currentTime/gpAudio.duration*100)+'%';document.getElementById('gp-cur').textContent=gpFmt(gpAudio.currentTime);});
-gpAudio.addEventListener('loadedmetadata',()=>{document.getElementById('gp-dur').textContent=gpFmt(gpAudio.duration);});
-gpAudio.addEventListener('ended',()=>{gpNext();setTimeout(()=>{gpAudio.play().catch(()=>{});gpPlaying=true;gpUpdateBtn();},300);});
-gpLoad(gpIdx,false);
+const $g=i=>document.getElementById(i);
+const ga=$g('gpAudio')||$g('gp-audio');
+const ge={t:$g('gpTitle')||$g('gp-title'),a:$g('gpArtist')||$g('gp-artist'),c:$g('gpCover')||$g('gp-cover'),l:$g('gpLink')||$g('gp-link'),f:$g('gpFill')||$g('gp-fill'),cu:$g('gpCur')||$g('gp-cur'),d:$g('gpDur')||$g('gp-dur'),p:$g('gpPlay')||$g('gp-play')};
+const gpFmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+let gi=Math.floor(Math.random()*GP.length),gp=false,gpResume=0,gpArmed=false,gpLastSave=0;
+let gpSt=null;try{gpSt=JSON.parse(localStorage.getItem('rr_gp')||'null')}catch(e){}
+if(gpSt&&gpSt.i>=0&&gpSt.i<GP.length){gi=gpSt.i;gpResume=gpSt.t||0;}
+function gpSave(){try{localStorage.setItem('rr_gp',JSON.stringify({i:gi,t:ga.currentTime||0,p:gp}))}catch(e){}}
+function gpUpd(){if(ge.p)ge.p.innerHTML=gp?'&#9646;&#9646;':'&#9654;';}
+function gpArm(){if(gpArmed)return;gpArmed=true;
+  const h=()=>{document.removeEventListener('pointerdown',h,true);document.removeEventListener('keydown',h,true);gpTry();};
+  document.addEventListener('pointerdown',h,true);document.addEventListener('keydown',h,true);}
+function gpTry(){ga.play().then(()=>{gp=true;gpUpd();gpSave();}).catch(()=>{gp=false;gpUpd();gpArm();});}
+function gpLoad(i,play){gi=(i+GP.length)%GP.length;const t=GP[gi];
+  if(ge.t)ge.t.textContent=t.title;if(ge.a)ge.a.textContent=t.artist;
+  if(ge.c)ge.c.src=t.cover;if(ge.l)ge.l.href=t.page;
+  if(ge.f)ge.f.style.width='0%';if(ge.cu)ge.cu.textContent='0:00';if(ge.d)ge.d.textContent='—';
+  ga.src=t.src;
+  if(gpResume>0.5){const r=gpResume;gpResume=0;
+    ga.addEventListener('loadedmetadata',()=>{try{ga.currentTime=r}catch(e){}},{once:true});}
+  if(play)gpTry();else gpUpd();
+  gpSave();}
+function gpToggle(){if(gp){ga.pause();gp=false;gpUpd();gpSave();}else{gpTry();}}
+function gpNext(){gpResume=0;gpLoad(gi+1,true);}
+function gpPrev(){gpResume=0;gpLoad(gi-1,true);}
+function gpUpdateBtn(){gpUpd();}
+function gpHide(){const w=$g('global-player')||$g('gp');if(w)w.classList.add('hidden');}
+function gpSeek(e){if(!ga.duration)return;const r=e.currentTarget.getBoundingClientRect();ga.currentTime=((e.clientX-r.left)/r.width)*ga.duration;gpSave();}
+ga.addEventListener('timeupdate',()=>{if(!ga.duration)return;
+  if(ge.f)ge.f.style.width=(ga.currentTime/ga.duration*100)+'%';
+  if(ge.cu)ge.cu.textContent=gpFmt(ga.currentTime);
+  const n=Date.now();if(n-gpLastSave>1000){gpLastSave=n;gpSave();}});
+ga.addEventListener('loadedmetadata',()=>{if(ge.d)ge.d.textContent=gpFmt(ga.duration);});
+ga.addEventListener('ended',()=>{gpNext();});
+window.addEventListener('pagehide',gpSave);
+gpLoad(gi,!(gpSt&&gpSt.p===false));
 </script>
 </body>
 </html>

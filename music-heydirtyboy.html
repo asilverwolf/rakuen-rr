@@ -205,19 +205,42 @@ const GP=[
   {title:'AIDA',artist:'Luna Liu',src:'audio/aida.mp3',cover:'cover-aida.jpg',page:'music-aida.html'},
   {title:'金魚が漂う',artist:'Ari Lin',src:'audio/kingyo.mp3',cover:'cover-kingyo.jpg',page:'music-kingyo.html'},
 ];
-let gi=4,gp=false;
-const ga=document.getElementById('gpAudio');
-const fmt=s=>Math.floor(s/60)+':'+(~~(s%60)+'').padStart(2,'0');
-function gpLoad(i,play){const t=GP[i];document.getElementById('gpTitle').textContent=t.title;document.getElementById('gpArtist').textContent=t.artist;document.getElementById('gpCover').src=t.cover;document.getElementById('gpLink').href=t.page;document.getElementById('gpFill').style.width='0%';document.getElementById('gpCur').textContent='0:00';document.getElementById('gpDur').textContent='—';ga.src=t.src;if(play){ga.play().catch(()=>{});gp=true;gpU();}}
-function gpToggle(){if(gp){ga.pause();gp=false;}else{ga.play().catch(()=>{});gp=true;}gpU();}
-function gpNext(){gi=(gi+1)%GP.length;gpLoad(gi,gp);}
-function gpPrev(){gi=(gi-1+GP.length)%GP.length;gpLoad(gi,gp);}
-function gpU(){document.getElementById('gpPlay').innerHTML=gp?'&#9646;&#9646;':'&#9654;';}
-function gpSeek(e){if(!ga.duration)return;const r=e.currentTarget.getBoundingClientRect();ga.currentTime=((e.clientX-r.left)/r.width)*ga.duration;}
-ga.addEventListener('timeupdate',()=>{if(!ga.duration)return;document.getElementById('gpFill').style.width=(ga.currentTime/ga.duration*100)+'%';document.getElementById('gpCur').textContent=fmt(ga.currentTime);});
-ga.addEventListener('loadedmetadata',()=>{document.getElementById('gpDur').textContent=fmt(ga.duration);});
+const $g=i=>document.getElementById(i);
+const ga=$g('gpAudio')||$g('gp-audio');
+const ge={t:$g('gpTitle')||$g('gp-title'),a:$g('gpArtist')||$g('gp-artist'),c:$g('gpCover')||$g('gp-cover'),l:$g('gpLink')||$g('gp-link'),f:$g('gpFill')||$g('gp-fill'),cu:$g('gpCur')||$g('gp-cur'),d:$g('gpDur')||$g('gp-dur'),p:$g('gpPlay')||$g('gp-play')};
+const gpFmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+let gi=4,gp=false,gpResume=0,gpArmed=false,gpLastSave=0;
+let gpSt=null;try{gpSt=JSON.parse(localStorage.getItem('rr_gp')||'null')}catch(e){}
+if(gpSt&&gpSt.i>=0&&gpSt.i<GP.length){gi=gpSt.i;gpResume=gpSt.t||0;}
+function gpSave(){try{localStorage.setItem('rr_gp',JSON.stringify({i:gi,t:ga.currentTime||0,p:gp}))}catch(e){}}
+function gpUpd(){if(ge.p)ge.p.innerHTML=gp?'&#9646;&#9646;':'&#9654;';}
+function gpArm(){if(gpArmed)return;gpArmed=true;
+  const h=()=>{document.removeEventListener('pointerdown',h,true);document.removeEventListener('keydown',h,true);gpTry();};
+  document.addEventListener('pointerdown',h,true);document.addEventListener('keydown',h,true);}
+function gpTry(){ga.play().then(()=>{gp=true;gpUpd();gpSave();}).catch(()=>{gp=false;gpUpd();gpArm();});}
+function gpLoad(i,play){gi=(i+GP.length)%GP.length;const t=GP[gi];
+  if(ge.t)ge.t.textContent=t.title;if(ge.a)ge.a.textContent=t.artist;
+  if(ge.c)ge.c.src=t.cover;if(ge.l)ge.l.href=t.page;
+  if(ge.f)ge.f.style.width='0%';if(ge.cu)ge.cu.textContent='0:00';if(ge.d)ge.d.textContent='—';
+  ga.src=t.src;
+  if(gpResume>0.5){const r=gpResume;gpResume=0;
+    ga.addEventListener('loadedmetadata',()=>{try{ga.currentTime=r}catch(e){}},{once:true});}
+  if(play)gpTry();else gpUpd();
+  gpSave();}
+function gpToggle(){if(gp){ga.pause();gp=false;gpUpd();gpSave();}else{gpTry();}}
+function gpNext(){gpResume=0;gpLoad(gi+1,true);}
+function gpPrev(){gpResume=0;gpLoad(gi-1,true);}
+function gpUpdateBtn(){gpUpd();}
+function gpHide(){const w=$g('global-player')||$g('gp');if(w)w.classList.add('hidden');}
+function gpSeek(e){if(!ga.duration)return;const r=e.currentTarget.getBoundingClientRect();ga.currentTime=((e.clientX-r.left)/r.width)*ga.duration;gpSave();}
+ga.addEventListener('timeupdate',()=>{if(!ga.duration)return;
+  if(ge.f)ge.f.style.width=(ga.currentTime/ga.duration*100)+'%';
+  if(ge.cu)ge.cu.textContent=gpFmt(ga.currentTime);
+  const n=Date.now();if(n-gpLastSave>1000){gpLastSave=n;gpSave();}});
+ga.addEventListener('loadedmetadata',()=>{if(ge.d)ge.d.textContent=gpFmt(ga.duration);});
 ga.addEventListener('ended',()=>{gpNext();});
-gpLoad(gi,false);
+window.addEventListener('pagehide',gpSave);
+gpLoad(gi,!(gpSt&&gpSt.p===false));
 </script>
 </body>
 </html>

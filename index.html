@@ -253,6 +253,16 @@
     100% { opacity: 1; filter: blur(0); letter-spacing: 0.3em; }
   }
 
+  /* Suminagashi ink-flow */
+  #sumi {
+    width: min(74vw, 680px);
+    height: clamp(150px, 24vh, 250px);
+    display: block;
+    opacity: 0;
+    animation: sumi-in 2s 1.4s forwards;
+  }
+  @keyframes sumi-in { to { opacity: 1; } }
+
   /* Scroll indicator */
   .scroll-hint {
     position: absolute;
@@ -1118,6 +1128,7 @@
 
   <div class="hero-center">
     <div id="heroLogo" style="background:transparent;isolation:auto;"><img src="logo-main.png" alt="R.R" style="width:clamp(180px,24vw,340px);display:block;margin:0 auto;opacity:0.95;"></div>
+    <canvas id="sumi" aria-hidden="true"></canvas>
   </div>
 
   <div class="scroll-hint">
@@ -1898,8 +1909,7 @@
 <audio id="gp-audio" preload="none"></audio>
 
 <script>
-// ── GLOBAL PLAYER ──────────────────────────────────────
-const GP_TRACKS=[
+const GP=[
   {title:'NO PROOF',artist:'Luna Liu · Irene Zang · Ari Lin',src:'audio/noproof.mp3',cover:'cover-noproof.jpg',page:'music-noproof.html'},
   {title:'SIGNAL',artist:'Irene Zang',src:'audio/signal.mp3',cover:'cover-signal.jpg',page:'music-signal.html'},
   {title:'界線',artist:'Ari Lin',src:'audio/jiexian.mp3',cover:'cover-jiexian.jpg',page:'music-jiexian.html'},
@@ -1914,57 +1924,42 @@ const GP_TRACKS=[
   {title:'AIDA',artist:'Luna Liu',src:'audio/aida.mp3',cover:'cover-aida.jpg',page:'music-aida.html'},
   {title:'金魚が漂う',artist:'Ari Lin',src:'audio/kingyo.mp3',cover:'cover-kingyo.jpg',page:'music-kingyo.html'},
 ];
-
-let gpIdx = Math.floor(Math.random() * GP_TRACKS.length);
-let gpPlaying = false;
-const gpAudio = document.getElementById('gp-audio');
-const gpFmt = s => {
-  const m = Math.floor(s/60);
-  return m + ':' + String(Math.floor(s%60)).padStart(2,'0');
-};
-
-function gpLoad(idx, play) {
-  const t = GP_TRACKS[idx];
-  document.getElementById('gp-title').textContent = t.title;
-  document.getElementById('gp-artist').textContent = t.artist;
-  document.getElementById('gp-cover').src = t.cover;
-  document.getElementById('gp-link').href = t.page;
-  document.getElementById('gp-link').textContent = 'Lyrics ↗';
-  document.getElementById('gp-fill').style.width = '0%';
-  document.getElementById('gp-cur').textContent = '0:00';
-  document.getElementById('gp-dur').textContent = '—';
-  gpAudio.src = t.src;
-  if (play) { gpAudio.play().catch(()=>{}); gpPlaying = true; gpUpdateBtn(); }
-}
-
-function gpToggle() {
-  if (!gpAudio.src || gpAudio.src === window.location.href) { gpLoad(gpIdx, true); return; }
-  if (gpPlaying) { gpAudio.pause(); gpPlaying = false; }
-  else { gpAudio.play().catch(()=>{}); gpPlaying = true; }
-  gpUpdateBtn();
-}
-function gpNext() { gpIdx = (gpIdx + 1) % GP_TRACKS.length; gpLoad(gpIdx, gpPlaying || false); }
-function gpPrev() { gpIdx = (gpIdx - 1 + GP_TRACKS.length) % GP_TRACKS.length; gpLoad(gpIdx, gpPlaying || false); }
-function gpUpdateBtn() { document.getElementById('gp-play').innerHTML = gpPlaying ? '&#9646;&#9646;' : '&#9654;'; }
-function gpHide() { document.getElementById('global-player').classList.add('hidden'); }
-function gpSeek(e) {
-  if (!gpAudio.duration) return;
-  const r = e.currentTarget.getBoundingClientRect();
-  gpAudio.currentTime = ((e.clientX - r.left) / r.width) * gpAudio.duration;
-}
-
-gpAudio.addEventListener('timeupdate', () => {
-  if (!gpAudio.duration) return;
-  document.getElementById('gp-fill').style.width = (gpAudio.currentTime / gpAudio.duration * 100) + '%';
-  document.getElementById('gp-cur').textContent = gpFmt(gpAudio.currentTime);
-});
-gpAudio.addEventListener('loadedmetadata', () => {
-  document.getElementById('gp-dur').textContent = gpFmt(gpAudio.duration);
-});
-gpAudio.addEventListener('ended', () => { gpNext(); setTimeout(()=>{gpAudio.play().catch(()=>{});gpPlaying=true;gpUpdateBtn();},300); });
-
-// Load first track on page (don't autoplay — wait for user click)
-gpLoad(gpIdx, false);
+const $g=i=>document.getElementById(i);
+const ga=$g('gpAudio')||$g('gp-audio');
+const ge={t:$g('gpTitle')||$g('gp-title'),a:$g('gpArtist')||$g('gp-artist'),c:$g('gpCover')||$g('gp-cover'),l:$g('gpLink')||$g('gp-link'),f:$g('gpFill')||$g('gp-fill'),cu:$g('gpCur')||$g('gp-cur'),d:$g('gpDur')||$g('gp-dur'),p:$g('gpPlay')||$g('gp-play')};
+const gpFmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+let gi=Math.floor(Math.random()*GP.length),gp=false,gpResume=0,gpArmed=false,gpLastSave=0;
+let gpSt=null;try{gpSt=JSON.parse(localStorage.getItem('rr_gp')||'null')}catch(e){}
+if(gpSt&&gpSt.i>=0&&gpSt.i<GP.length){gi=gpSt.i;gpResume=gpSt.t||0;}
+function gpSave(){try{localStorage.setItem('rr_gp',JSON.stringify({i:gi,t:ga.currentTime||0,p:gp}))}catch(e){}}
+function gpUpd(){if(ge.p)ge.p.innerHTML=gp?'&#9646;&#9646;':'&#9654;';}
+function gpArm(){if(gpArmed)return;gpArmed=true;
+  const h=()=>{document.removeEventListener('pointerdown',h,true);document.removeEventListener('keydown',h,true);gpTry();};
+  document.addEventListener('pointerdown',h,true);document.addEventListener('keydown',h,true);}
+function gpTry(){ga.play().then(()=>{gp=true;gpUpd();gpSave();}).catch(()=>{gp=false;gpUpd();gpArm();});}
+function gpLoad(i,play){gi=(i+GP.length)%GP.length;const t=GP[gi];
+  if(ge.t)ge.t.textContent=t.title;if(ge.a)ge.a.textContent=t.artist;
+  if(ge.c)ge.c.src=t.cover;if(ge.l)ge.l.href=t.page;
+  if(ge.f)ge.f.style.width='0%';if(ge.cu)ge.cu.textContent='0:00';if(ge.d)ge.d.textContent='—';
+  ga.src=t.src;
+  if(gpResume>0.5){const r=gpResume;gpResume=0;
+    ga.addEventListener('loadedmetadata',()=>{try{ga.currentTime=r}catch(e){}},{once:true});}
+  if(play)gpTry();else gpUpd();
+  gpSave();}
+function gpToggle(){if(gp){ga.pause();gp=false;gpUpd();gpSave();}else{gpTry();}}
+function gpNext(){gpResume=0;gpLoad(gi+1,true);}
+function gpPrev(){gpResume=0;gpLoad(gi-1,true);}
+function gpUpdateBtn(){gpUpd();}
+function gpHide(){const w=$g('global-player')||$g('gp');if(w)w.classList.add('hidden');}
+function gpSeek(e){if(!ga.duration)return;const r=e.currentTarget.getBoundingClientRect();ga.currentTime=((e.clientX-r.left)/r.width)*ga.duration;gpSave();}
+ga.addEventListener('timeupdate',()=>{if(!ga.duration)return;
+  if(ge.f)ge.f.style.width=(ga.currentTime/ga.duration*100)+'%';
+  if(ge.cu)ge.cu.textContent=gpFmt(ga.currentTime);
+  const n=Date.now();if(n-gpLastSave>1000){gpLastSave=n;gpSave();}});
+ga.addEventListener('loadedmetadata',()=>{if(ge.d)ge.d.textContent=gpFmt(ga.duration);});
+ga.addEventListener('ended',()=>{gpNext();});
+window.addEventListener('pagehide',gpSave);
+gpLoad(gi,!(gpSt&&gpSt.p===false));
 </script>
 
 <script>
@@ -2029,5 +2024,117 @@ gpLoad(gpIdx, false);
 })();
 </script>
 
+
+<script>
+// ── SUMINAGASHI 墨流 ──────────────────────────────
+(function(){
+if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+const cv=document.getElementById('sumi');if(!cv)return;
+const gl=cv.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:false});
+if(!gl)return;
+const SW=512,SH=224;cv.width=SW;cv.height=SH;
+const VS='attribute vec2 a;varying vec2 v;void main(){v=a*0.5+0.5;gl_Position=vec4(a,0.,1.);}';
+const STEP=`precision highp float;varying vec2 v;
+uniform sampler2D uP;uniform vec2 uR;uniform float uT;
+uniform vec4 uM;uniform vec4 uD;uniform float uDC;
+float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+ return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+float fbm(vec2 p){float s=0.,a=.5;for(int i=0;i<4;i++){s+=a*n(p);p=p*2.03+11.7;a*=.5;}return s;}
+vec2 curl(vec2 p){float e=.012;
+ float a=fbm(p+vec2(0.,e)),b=fbm(p-vec2(0.,e)),c=fbm(p+vec2(e,0.)),d=fbm(p-vec2(e,0.));
+ return vec2(a-b,-(c-d))/(2.*e);}
+void main(){
+ vec2 asp=vec2(uR.x/uR.y,1.);
+ vec2 p=v*asp;
+ vec2 vel=curl(p*2.4+vec2(uT*.020,-uT*.013))*.0017;
+ vel+=curl(p*6.5+vec2(-uT*.031,uT*.022))*.0007;
+ float md=distance(p,uM.xy*asp);
+ vel+=uM.zw*exp(-md*md*60.);
+ vec4 s=texture2D(uP,v-vel);
+ s*=.9968;
+ if(uD.z>0.){
+  float dd=distance(p,uD.xy*asp);
+  float ink=exp(-dd*dd/(uD.z*uD.z))*uD.w;
+  s.r+=ink*(1.-uDC);s.g+=ink*uDC;}
+ float mi=exp(-md*md*240.)*min(length(uM.zw)*8.,.05);
+ s.r+=mi*.6;s.g+=mi*.4;
+ gl_FragColor=clamp(s,0.,1.);}`;
+const DRAW=`precision highp float;varying vec2 v;uniform sampler2D uP;
+void main(){
+ vec4 s=texture2D(uP,v);
+ float w=s.r,g=s.g;
+ float a=clamp(w+g,0.,1.);
+ vec3 cw=vec3(.941,.941,.961),cg=vec3(.533,.533,.60);
+ vec3 col=(w*cw+g*cg)/max(w+g,1e-4);
+ vec2 e=smoothstep(vec2(0.),vec2(.14),v)*smoothstep(vec2(0.),vec2(.14),1.-v);
+ a*=e.x*e.y;a=pow(a,1.12)*.9;
+ gl_FragColor=vec4(col*a,a);}`;
+function sh(t,src){const s=gl.createShader(t);gl.shaderSource(s,src);gl.compileShader(s);
+ if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){return null;}return s;}
+function prog(fs){const p=gl.createProgram();
+ gl.attachShader(p,sh(gl.VERTEX_SHADER,VS));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,fs));
+ gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))return null;return p;}
+const pStep=prog(STEP),pDraw=prog(DRAW);if(!pStep||!pDraw)return;
+const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+function bindAttr(p){const a=gl.getAttribLocation(p,'a');gl.enableVertexAttribArray(a);gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);}
+function mkTex(){const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);
+ gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,SW,SH,0,gl.RGBA,gl.UNSIGNED_BYTE,null);
+ gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+ gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+ gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+ gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);return t;}
+let tA=mkTex(),tB=mkTex();
+const fb=gl.createFramebuffer();
+let mx=.5,my=.5,mdx=0,mdy=0,lastX=null,lastY=null;
+function pt(e){const r=cv.getBoundingClientRect();
+ const x=(e.clientX-r.left)/r.width,y=1-(e.clientY-r.top)/r.height;
+ if(lastX!==null){mdx+=(x-lastX)*.5;mdy+=(y-lastY)*.5;}
+ lastX=x;lastY=y;mx=x;my=y;}
+cv.addEventListener('pointermove',pt);
+cv.addEventListener('pointerdown',e=>{pt(e);drop={x:mx,y:my,r:.05+Math.random()*.04,s:.5,ch:Math.random()<.55?0:1,life:18};});
+cv.addEventListener('pointerleave',()=>{lastX=lastY=null;});
+let drop=null,nextDrop=600;
+function schedule(){nextDrop=performance.now()+1800+Math.random()*2600;}
+const t0=performance.now();
+function frame(now){
+ const t=(now-t0)/1000;
+ if(!drop&&now>nextDrop){
+  drop={x:.18+Math.random()*.64,y:.2+Math.random()*.6,r:.035+Math.random()*.055,
+        s:.32+Math.random()*.3,ch:Math.random()<.55?0:1,life:22};
+  schedule();}
+ gl.bindFramebuffer(gl.FRAMEBUFFER,fb);
+ gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,tB,0);
+ gl.viewport(0,0,SW,SH);
+ gl.useProgram(pStep);bindAttr(pStep);
+ gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tA);
+ gl.uniform1i(gl.getUniformLocation(pStep,'uP'),0);
+ gl.uniform2f(gl.getUniformLocation(pStep,'uR'),SW,SH);
+ gl.uniform1f(gl.getUniformLocation(pStep,'uT'),t);
+ gl.uniform4f(gl.getUniformLocation(pStep,'uM'),mx,my,mdx,mdy);
+ if(drop){gl.uniform4f(gl.getUniformLocation(pStep,'uD'),drop.x,drop.y,drop.r,drop.s*(drop.life/22)*.14);
+  gl.uniform1f(gl.getUniformLocation(pStep,'uDC'),drop.ch);
+  if(--drop.life<=0)drop=null;}
+ else{gl.uniform4f(gl.getUniformLocation(pStep,'uD'),0,0,0,0);
+  gl.uniform1f(gl.getUniformLocation(pStep,'uDC'),0);}
+ gl.drawArrays(gl.TRIANGLES,0,3);
+ gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+ gl.viewport(0,0,SW,SH);
+ gl.useProgram(pDraw);bindAttr(pDraw);
+ gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,tB);
+ gl.uniform1i(gl.getUniformLocation(pDraw,'uP'),0);
+ gl.drawArrays(gl.TRIANGLES,0,3);
+ const tmp=tA;tA=tB;tB=tmp;
+ mdx*=.82;mdy*=.82;
+ requestAnimationFrame(frame);}
+// 開場先滴三滴
+drop={x:.5,y:.55,r:.07,s:.55,ch:0,life:24};
+setTimeout(()=>{if(!drop)drop={x:.36,y:.4,r:.05,s:.45,ch:1,life:20};},900);
+setTimeout(()=>{if(!drop)drop={x:.66,y:.6,r:.045,s:.4,ch:0,life:20};},1900);
+schedule();
+requestAnimationFrame(frame);
+})();
+</script>
 </body>
 </html>
