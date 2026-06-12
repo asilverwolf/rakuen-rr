@@ -253,13 +253,17 @@
     100% { opacity: 1; filter: blur(0); letter-spacing: 0.3em; }
   }
 
-  /* Suminagashi ink-flow */
+  /* Suminagashi ink-flow — full hero */
   #sumi {
-    width: min(74vw, 680px);
-    height: clamp(150px, 24vh, 250px);
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     display: block;
+    pointer-events: none;
+    z-index: 5;
     opacity: 0;
-    animation: sumi-in 2s 1.4s forwards;
+    animation: sumi-in 2.5s 1s forwards;
   }
   @keyframes sumi-in { to { opacity: 1; } }
 
@@ -1112,6 +1116,7 @@
 
 <!-- SECTION 1: HERO -->
 <section id="hero">
+  <canvas id="sumi" aria-hidden="true"></canvas>
   <div class="tunnel">
     <div class="tunnel-lines"></div>
     <div class="rays"></div>
@@ -1128,7 +1133,6 @@
 
   <div class="hero-center">
     <div id="heroLogo" style="background:transparent;isolation:auto;"><img src="logo-main.png" alt="R.R" style="width:clamp(180px,24vw,340px);display:block;margin:0 auto;opacity:0.95;"></div>
-    <canvas id="sumi" aria-hidden="true"></canvas>
   </div>
 
   <div class="scroll-hint">
@@ -2026,13 +2030,15 @@ gpLoad(gi,!(gpSt&&gpSt.p===false));
 
 
 <script>
-// ── SUMINAGASHI 墨流 ──────────────────────────────
+// ── SUMINAGASHI 墨流（全 hero 區） ──────────────────
 (function(){
 if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-const cv=document.getElementById('sumi');if(!cv)return;
+const cv=document.getElementById('sumi'),hero=document.getElementById('hero');
+if(!cv||!hero)return;
 const gl=cv.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:false});
 if(!gl)return;
-const SW=512,SH=224;cv.width=SW;cv.height=SH;
+const SW=720,SH=Math.max(240,Math.min(720,Math.round(720*innerHeight/Math.max(innerWidth,1))));
+cv.width=SW;cv.height=SH;
 const VS='attribute vec2 a;varying vec2 v;void main(){v=a*0.5+0.5;gl_Position=vec4(a,0.,1.);}';
 const STEP=`precision highp float;varying vec2 v;
 uniform sampler2D uP;uniform vec2 uR;uniform float uT;
@@ -2047,31 +2053,33 @@ vec2 curl(vec2 p){float e=.012;
 void main(){
  vec2 asp=vec2(uR.x/uR.y,1.);
  vec2 p=v*asp;
- vec2 vel=curl(p*2.4+vec2(uT*.020,-uT*.013))*.0017;
- vel+=curl(p*6.5+vec2(-uT*.031,uT*.022))*.0007;
+ vec2 vel=curl(p*2.1+vec2(uT*.022,-uT*.014))*.0019;
+ vel+=curl(p*5.8+vec2(-uT*.034,uT*.024))*.0008;
  float md=distance(p,uM.xy*asp);
- vel+=uM.zw*exp(-md*md*60.);
+ vel+=uM.zw*exp(-md*md*40.);
  vec4 s=texture2D(uP,v-vel);
- s*=.9968;
+ s*=.9938;
  if(uD.z>0.){
   float dd=distance(p,uD.xy*asp);
   float ink=exp(-dd*dd/(uD.z*uD.z))*uD.w;
   s.r+=ink*(1.-uDC);s.g+=ink*uDC;}
- float mi=exp(-md*md*240.)*min(length(uM.zw)*8.,.05);
- s.r+=mi*.6;s.g+=mi*.4;
+ float mi=exp(-md*md*200.)*min(length(uM.zw)*10.,.10);
+ s.r+=mi*.65;s.g+=mi*.35;
  gl_FragColor=clamp(s,0.,1.);}`;
 const DRAW=`precision highp float;varying vec2 v;uniform sampler2D uP;
 void main(){
  vec4 s=texture2D(uP,v);
  float w=s.r,g=s.g;
- float a=clamp(w+g,0.,1.);
- vec3 cw=vec3(.941,.941,.961),cg=vec3(.533,.533,.60);
- vec3 col=(w*cw+g*cg)/max(w+g,1e-4);
- vec2 e=smoothstep(vec2(0.),vec2(.14),v)*smoothstep(vec2(0.),vec2(.14),1.-v);
- a*=e.x*e.y;a=pow(a,1.12)*.9;
+ float dn=w+g;
+ float a=smoothstep(.035,.45,dn);
+ vec3 cw=vec3(.96,.96,.98),cg=vec3(.42,.42,.50);
+ vec3 col=(w*cw+g*cg)/max(dn,1e-4);
+ col*=mix(.75,1.05,a);
+ vec2 e=smoothstep(vec2(0.),vec2(.05),v)*smoothstep(vec2(0.),vec2(.05),1.-v);
+ a*=e.x*e.y;
  gl_FragColor=vec4(col*a,a);}`;
 function sh(t,src){const s=gl.createShader(t);gl.shaderSource(s,src);gl.compileShader(s);
- if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){return null;}return s;}
+ if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))return null;return s;}
 function prog(fs){const p=gl.createProgram();
  gl.attachShader(p,sh(gl.VERTEX_SHADER,VS));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,fs));
  gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))return null;return p;}
@@ -2090,19 +2098,20 @@ const fb=gl.createFramebuffer();
 let mx=.5,my=.5,mdx=0,mdy=0,lastX=null,lastY=null;
 function pt(e){const r=cv.getBoundingClientRect();
  const x=(e.clientX-r.left)/r.width,y=1-(e.clientY-r.top)/r.height;
- if(lastX!==null){mdx+=(x-lastX)*.5;mdy+=(y-lastY)*.5;}
+ if(lastX!==null){mdx+=(x-lastX)*.55;mdy+=(y-lastY)*.55;}
  lastX=x;lastY=y;mx=x;my=y;}
-cv.addEventListener('pointermove',pt);
-cv.addEventListener('pointerdown',e=>{pt(e);drop={x:mx,y:my,r:.05+Math.random()*.04,s:.5,ch:Math.random()<.55?0:1,life:18};});
-cv.addEventListener('pointerleave',()=>{lastX=lastY=null;});
-let drop=null,nextDrop=600;
-function schedule(){nextDrop=performance.now()+1800+Math.random()*2600;}
+hero.addEventListener('pointermove',pt,{passive:true});
+hero.addEventListener('pointerdown',e=>{pt(e);
+ drop={x:mx,y:my,r:.05+Math.random()*.05,s:.6,ch:Math.random()<.55?0:1,life:20};},{passive:true});
+hero.addEventListener('pointerleave',()=>{lastX=lastY=null;});
+let drop=null,nextDrop=500;
+function schedule(){nextDrop=performance.now()+1400+Math.random()*2200;}
 const t0=performance.now();
 function frame(now){
  const t=(now-t0)/1000;
  if(!drop&&now>nextDrop){
-  drop={x:.18+Math.random()*.64,y:.2+Math.random()*.6,r:.035+Math.random()*.055,
-        s:.32+Math.random()*.3,ch:Math.random()<.55?0:1,life:22};
+  drop={x:.08+Math.random()*.84,y:.12+Math.random()*.76,r:.04+Math.random()*.07,
+        s:.45+Math.random()*.35,ch:Math.random()<.55?0:1,life:24};
   schedule();}
  gl.bindFramebuffer(gl.FRAMEBUFFER,fb);
  gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,tB,0);
@@ -2113,7 +2122,7 @@ function frame(now){
  gl.uniform2f(gl.getUniformLocation(pStep,'uR'),SW,SH);
  gl.uniform1f(gl.getUniformLocation(pStep,'uT'),t);
  gl.uniform4f(gl.getUniformLocation(pStep,'uM'),mx,my,mdx,mdy);
- if(drop){gl.uniform4f(gl.getUniformLocation(pStep,'uD'),drop.x,drop.y,drop.r,drop.s*(drop.life/22)*.14);
+ if(drop){gl.uniform4f(gl.getUniformLocation(pStep,'uD'),drop.x,drop.y,drop.r,drop.s*(drop.life/24)*.20);
   gl.uniform1f(gl.getUniformLocation(pStep,'uDC'),drop.ch);
   if(--drop.life<=0)drop=null;}
  else{gl.uniform4f(gl.getUniformLocation(pStep,'uD'),0,0,0,0);
@@ -2126,12 +2135,11 @@ function frame(now){
  gl.uniform1i(gl.getUniformLocation(pDraw,'uP'),0);
  gl.drawArrays(gl.TRIANGLES,0,3);
  const tmp=tA;tA=tB;tB=tmp;
- mdx*=.82;mdy*=.82;
+ mdx*=.84;mdy*=.84;
  requestAnimationFrame(frame);}
-// 開場先滴三滴
-drop={x:.5,y:.55,r:.07,s:.55,ch:0,life:24};
-setTimeout(()=>{if(!drop)drop={x:.36,y:.4,r:.05,s:.45,ch:1,life:20};},900);
-setTimeout(()=>{if(!drop)drop={x:.66,y:.6,r:.045,s:.4,ch:0,life:20};},1900);
+drop={x:.5,y:.5,r:.08,s:.6,ch:0,life:26};
+setTimeout(()=>{if(!drop)drop={x:.28,y:.34,r:.06,s:.5,ch:1,life:22};},800);
+setTimeout(()=>{if(!drop)drop={x:.72,y:.62,r:.055,s:.5,ch:0,life:22};},1700);
 schedule();
 requestAnimationFrame(frame);
 })();
