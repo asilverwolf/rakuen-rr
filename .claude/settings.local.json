@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(sed -n '349,350p' \"/Users/Rakuen_Reyuon/Library/Mobile Documents/com~apple~CloudDocs/Aida/樂園 Я·R｜RakuenɒuyɘЯ/web site/rakuen-rr/index.html\")",
+      "Bash(sed -n '861,862p' \"/Users/Rakuen_Reyuon/Library/Mobile Documents/com~apple~CloudDocs/Aida/樂園 Я·R｜RakuenɒuyɘЯ/web site/rakuen-rr/index.html\")",
+      "Bash(sed -n '1485,1505p' \"/Users/Rakuen_Reyuon/Library/Mobile Documents/com~apple~CloudDocs/Aida/樂園 Я·R｜RakuenɒuyɘЯ/web site/rakuen-rr/index.html\")",
+      "Bash(python3 *)"
+    ]
+  }
+}

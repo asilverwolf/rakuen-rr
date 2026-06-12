@@ -96,7 +96,7 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
   </div>
 </nav>
 <section class="hero">
-  <div class="hero-bg"><img src="cover-jiexian.jpg" alt="自由のままで"></div>
+  <div class="hero-bg"><img src="cover-jiyuu.jpg" alt="自由のままで"></div>
   <div class="hero-info">
     <span class="hero-num">R.R · 06</span>
     <h1 class="hero-title">自由のままで</h1>
@@ -159,7 +159,7 @@ if you understand / …stay</div>
   <span class="footer-copy">© 2026 RakuenɒuyɘЯ</span>
 </footer>
 <div id="gp">
-  <img class="gp-cover" id="gpCover" src="cover-jiexian.jpg" alt="">
+  <img class="gp-cover" id="gpCover" src="cover-jiyuu.jpg" alt="">
   <div class="gp-info">
     <div class="gp-title" id="gpTitle">自由のままで</div>
     <div class="gp-artist" id="gpArtist">Ari Lin</div>
@@ -186,18 +186,24 @@ let mx=0,my=0,rx=0,ry=0;
 let lo=false;
 function toggleLyrics(){lo=!lo;document.getElementById('lyricsBody').classList.toggle('open',lo);document.getElementById('lyricsBtn').textContent=(lo?'− Hide':'+ Show');}
 const GP=[
-  {title:'NO PROOF',artist:'Luna · Irene · Ari',src:'',cover:'cover-noproof.jpg',page:'music-noproof.html'},
-  {title:'SIGNAL',artist:'Irene Zang',src:'',cover:'cover-signal.jpg',page:'music-signal.html'},
-  {title:'界線',artist:'Ari Lin',src:'',cover:'cover-jiexian.jpg',page:'music-jiexian.html'},
-  {title:'BETWEEN',artist:'Luna Liu',src:'',cover:'cover-between.jpg',page:'music-between.html'},
-  {title:'Hey Dirty Boy',artist:'Irene Zang',src:'',cover:'cover-signal.jpg',page:'music-heydirtyboy.html'},
-  {title:'自由のままで',artist:'Ari Lin',src:'',cover:'cover-jiexian.jpg',page:'music-jiyuu.html'},
-  {title:'STILL HERE',artist:'Luna Liu',src:'',cover:'cover-between.jpg',page:'music-stillhere.html'},
+  {title:'NO PROOF',artist:'Luna Liu · Irene Zang · Ari Lin',src:'audio/noproof.mp3',cover:'cover-noproof.jpg',page:'music-noproof.html'},
+  {title:'SIGNAL',artist:'Irene Zang',src:'audio/signal.mp3',cover:'cover-signal.jpg',page:'music-signal.html'},
+  {title:'界線',artist:'Ari Lin',src:'audio/jiexian.mp3',cover:'cover-jiexian.jpg',page:'music-jiexian.html'},
+  {title:'BETWEEN',artist:'Luna Liu',src:'audio/between.mp3',cover:'cover-between.jpg',page:'music-between.html'},
+  {title:'Hey Dirty Boy',artist:'Irene Zang',src:'audio/heydirtyboy.mp3',cover:'cover-heydirtyboy.jpg',page:'music-heydirtyboy.html'},
+  {title:'自由のままで',artist:'Ari Lin',src:'audio/jiyuu.mp3',cover:'cover-jiyuu.jpg',page:'music-jiyuu.html'},
+  {title:'STILL HERE',artist:'Luna Liu',src:'audio/stillhere.mp3',cover:'cover-stillhere.jpg',page:'music-stillhere.html'},
+  {title:'ARE YOU SURE',artist:'Luna Liu',src:'audio/areyousure.mp3',cover:'cover-areyousure.jpg',page:'music-areyousure.html'},
+  {title:'SAY IT',artist:'Irene Zang',src:'audio/sayit.mp3',cover:'cover-sayit.jpg',page:'music-sayit.html'},
+  {title:'またね',artist:'Ari Lin',src:'audio/matane.mp3',cover:'cover-matane.jpg',page:'music-matane.html'},
+  {title:'비의 밤',artist:'Irene Zang',src:'audio/rainnight.mp3',cover:'cover-rainnight.jpg',page:'music-rainnight.html'},
+  {title:'AIDA',artist:'Luna Liu',src:'audio/aida.mp3',cover:'cover-aida.jpg',page:'music-aida.html'},
+  {title:'金魚が漂う',artist:'Ari Lin',src:'audio/kingyo.mp3',cover:'cover-kingyo.jpg',page:'music-kingyo.html'},
 ];
-let gi=Math.floor(Math.random()*GP.length),gp=false;
+let gi=5,gp=false;
 const ga=document.getElementById('gpAudio');
 const fmt=s=>Math.floor(s/60)+':'+(~~(s%60)+'').padStart(2,'0');
-function gpLoad(i,play){const t=GP[i];document.getElementById('gpTitle').textContent=t.title;document.getElementById('gpArtist').textContent=t.artist;document.getElementById('gpCover').src=t.cover;document.getElementById('gpLink').href=t.page;document.getElementById('gpFill').style.width='0%';document.getElementById('gpCur').textContent='0:00';document.getElementById('gpDur').textContent='—';if(play&&t.src){ga.src=t.src;ga.play().catch(()=>{});gp=true;gpU();}}
+function gpLoad(i,play){const t=GP[i];document.getElementById('gpTitle').textContent=t.title;document.getElementById('gpArtist').textContent=t.artist;document.getElementById('gpCover').src=t.cover;document.getElementById('gpLink').href=t.page;document.getElementById('gpFill').style.width='0%';document.getElementById('gpCur').textContent='0:00';document.getElementById('gpDur').textContent='—';ga.src=t.src;if(play){ga.play().catch(()=>{});gp=true;gpU();}}
 function gpToggle(){if(gp){ga.pause();gp=false;}else{ga.play().catch(()=>{});gp=true;}gpU();}
 function gpNext(){gi=(gi+1)%GP.length;gpLoad(gi,gp);}
 function gpPrev(){gi=(gi-1+GP.length)%GP.length;gpLoad(gi,gp);}
