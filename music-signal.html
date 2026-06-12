@@ -82,6 +82,15 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
   #gp{padding:10px 16px;gap:12px;}
   .gp-pw{display:none;}
 }
+.cover-section{padding:90px 64px 10px;display:flex;justify-content:center;}
+.cover-section img{width:min(520px,82vw);aspect-ratio:1/1;object-fit:cover;display:block;box-shadow:0 30px 90px rgba(0,0,0,0.55);transition:transform 0.4s;}
+.cover-section img:hover{transform:scale(1.015);}
+#lightbox{position:fixed;inset:0;z-index:3000;background:rgba(4,4,10,0.94);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+#lightbox.open{opacity:1;pointer-events:all;}
+#lightbox img{max-width:92vw;max-height:86vh;object-fit:contain;}
+.lb-x{position:absolute;top:20px;right:28px;font-size:20px;color:#888899;background:none;border:none;cursor:none;font-family:'Space Mono',monospace;}
+.lb-x:hover{color:#F0F0F5;}
+@media(max-width:768px){.cover-section{padding:60px 24px 0;}}
 </style>
 </head>
 <body>
@@ -105,6 +114,10 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
     <p class="hero-meta">2026 · Dark Electronic · D minor · BPM 128</p>
   </div>
 </section>
+<section class="cover-section">
+  <img src="cover-signal.jpg" alt="SIGNAL — cover" id="coverFull">
+</section>
+
 <section class="words-section">
   <div class="words-rule"></div>
   <span class="words-label">— Why we made this</span>
@@ -164,6 +177,7 @@ you can't confirm
   <a href="index.html" class="footer-logo"><img src="logo-main.png" alt="R.R" style="height:36px;opacity:1;"></a>
   <span class="footer-copy">© 2026 RakuenɒuyɘЯ</span>
 </footer>
+<div id="lightbox"><img id="lbImg" alt=""><button class="lb-x" id="lbX">✕</button></div>
 <div id="gp">
   <img class="gp-cover" id="gpCover" src="cover-signal.jpg" alt="">
   <div class="gp-info">
@@ -206,19 +220,24 @@ const GP=[
   {title:'AIDA',artist:'Luna Liu',src:'audio/aida.mp3',cover:'cover-aida.jpg',page:'music-aida.html'},
   {title:'金魚が漂う',artist:'Ari Lin',src:'audio/kingyo.mp3',cover:'cover-kingyo.jpg',page:'music-kingyo.html'},
 ];
+const PAGE_IDX=1;
 const $g=i=>document.getElementById(i);
 const ga=$g('gpAudio')||$g('gp-audio');
 const ge={t:$g('gpTitle')||$g('gp-title'),a:$g('gpArtist')||$g('gp-artist'),c:$g('gpCover')||$g('gp-cover'),l:$g('gpLink')||$g('gp-link'),f:$g('gpFill')||$g('gp-fill'),cu:$g('gpCur')||$g('gp-cur'),d:$g('gpDur')||$g('gp-dur'),p:$g('gpPlay')||$g('gp-play')};
 const gpFmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
-let gi=1,gp=false,gpResume=0,gpArmed=false,gpLastSave=0;
 let gpSt=null;try{gpSt=JSON.parse(localStorage.getItem('rr_gp')||'null')}catch(e){}
-if(gpSt&&gpSt.i>=0&&gpSt.i<GP.length){gi=gpSt.i;gpResume=gpSt.t||0;}
-function gpSave(){try{localStorage.setItem('rr_gp',JSON.stringify({i:gi,t:ga.currentTime||0,p:gp}))}catch(e){}}
+const gpFresh=!!(gpSt&&gpSt.i>=0&&gpSt.i<GP.length&&(Date.now()-(gpSt.ts||0))<1800000);
+let gi,gp=false,gpResume=0,gpArmed=false,gpLastSave=0;
+let userPaused=gpFresh&&gpSt.u===true;
+if(PAGE_IDX>=0){gi=PAGE_IDX;if(gpFresh&&gpSt.i===gi)gpResume=gpSt.t||0;}
+else if(gpFresh){gi=gpSt.i;gpResume=gpSt.t||0;}
+else{gi=Math.floor(Math.random()*GP.length);userPaused=false;}
+function gpSave(){try{localStorage.setItem('rr_gp',JSON.stringify({i:gi,t:ga.currentTime||0,u:userPaused,ts:Date.now()}))}catch(e){}}
 function gpUpd(){if(ge.p)ge.p.innerHTML=gp?'&#9646;&#9646;':'&#9654;';}
 function gpArm(){if(gpArmed)return;gpArmed=true;
-  const h=()=>{document.removeEventListener('pointerdown',h,true);document.removeEventListener('keydown',h,true);gpTry();};
+  const h=()=>{document.removeEventListener('pointerdown',h,true);document.removeEventListener('keydown',h,true);if(!userPaused)gpTry();};
   document.addEventListener('pointerdown',h,true);document.addEventListener('keydown',h,true);}
-function gpTry(){ga.play().then(()=>{gp=true;gpUpd();gpSave();}).catch(()=>{gp=false;gpUpd();gpArm();});}
+function gpTry(){ga.play().then(()=>{gp=true;userPaused=false;gpUpd();gpSave();}).catch(()=>{gp=false;gpUpd();gpArm();});}
 function gpLoad(i,play){gi=(i+GP.length)%GP.length;const t=GP[gi];
   if(ge.t)ge.t.textContent=t.title;if(ge.a)ge.a.textContent=t.artist;
   if(ge.c)ge.c.src=t.cover;if(ge.l)ge.l.href=t.page;
@@ -228,7 +247,7 @@ function gpLoad(i,play){gi=(i+GP.length)%GP.length;const t=GP[gi];
     ga.addEventListener('loadedmetadata',()=>{try{ga.currentTime=r}catch(e){}},{once:true});}
   if(play)gpTry();else gpUpd();
   gpSave();}
-function gpToggle(){if(gp){ga.pause();gp=false;gpUpd();gpSave();}else{gpTry();}}
+function gpToggle(){if(gp){ga.pause();gp=false;userPaused=true;gpUpd();gpSave();}else{gpTry();}}
 function gpNext(){gpResume=0;gpLoad(gi+1,true);}
 function gpPrev(){gpResume=0;gpLoad(gi-1,true);}
 function gpUpdateBtn(){gpUpd();}
@@ -241,7 +260,13 @@ ga.addEventListener('timeupdate',()=>{if(!ga.duration)return;
 ga.addEventListener('loadedmetadata',()=>{if(ge.d)ge.d.textContent=gpFmt(ga.duration);});
 ga.addEventListener('ended',()=>{gpNext();});
 window.addEventListener('pagehide',gpSave);
-gpLoad(gi,!(gpSt&&gpSt.p===false));
+gpLoad(gi,!userPaused);
+// Cover lightbox
+const lb=document.getElementById('lightbox'),lbImg=document.getElementById('lbImg');
+document.getElementById('coverFull').addEventListener('click',function(){lbImg.src=this.src;lb.classList.add('open');});
+document.getElementById('lbX').addEventListener('click',()=>lb.classList.remove('open'));
+lb.addEventListener('click',e=>{if(e.target===lb)lb.classList.remove('open');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('open');});
 </script>
 </body>
 </html>

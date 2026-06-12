@@ -1928,19 +1928,24 @@ const GP=[
   {title:'AIDA',artist:'Luna Liu',src:'audio/aida.mp3',cover:'cover-aida.jpg',page:'music-aida.html'},
   {title:'金魚が漂う',artist:'Ari Lin',src:'audio/kingyo.mp3',cover:'cover-kingyo.jpg',page:'music-kingyo.html'},
 ];
+const PAGE_IDX=-1;
 const $g=i=>document.getElementById(i);
 const ga=$g('gpAudio')||$g('gp-audio');
 const ge={t:$g('gpTitle')||$g('gp-title'),a:$g('gpArtist')||$g('gp-artist'),c:$g('gpCover')||$g('gp-cover'),l:$g('gpLink')||$g('gp-link'),f:$g('gpFill')||$g('gp-fill'),cu:$g('gpCur')||$g('gp-cur'),d:$g('gpDur')||$g('gp-dur'),p:$g('gpPlay')||$g('gp-play')};
 const gpFmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
-let gi=Math.floor(Math.random()*GP.length),gp=false,gpResume=0,gpArmed=false,gpLastSave=0;
 let gpSt=null;try{gpSt=JSON.parse(localStorage.getItem('rr_gp')||'null')}catch(e){}
-if(gpSt&&gpSt.i>=0&&gpSt.i<GP.length){gi=gpSt.i;gpResume=gpSt.t||0;}
-function gpSave(){try{localStorage.setItem('rr_gp',JSON.stringify({i:gi,t:ga.currentTime||0,p:gp}))}catch(e){}}
+const gpFresh=!!(gpSt&&gpSt.i>=0&&gpSt.i<GP.length&&(Date.now()-(gpSt.ts||0))<1800000);
+let gi,gp=false,gpResume=0,gpArmed=false,gpLastSave=0;
+let userPaused=gpFresh&&gpSt.u===true;
+if(PAGE_IDX>=0){gi=PAGE_IDX;if(gpFresh&&gpSt.i===gi)gpResume=gpSt.t||0;}
+else if(gpFresh){gi=gpSt.i;gpResume=gpSt.t||0;}
+else{gi=Math.floor(Math.random()*GP.length);userPaused=false;}
+function gpSave(){try{localStorage.setItem('rr_gp',JSON.stringify({i:gi,t:ga.currentTime||0,u:userPaused,ts:Date.now()}))}catch(e){}}
 function gpUpd(){if(ge.p)ge.p.innerHTML=gp?'&#9646;&#9646;':'&#9654;';}
 function gpArm(){if(gpArmed)return;gpArmed=true;
-  const h=()=>{document.removeEventListener('pointerdown',h,true);document.removeEventListener('keydown',h,true);gpTry();};
+  const h=()=>{document.removeEventListener('pointerdown',h,true);document.removeEventListener('keydown',h,true);if(!userPaused)gpTry();};
   document.addEventListener('pointerdown',h,true);document.addEventListener('keydown',h,true);}
-function gpTry(){ga.play().then(()=>{gp=true;gpUpd();gpSave();}).catch(()=>{gp=false;gpUpd();gpArm();});}
+function gpTry(){ga.play().then(()=>{gp=true;userPaused=false;gpUpd();gpSave();}).catch(()=>{gp=false;gpUpd();gpArm();});}
 function gpLoad(i,play){gi=(i+GP.length)%GP.length;const t=GP[gi];
   if(ge.t)ge.t.textContent=t.title;if(ge.a)ge.a.textContent=t.artist;
   if(ge.c)ge.c.src=t.cover;if(ge.l)ge.l.href=t.page;
@@ -1950,7 +1955,7 @@ function gpLoad(i,play){gi=(i+GP.length)%GP.length;const t=GP[gi];
     ga.addEventListener('loadedmetadata',()=>{try{ga.currentTime=r}catch(e){}},{once:true});}
   if(play)gpTry();else gpUpd();
   gpSave();}
-function gpToggle(){if(gp){ga.pause();gp=false;gpUpd();gpSave();}else{gpTry();}}
+function gpToggle(){if(gp){ga.pause();gp=false;userPaused=true;gpUpd();gpSave();}else{gpTry();}}
 function gpNext(){gpResume=0;gpLoad(gi+1,true);}
 function gpPrev(){gpResume=0;gpLoad(gi-1,true);}
 function gpUpdateBtn(){gpUpd();}
@@ -1963,7 +1968,7 @@ ga.addEventListener('timeupdate',()=>{if(!ga.duration)return;
 ga.addEventListener('loadedmetadata',()=>{if(ge.d)ge.d.textContent=gpFmt(ga.duration);});
 ga.addEventListener('ended',()=>{gpNext();});
 window.addEventListener('pagehide',gpSave);
-gpLoad(gi,!(gpSt&&gpSt.p===false));
+gpLoad(gi,!userPaused);
 </script>
 
 <script>
@@ -2058,7 +2063,7 @@ void main(){
  float md=distance(p,uM.xy*asp);
  vel+=uM.zw*exp(-md*md*40.);
  vec4 s=texture2D(uP,v-vel);
- s*=.9938;
+ s*=.9890;
  if(uD.z>0.){
   float dd=distance(p,uD.xy*asp);
   float ink=exp(-dd*dd/(uD.z*uD.z))*uD.w;
