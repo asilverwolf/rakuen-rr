@@ -1129,18 +1129,21 @@
       padding: 64px 24px !important;
     }
 
-    /* Person cards: vertical stack, fixed height */
+    /* Person cards: vertical stack */
     .people-row {
       grid-template-columns: 1fr !important;
     }
     .person {
-      min-height: 56vw;
+      min-height: 75vw;
       border-right: none !important;
       border-bottom: 1px solid rgba(240,240,245,0.06);
     }
     .person:last-child { border-bottom: none; }
-    /* Show desc on mobile touch (via .touched class) */
-    .person.touched .person-desc { opacity: 1 !important; transform: translateY(0) !important; }
+    .person-info { padding: 28px 28px 28px !important; }
+    /* Hide desc by default (it's invisible but takes layout height → clips names) */
+    .person-desc { display: none !important; }
+    /* Touch: show info */
+    .person.touched .person-desc { display: block !important; opacity: 1 !important; transform: translateY(0) !important; }
     .person.touched .person-enter { opacity: 1 !important; transform: translateY(0) !important; }
     .person.touched .person-enter-line { width: 32px !important; }
     .person.touched .person-overlay {
