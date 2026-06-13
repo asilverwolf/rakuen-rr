@@ -1,0 +1,14 @@
+{
+  "name": "R.R｜樂園 Rakuen",
+  "short_name": "R.R",
+  "description": "虛構的，所以真實",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#04040A",
+  "theme_color": "#04040A",
+  "icons": [
+    { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

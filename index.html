@@ -6,6 +6,9 @@
   
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="alternate icon" href="logo-main.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#04040A">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>R.R｜樂園 Rakuen — 虛構的，所以真實</title>
 <style>
@@ -1098,6 +1101,53 @@
     z-index: 5;
   }
 
+
+  /* ===== MOBILE ===== */
+  @media (max-width: 768px) {
+
+    /* Music cards: 2 equal columns, no tilt, no scatter */
+    .objects-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 8px !important;
+    }
+    .obj-1,.obj-2,.obj-3,.obj-4,.obj-5,.obj-6,
+    .obj-7,.obj-8,.obj-9,.obj-10,.obj-11,.obj-12,.obj-13 {
+      grid-column: auto !important;
+      grid-row: auto !important;
+      margin-top: 0 !important;
+      --tilt: 0deg;
+    }
+    .obj:hover { transform: none; }
+    .obj-visual { margin-bottom: 8px; }
+    .obj-inner { padding: 12px 10px; }
+
+    /* What We Do: single column */
+    .wwd-grid {
+      grid-template-columns: 1fr !important;
+    }
+    #what-we-do-home {
+      padding: 64px 24px !important;
+    }
+
+    /* Person cards: vertical stack, fixed height */
+    .people-row {
+      grid-template-columns: 1fr !important;
+    }
+    .person {
+      min-height: 56vw;
+      border-right: none !important;
+      border-bottom: 1px solid rgba(240,240,245,0.06);
+    }
+    .person:last-child { border-bottom: none; }
+    /* Show desc on mobile touch (via .touched class) */
+    .person.touched .person-desc { opacity: 1 !important; transform: translateY(0) !important; }
+    .person.touched .person-enter { opacity: 1 !important; transform: translateY(0) !important; }
+    .person.touched .person-enter-line { width: 32px !important; }
+    .person.touched .person-overlay {
+      background: linear-gradient(to bottom,rgba(4,4,10,0.1) 0%,rgba(4,4,10,0.05) 40%,rgba(4,4,10,0.7) 80%,rgba(4,4,10,0.95) 100%) !important;
+    }
+  }
+
 </style>
 </head>
 <body>
@@ -1312,7 +1362,7 @@
     <span style="font-family:'EB Garamond',serif;font-size:clamp(32px,4vw,52px);color:var(--white);letter-spacing:0.02em;">What We Do</span>
   </div>
 
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(240,240,245,0.06);">
+  <div class="wwd-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(240,240,245,0.06);">
 
     <!-- MUSIC -->
     <div style="background:#04040A;padding:48px 40px;position:relative;overflow:hidden;transition:background 0.3s;"
@@ -2148,6 +2198,35 @@ setTimeout(()=>{if(!drop)drop={x:.72,y:.62,r:.035,s:.5,ch:0,life:22};},1700);
 schedule();
 requestAnimationFrame(frame);
 })();
+
+// Mobile touch: 1st tap = show info, 2nd tap = navigate
+if ('ontouchstart' in window) {
+  document.querySelectorAll('.person').forEach(function(card) {
+    var link = card.querySelector('.person-link');
+    link.addEventListener('click', function(e) {
+      if (!card.classList.contains('touched')) {
+        e.preventDefault();
+        // clear others
+        document.querySelectorAll('.person.touched').forEach(function(c){ c.classList.remove('touched'); });
+        card.classList.add('touched');
+        // swap to alt photo (swapPhoto equivalent)
+        var id = card.id.replace('person','').toLowerCase();
+        var main = document.getElementById(id+'-main');
+        var alt  = document.getElementById(id+'-alt');
+        if(main) main.className='person-photo inactive';
+        if(alt)  alt.className='person-photo active';
+      }
+      // 2nd tap: default navigation happens
+    });
+  });
+  // tap outside clears .touched
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.person')) {
+      document.querySelectorAll('.person.touched').forEach(function(c){ c.classList.remove('touched'); });
+    }
+  });
+}
+
 </script>
 </body>
 </html>
