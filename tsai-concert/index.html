@@ -206,10 +206,19 @@ html,body{
 }
 @keyframes pu{0%,100%{opacity:.2}50%{opacity:.6}}
 
-/* Cover / back-cover: mask the empty half so single page appears centered */
-#mask{
-  position:absolute;top:0;height:100%;width:50%;
-  background:#04040A;display:none;z-index:25;pointer-events:none;
+/* Cover / back-cover: full-screen overlay, single page centered */
+#pgsingle{
+  position:fixed;top:40px;left:0;right:0;bottom:0;
+  background:#04040A;
+  display:none;
+  align-items:center;justify-content:center;
+  z-index:50;
+}
+#pgsi{
+  height:min(calc(100vh - 40px), calc(100vw * 1272 / 900));
+  width:min(calc(100vw), calc((100vh - 40px) * 900 / 1272));
+  object-fit:cover;display:block;
+  box-shadow:0 20px 70px rgba(0,0,0,.92),0 4px 16px rgba(0,0,0,.6);
 }
 </style>
 </head>
@@ -239,8 +248,6 @@ html,body{
       </div>
       <!-- spine -->
       <div id="spine"></div>
-      <!-- cover/back mask: hides empty half so single page appears centered -->
-      <div id="mask"></div>
       <!-- click zones -->
       <div id="zl" onclick="bkNav(-1)"></div>
       <div id="zr" onclick="bkNav(1)"></div>
@@ -248,6 +255,9 @@ html,body{
     <button class="arr off" id="al" onclick="bkNav(-1)">&#9664;</button>
     <button class="arr"     id="ar" onclick="bkNav(1)">&#9654;</button>
   </div>
+
+  <!-- Cover / back-cover single-page overlay (book mode only) -->
+  <div id="pgsingle"><img id="pgsi" alt=""></div>
 
   <!-- ── Single/portrait mode ── -->
   <div id="single-mode">
@@ -305,8 +315,8 @@ const siEl = document.getElementById('si');   // single mode image
 const lbg  = document.getElementById('lbg');  // left bg div (for shadow class)
 const al   = document.getElementById('al');   // arrow left
 const ar   = document.getElementById('ar');   // arrow right
-const mask  = document.getElementById('mask');
-const spine = document.getElementById('spine');
+const pgsingle = document.getElementById('pgsingle');
+const pgsi     = document.getElementById('pgsi');
 
 /* ══════════════════════════════════════════
    MODE DETECTION
@@ -320,21 +330,19 @@ function isBookMode() {
 ══════════════════════════════════════════ */
 function img(idx) { return idx != null && idx >= 0 ? IMGS[idx] : ''; }
 
-// Show mask over one half (cover/back spreads → single page appears centered)
-function showMask(side) {
-  mask.style.left = side === 'left' ? '0' : '50%';
-  mask.style.display = '';
-  spine.style.display = 'none';
+// Centered single-page overlay for cover / back-cover spreads
+function showPgSingle(imgSrc) {
+  pgsi.src = imgSrc;
+  pgsingle.style.display = 'flex';
 }
-function hideMask() {
-  mask.style.display = 'none';
-  spine.style.display = '';
+function hidePgSingle() {
+  pgsingle.style.display = 'none';
 }
-function applyMaskForSpread(idx) {
-  const t = SPREADS[idx].type;
-  if (t === 'cover')     showMask('left');
-  else if (t === 'back') showMask('right');
-  else                   hideMask();
+function applyPgSingle(idx) {
+  const s = SPREADS[idx];
+  if (s.type === 'cover')     showPgSingle(img(s.R));
+  else if (s.type === 'back') showPgSingle(img(s.L));
+  else                        hidePgSingle();
 }
 
 // Silence leaf transform instantly (no CSS transition)
@@ -379,14 +387,14 @@ function renderSpread(idx) {
   const curRight = (s.type === 'cover' || s.type === 'pair') ? img(s.R) : '';
   const nxtLeft  = nxt ? (nxt.L != null ? img(nxt.L) : '') : '';
   leafToRight(curRight, nxtLeft);
-  applyMaskForSpread(idx);
+  applyPgSingle(idx);
 }
 
 /* ══════════════════════════════════════════
    FORWARD FLIP
 ══════════════════════════════════════════ */
 function flipForward() {
-  hideMask();
+  hidePgSingle();
   const s   = SPREADS[sIdx];
   const nxt = SPREADS[sIdx + 1];
   if (!nxt) return;
@@ -420,7 +428,7 @@ function flipForward() {
     const nxt2Left = nxt2 ? (nxt2.L != null ? img(nxt2.L) : '') : '';
     ri.src = nxt2 ? (nxt2.R != null ? img(nxt2.R) : '') : '';
     leafToRight(newRight, nxt2Left);
-    applyMaskForSpread(sIdx);
+    applyPgSingle(sIdx);
     updateUI();
     busy = false;
   }, 700);
@@ -430,39 +438,39 @@ function flipForward() {
    BACKWARD FLIP
 ══════════════════════════════════════════ */
 function flipBackward() {
-  hideMask();
+  hidePgSingle();
   const s   = SPREADS[sIdx];
   const prv = SPREADS[sIdx - 1];
   if (!prv) return;
 
-  // Setup: left-bg already shows current left (s.L or empty)
-  // leaf goes to LEFT side, front = current left, back = previous right
-  const curLeft = (s.type === 'pair' || s.type === 'back') ? img(s.L) : '';
+  const curLeft  = (s.type === 'pair' || s.type === 'back') ? img(s.L) : '';
   const prvRight = (prv.type === 'cover' || prv.type === 'pair') ? img(prv.R) : '';
   leafToLeft(curLeft, prvRight);
 
-  // Also set right-bg to current right (stays visible)
+  // KEY FIX: set left-bg to previous left BEFORE animation starts.
+  // The leaf covers it now; as it peels away it reveals the correct page.
+  li.src = prv.L != null ? img(prv.L) : '';
+
+  // Right-bg = current right page, stays visible while leaf is on the left
   ri.src = s.R != null ? img(s.R) : '';
 
   lbg.classList.add('shadowed');
 
   requestAnimationFrame(() => {
     leaf.classList.add('animate');
-    // Flip rightward: leaf goes from left-half to right-half
     leaf.style.transform = 'rotateY(180deg)';
   });
 
   setTimeout(() => {
     sIdx--;
     lbg.classList.remove('shadowed');
-    // Settle: left-bg = prev left
-    li.src = prv.L != null ? img(prv.L) : '';
+    // li.src is already correct; just update ri and reset leaf
     const nxt2 = SPREADS[sIdx + 1];
     const newRight = (prv.type === 'cover' || prv.type === 'pair') ? img(prv.R) : '';
     const nxt2Left = nxt2 ? (nxt2.L != null ? img(nxt2.L) : '') : '';
     ri.src = nxt2 ? (nxt2.R != null ? img(nxt2.R) : '') : '';
     leafToRight(newRight, nxt2Left);
-    applyMaskForSpread(sIdx);
+    applyPgSingle(sIdx);
     updateUI();
     busy = false;
   }, 700);
@@ -527,6 +535,7 @@ function applyMode() {
     sIdx = Math.min(Math.floor(pIdx / 2), SPREADS.length - 1);
     renderSpread(sIdx);
   } else {
+    hidePgSingle();
     // Sync spread → page
     const s = SPREADS[sIdx];
     if (s.type === 'cover')      pIdx = 0;
@@ -576,6 +585,15 @@ let resizeTimer;
 window.addEventListener('resize', ()=>{
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(applyMode, 150);
+});
+
+/* ══════════════════════════════════════════
+   SINGLE-PAGE OVERLAY NAVIGATION
+══════════════════════════════════════════ */
+pgsingle.addEventListener('click', function() {
+  const t = SPREADS[sIdx].type;
+  if (t === 'cover') bkNav(1);
+  else if (t === 'back') bkNav(-1);
 });
 
 /* ══════════════════════════════════════════
