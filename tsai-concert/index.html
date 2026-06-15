@@ -53,18 +53,20 @@ html,body{
   display:flex;align-items:center;justify-content:center;
 }
 
-/* Book container – preserves perspective for 3D flip */
+/* Book container
+   IMPORTANT: no `filter` — filter creates a flat compositing layer
+   and breaks CSS 3D transforms on child elements.
+   Use box-shadow instead. Explicit w/h so aspect-ratio resolves in flex. */
 #bk{
   position:relative;
-  /* two portrait A5 pages: 900×1272 each → 1800×1272 */
-  aspect-ratio:1800/1272;
-  max-width:calc(100% - 40px);
-  max-height:calc(100% - 24px);
-  /* 3D context */
+  /* Pick tighter constraint between width & height limits */
+  width: min(calc(100vw - 40px), calc((100vh - 64px) * 1800 / 1272));
+  height: min(calc(100vh - 64px), calc((100vw - 40px) * 1272 / 1800));
+  /* 3D context for leaf flip */
   transform-style:preserve-3d;
   perspective:3000px;
-  /* subtle book shadow */
-  filter:drop-shadow(0 20px 60px rgba(0,0,0,.9));
+  /* Shadow — box-shadow does NOT break 3D transforms */
+  box-shadow:0 20px 70px rgba(0,0,0,.92), 0 4px 16px rgba(0,0,0,.6);
 }
 
 /* Left & right static background halves */
