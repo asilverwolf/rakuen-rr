@@ -206,6 +206,32 @@ html,body{
 }
 @keyframes pu{0%,100%{opacity:.2}50%{opacity:.6}}
 
+/* ── Pinch-to-zoom overlay ─────────────── */
+#zoom-view{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.96);
+  display:none;align-items:center;justify-content:center;
+  z-index:500;touch-action:none;overflow:hidden;
+}
+#zoom-img{
+  max-width:100%;max-height:100%;
+  display:block;will-change:transform;
+  transform-origin:center center;
+  box-shadow:0 0 60px rgba(0,0,0,.8);
+}
+#zoom-close{
+  position:absolute;top:14px;right:14px;
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
+  color:rgba(255,255,255,.6);font-size:18px;line-height:36px;text-align:center;
+  cursor:pointer;z-index:10;
+}
+#zoom-hint{
+  position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+  font-size:9px;letter-spacing:.25em;color:rgba(255,255,255,.2);
+  white-space:nowrap;pointer-events:none;
+}
+
 /* Cover / back-cover: full-screen overlay, single page centered */
 #pgsingle{
   position:fixed;top:40px;left:0;right:0;bottom:0;
@@ -225,6 +251,13 @@ html,body{
 <body>
 
 <div id="ldr"><span>Loading</span></div>
+
+<!-- Pinch-to-zoom overlay -->
+<div id="zoom-view">
+  <img id="zoom-img" alt="">
+  <div id="zoom-close">×</div>
+  <div id="zoom-hint">tap to close</div>
+</div>
 
 <!-- Header -->
 <div id="hdr">
@@ -561,19 +594,130 @@ document.addEventListener('keydown', e => {
 });
 
 /* ══════════════════════════════════════════
-   TOUCH SWIPE
+   PINCH-TO-ZOOM
+══════════════════════════════════════════ */
+const zv  = document.getElementById('zoom-view');
+const zvi = document.getElementById('zoom-img');
+
+let zActive=false, zScale=1, zTx=0, zTy=0;
+let zPD=null, zPM=null, zPan=null, zPinching=false, zTap=null;
+
+function zD(t){ const dx=t[0].clientX-t[1].clientX,dy=t[0].clientY-t[1].clientY; return Math.sqrt(dx*dx+dy*dy); }
+function zM(t){ return [(t[0].clientX+t[1].clientX)/2,(t[0].clientY+t[1].clientY)/2]; }
+
+function zApply(){
+  const mx=Math.max(0,(zScale-1)*window.innerWidth/2);
+  const my=Math.max(0,(zScale-1)*window.innerHeight/2);
+  zTx=Math.max(-mx,Math.min(mx,zTx));
+  zTy=Math.max(-my,Math.min(my,zTy));
+  zvi.style.transform='scale('+zScale+') translate('+(zTx/zScale)+'px,'+(zTy/zScale)+'px)';
+}
+
+function zGetSrc(cx,cy){
+  if(!isBookMode()) return IMGS[pIdx];
+  if(pgsingle.style.display==='flex'){
+    const s=SPREADS[sIdx]; return img(s.type==='cover'?s.R:s.L);
+  }
+  const bkEl=document.getElementById('bk');
+  const r=bkEl.getBoundingClientRect();
+  const s=SPREADS[sIdx];
+  if(cx < r.left+r.width/2) return (s.type==='pair'||s.type==='back')?img(s.L):null;
+  else                       return (s.type==='cover'||s.type==='pair')?img(s.R):null;
+}
+
+function zOpen(src,scale){
+  if(!src) return;
+  zvi.src=src; zvi.style.transform='';
+  zScale=scale||2; zTx=0; zTy=0;
+  zApply();
+  zv.style.display='flex'; zActive=true;
+}
+
+function zClose(){
+  zv.style.display='none'; zActive=false;
+  zScale=1; zTx=0; zTy=0;
+}
+
+// Zoom-view touch: pan + pinch-zoom + tap-to-close
+zv.addEventListener('touchstart',function(e){
+  e.preventDefault();
+  zPinching=false;
+  if(e.touches.length===2){
+    zPD=zD(e.touches); zPM=zM(e.touches); zPan=null; zTap=null;
+  } else if(e.touches.length===1){
+    zPan={x:e.touches[0].clientX,y:e.touches[0].clientY,tx:zTx,ty:zTy};
+    zTap={x:e.touches[0].clientX,y:e.touches[0].clientY};
+    zPD=null;
+  }
+},{passive:false});
+
+zv.addEventListener('touchmove',function(e){
+  e.preventDefault();
+  if(e.touches.length===2&&zPD!=null){
+    const d=zD(e.touches),m=zM(e.touches);
+    zScale=Math.max(1,Math.min(6,zScale*d/zPD));
+    zTx+=m[0]-zPM[0]; zTy+=m[1]-zPM[1];
+    zPD=d; zPM=m; zPinching=true; zApply();
+  } else if(e.touches.length===1&&zPan){
+    zTx=zPan.tx+(e.touches[0].clientX-zPan.x);
+    zTy=zPan.ty+(e.touches[0].clientY-zPan.y);
+    zApply();
+  }
+},{passive:false});
+
+zv.addEventListener('touchend',function(e){
+  if(e.touches.length===0){
+    if(zPinching&&zScale<=1.05){ zClose(); return; }
+    if(!zPinching&&zTap){
+      const dx=e.changedTouches[0].clientX-zTap.x;
+      const dy=e.changedTouches[0].clientY-zTap.y;
+      if(Math.abs(dx)<15&&Math.abs(dy)<15) zClose();
+    }
+    zPD=null; zPan=null; zTap=null; zPinching=false;
+  } else if(e.touches.length===1){
+    zPD=null; zPinching=false;
+    zPan={x:e.touches[0].clientX,y:e.touches[0].clientY,tx:zTx,ty:zTy};
+    zTap=null;
+  }
+},{passive:true});
+
+document.getElementById('zoom-close').addEventListener('click',zClose);
+
+/* ══════════════════════════════════════════
+   TOUCH SWIPE + PINCH DETECTION
 ══════════════════════════════════════════ */
 let tx0=null, ty0=null;
-document.addEventListener('touchstart', e=>{
+let mPinch0=null, mPinchXY=null;
+
+document.addEventListener('touchstart',e=>{
+  if(zActive) return;
+  if(e.touches.length===2){
+    mPinch0=zD(e.touches);
+    mPinchXY=[e.touches[0].clientX,e.touches[0].clientY];
+    tx0=null; return;
+  }
+  mPinch0=null;
   tx0=e.changedTouches[0].clientX;
   ty0=e.changedTouches[0].clientY;
 },{passive:true});
-document.addEventListener('touchend', e=>{
+
+document.addEventListener('touchmove',e=>{
+  if(zActive||e.touches.length!==2||mPinch0==null) return;
+  const d=zD(e.touches);
+  if(d-mPinch0>20){
+    zOpen(zGetSrc(mPinchXY[0],mPinchXY[1]), Math.max(1.8,d/mPinch0*1.5));
+    mPinch0=null;
+  }
+},{passive:true});
+
+document.addEventListener('touchend',e=>{
+  if(zActive){ mPinch0=null; return; }
+  mPinch0=null;
   if(tx0===null) return;
   const dx=e.changedTouches[0].clientX-tx0;
   const dy=e.changedTouches[0].clientY-ty0;
-  if(Math.abs(dx)>Math.abs(dy) && Math.abs(dx)>40){
-    isBookMode() ? bkNav(dx<0?1:-1) : snNav(dx<0?1:-1);
+  if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){
+    isBookMode()?bkNav(dx<0?1:-1):snNav(dx<0?1:-1);
   }
   tx0=ty0=null;
 },{passive:true});
