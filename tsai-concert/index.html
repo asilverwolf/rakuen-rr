@@ -4,437 +4,556 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0d0d0d">
-<meta property="og:title" content="蔡佩伶｜小提琴學位音樂會 節目冊">
-<meta property="og:description" content="Pei-Ling Tsai — Violin Degree Recital Program Book">
+<meta property="og:title" content="蔡佩伶｜小提琴學位音樂會">
 <title>蔡佩伶｜小提琴學位音樂會</title>
 <style>
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  width:100%;height:100%;
+  background:#111;
+  overflow:hidden;
+  font-family:Georgia,'Times New Roman',serif;
+  color:#ccc;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:none;
+}
 
-  html, body {
-    width: 100%; height: 100%;
-    background: #0d0d0d;
-    overflow: hidden;
-    font-family: 'Georgia', 'Times New Roman', serif;
-    color: #ccc;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: pan-y;
-  }
+/* ── Header ─────────────────────────────── */
+#hdr{
+  position:fixed;top:0;left:0;right:0;
+  height:40px;
+  background:rgba(10,10,10,.96);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 18px;
+  z-index:200;
+  gap:12px;
+}
+.ht{
+  font-size:9.5px;letter-spacing:.28em;
+  text-transform:uppercase;
+  color:rgba(200,200,200,.35);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
 
-  /* ── Layout ── */
-  #viewer {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+/* ── Stage ───────────────────────────────── */
+#stage{
+  position:fixed;
+  top:40px;left:0;right:0;bottom:0;
+  display:flex;align-items:center;justify-content:center;
+  background:#111;
+}
 
-  #header {
-    flex-shrink: 0;
-    width: 100%;
-    padding: 12px 20px 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #0d0d0d;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-  #header-title {
-    font-size: 10px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: rgba(204,204,204,0.4);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  #counter {
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    color: rgba(204,204,204,0.35);
-    flex-shrink: 0;
-    margin-left: 16px;
-  }
+/* ══════════════════════════════════════════
+   BOOK MODE  (landscape / wide)
+══════════════════════════════════════════ */
+#book-mode{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+}
 
-  #book-wrap {
-    flex: 1;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-  }
+/* Book container – preserves perspective for 3D flip */
+#bk{
+  position:relative;
+  /* two portrait A5 pages: 900×1272 each → 1800×1272 */
+  aspect-ratio:1800/1272;
+  max-width:calc(100% - 40px);
+  max-height:calc(100% - 24px);
+  /* 3D context */
+  transform-style:preserve-3d;
+  perspective:3000px;
+  /* subtle book shadow */
+  filter:drop-shadow(0 20px 60px rgba(0,0,0,.9));
+}
 
-  /* ── Page display ── */
-  #stage {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-    gap: 0;
-  }
+/* Left & right static background halves */
+.bg{
+  position:absolute;top:0;height:100%;width:50%;
+  overflow:hidden;
+  background:#1a1a1a; /* dark placeholder */
+}
+#lbg{left:0;}
+#rbg{left:50%;}
+.bg img{width:100%;height:100%;object-fit:cover;display:block;}
 
-  .page-slot {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    transition: opacity 0.25s ease;
-  }
+/* Spine shadow overlay */
+#spine{
+  position:absolute;top:0;bottom:0;
+  left:calc(50% - 6px);width:12px;
+  background:linear-gradient(to right,
+    rgba(0,0,0,.45) 0%,rgba(0,0,0,.1) 40%,
+    rgba(0,0,0,.1) 60%,rgba(0,0,0,.4) 100%);
+  pointer-events:none;z-index:20;
+}
 
-  .page-slot img {
-    display: block;
-    max-height: 100%;
-    max-width: 100%;
-    object-fit: contain;
-    box-shadow: 0 12px 60px rgba(0,0,0,0.85), 0 2px 8px rgba(0,0,0,0.5);
-    background: #fff;
-  }
+/* ── The turning leaf ─────────────────────
+   Sits over the RIGHT half, transform-origin = left spine
+   Forward flip: rotateY(0) → rotateY(-180deg)
+   Backward flip: repositioned to LEFT, origin=right, then rotates back
+──────────────────────────────────────────── */
+#leaf{
+  position:absolute;top:0;height:100%;
+  left:50%;width:50%;
+  transform-origin:left center;
+  transform-style:preserve-3d;
+  transform:rotateY(0deg);
+  z-index:10;
+}
+#leaf.animate{
+  transition:transform .68s cubic-bezier(.455,.03,.515,.955);
+}
+/* front face (default: shows current right page) */
+#lf,#lb{
+  position:absolute;inset:0;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  overflow:hidden;
+}
+#lf img,#lb img{width:100%;height:100%;object-fit:cover;display:block;}
+/* back face placed behind and mirrored so it reads correctly after flip */
+#lb{transform:rotateY(180deg) scaleX(-1);}
 
-  /* Spread pages fill full width */
-  .page-slot.is-spread {
-    width: 100%;
-  }
-  .page-slot.is-spread img {
-    max-width: min(95vw, 1400px);
-  }
+/* Page-turn shadow on front face */
+#lf::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(0,0,0,0) 55%,rgba(0,0,0,.28) 100%);
+  opacity:0;transition:opacity .68s;
+}
+#leaf.animate #lf::after{opacity:1;}
 
-  /* Desktop: show 2 portrait pages side by side */
-  @media (min-width: 700px) {
-    #stage.dual-mode .page-slot {
-      width: 50%;
-      padding: 0 4px;
-    }
-    #stage.dual-mode .page-slot img {
-      max-width: 100%;
-      max-height: calc(100vh - 120px);
-    }
-  }
+/* Shadow on exposed left page as right page lifts */
+#lbg::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:2;
+  background:linear-gradient(to left,rgba(0,0,0,.25) 0%,transparent 60%);
+  opacity:0;transition:opacity .68s;
+}
+#lbg.shadowed::after{opacity:1;}
 
-  /* Mobile: full width single page */
-  @media (max-width: 699px) {
-    .page-slot img {
-      max-height: calc(100vh - 110px);
-      max-width: 96vw;
-    }
-  }
+/* ── Click zones ────────────────────────── */
+#zl,#zr{
+  position:absolute;top:0;bottom:0;width:38%;
+  cursor:pointer;z-index:30;
+}
+#zl{left:0;}
+#zr{right:0;}
 
-  /* ── Transitions ── */
-  .anim-in-right { animation: fadeSlideRight 0.28s ease forwards; }
-  .anim-in-left  { animation: fadeSlideLeft  0.28s ease forwards; }
+/* ── Hover nav arrows ───────────────────── */
+.arr{
+  position:fixed;top:50%;transform:translateY(-50%);
+  width:38px;height:38px;border-radius:50%;
+  background:rgba(12,12,12,.7);
+  border:1px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.45);
+  font-size:13px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s,background .2s,color .2s;
+  z-index:100;
+}
+#stage:hover .arr{opacity:1;}
+.arr:hover{background:rgba(30,30,30,.9);color:#fff;}
+.arr:disabled,.arr.off{opacity:0!important;pointer-events:none;}
+#al{left:10px;}
+#ar{right:10px;}
 
-  @keyframes fadeSlideRight {
-    from { opacity: 0; transform: translateX(40px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
-  @keyframes fadeSlideLeft {
-    from { opacity: 0; transform: translateX(-40px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
+/* ══════════════════════════════════════════
+   SINGLE/PORTRAIT MODE
+══════════════════════════════════════════ */
+#single-mode{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+}
+#si{
+  max-width:100%;max-height:100%;
+  object-fit:contain;display:block;
+  box-shadow:0 10px 50px rgba(0,0,0,.9);
+}
 
-  /* ── Click zones (invisible, left/right halves) ── */
-  #zone-prev, #zone-next {
-    position: absolute;
-    top: 0; bottom: 0;
-    width: 30%;
-    cursor: pointer;
-    z-index: 5;
-  }
-  #zone-prev { left: 0; }
-  #zone-next { right: 0; }
+/* Slide transitions */
+@keyframes sIn {from{opacity:0;transform:translateX(var(--tx,50px))}to{opacity:1;transform:none}}
+.slide-anim{animation:sIn .28s ease forwards;}
 
-  /* Arrow hints on hover */
-  #zone-prev::after, #zone-next::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    width: 28px; height: 28px;
-    border: 1.5px solid rgba(255,255,255,0.18);
-    border-radius: 50%;
-    transform: translateY(-50%);
-    opacity: 0;
-    transition: opacity 0.2s;
-    background: rgba(13,13,13,0.6);
-    display: flex; align-items: center; justify-content: center;
-  }
-  #zone-prev:hover::after { opacity: 1; left: 16px; }
-  #zone-next:hover::after { opacity: 1; right: 16px; }
+/* Tap zones for portrait */
+#tl,#tr{
+  position:fixed;top:40px;bottom:0;width:28%;
+  z-index:50;cursor:pointer;
+}
+#tl{left:0;}
+#tr{right:0;}
 
-  /* ── Bottom nav ── */
-  #nav {
-    flex-shrink: 0;
-    width: 100%;
-    height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    background: #0d0d0d;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    padding: 0 20px;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
+/* ── Page counter ─────────────────────── */
+#ctr{
+  position:fixed;bottom:12px;left:50%;transform:translateX(-50%);
+  font-size:9px;letter-spacing:.3em;
+  color:rgba(200,200,200,.22);
+  z-index:150;white-space:nowrap;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
 
-  .nav-btn {
-    background: none;
-    border: 1px solid rgba(255,255,255,0.15);
-    color: rgba(204,204,204,0.7);
-    font-size: 13px;
-    width: 36px; height: 32px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.18s;
-    border-radius: 2px;
-    flex-shrink: 0;
-  }
-  .nav-btn:hover:not(:disabled) {
-    background: rgba(255,255,255,0.08);
-    color: #fff;
-    border-color: rgba(255,255,255,0.3);
-  }
-  .nav-btn:disabled { opacity: 0.18; cursor: default; }
-
-  /* Thumbnail strip */
-  #thumb-strip {
-    flex: 1;
-    overflow-x: auto;
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-  }
-  #thumb-strip::-webkit-scrollbar { display: none; }
-
-  .thumb {
-    flex-shrink: 0;
-    height: 34px;
-    width: auto;
-    opacity: 0.35;
-    cursor: pointer;
-    border: 1px solid transparent;
-    border-radius: 1px;
-    transition: opacity 0.18s, border-color 0.18s;
-    object-fit: cover;
-  }
-  .thumb:hover { opacity: 0.65; }
-  .thumb.active {
-    opacity: 1;
-    border-color: rgba(255,255,255,0.5);
-  }
-
-  /* ── Preload indicator ── */
-  #loading {
-    position: fixed;
-    inset: 0;
-    background: #0d0d0d;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    transition: opacity 0.4s;
-  }
-  #loading.done { opacity: 0; pointer-events: none; }
-  #loading-text {
-    font-size: 10px;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.25);
-    animation: pulse 1.2s ease infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.25; }
-    50% { opacity: 0.6; }
-  }
+/* ── Loader ──────────────────────────── */
+#ldr{
+  position:fixed;inset:0;background:#111;
+  display:flex;align-items:center;justify-content:center;
+  z-index:999;transition:opacity .5s;
+}
+#ldr.done{opacity:0;pointer-events:none;}
+#ldr span{
+  font-size:9px;letter-spacing:.5em;text-transform:uppercase;
+  color:rgba(255,255,255,.2);
+  animation:pu 1.2s ease infinite;
+}
+@keyframes pu{0%,100%{opacity:.2}50%{opacity:.6}}
 </style>
 </head>
 <body>
 
-<div id="loading"><span id="loading-text">Loading</span></div>
+<div id="ldr"><span>Loading</span></div>
 
-<div id="viewer">
+<!-- Header -->
+<div id="hdr">
+  <span class="ht">蔡佩伶｜小提琴學位音樂會</span>
+  <span class="ht" id="pgn"></span>
+</div>
 
-  <div id="header">
-    <span id="header-title">蔡佩伶｜小提琴學位音樂會</span>
-    <span id="counter">1 / 18</span>
+<!-- Stage -->
+<div id="stage">
+
+  <!-- ── Book mode ── -->
+  <div id="book-mode">
+    <div id="bk">
+      <!-- static background halves -->
+      <div class="bg" id="lbg"><img id="li" src="" alt=""></div>
+      <div class="bg" id="rbg"><img id="ri" src="" alt=""></div>
+      <!-- turning leaf -->
+      <div id="leaf">
+        <div id="lf"><img id="lfi" src="" alt=""></div>
+        <div id="lb"><img id="lbi" src="" alt=""></div>
+      </div>
+      <!-- spine -->
+      <div id="spine"></div>
+      <!-- click zones -->
+      <div id="zl" onclick="bkNav(-1)"></div>
+      <div id="zr" onclick="bkNav(1)"></div>
+    </div>
+    <button class="arr off" id="al" onclick="bkNav(-1)">&#9664;</button>
+    <button class="arr"     id="ar" onclick="bkNav(1)">&#9654;</button>
   </div>
 
-  <div id="book-wrap">
-    <div id="zone-prev" onclick="navigate(-1)" role="button" aria-label="上一頁"></div>
-    <div id="zone-next" onclick="navigate(1)"  role="button" aria-label="下一頁"></div>
-    <div id="stage"></div>
+  <!-- ── Single/portrait mode ── -->
+  <div id="single-mode">
+    <img id="si" src="" alt="">
+    <div id="tl" onclick="snNav(-1)"></div>
+    <div id="tr" onclick="snNav(1)"></div>
   </div>
-
-  <nav id="nav">
-    <button class="nav-btn" id="btn-prev" onclick="navigate(-1)" aria-label="上一頁">&#9664;</button>
-    <div id="thumb-strip"></div>
-    <button class="nav-btn" id="btn-next" onclick="navigate(1)" aria-label="下一頁">&#9654;</button>
-  </nav>
 
 </div>
 
+<!-- Counter -->
+<div id="ctr"></div>
+
 <script>
-// ── Page data ──────────────────────────────────────────────
-const PAGES = [
-  {src:'imgs/A5-00.jpg',       type:'single', label:'封面'},
-  {src:'imgs/A5-01.jpg',       type:'single', label:'01'},
-  {src:'imgs/A5-02.jpg',       type:'single', label:'02'},
-  {src:'imgs/A5-03.jpg',       type:'single', label:'03'},
-  {src:'imgs/A5-04.jpg',       type:'single', label:'04'},
-  {src:'imgs/A5-05.jpg',       type:'single', label:'05'},
-  {src:'imgs/A5-06.jpg',       type:'single', label:'06'},
-  {src:'imgs/A5-07.jpg',       type:'single', label:'07'},
-  {src:'imgs/A5-08.jpg',       type:'single', label:'08'},
-  {src:'imgs/A5-09.jpg',       type:'single', label:'09'},
-  {src:'imgs/A5-10.jpg',       type:'single', label:'10'},
-  {src:'imgs/A5-11.jpg',       type:'single', label:'封底'},
-  {src:'imgs/A5曲目表-01.jpg', type:'spread', label:'曲目 1'},
-  {src:'imgs/A5曲目表-02.jpg', type:'spread', label:'曲目 2'},
-  {src:'imgs/A5曲目表-03.jpg', type:'spread', label:'曲目 3'},
-  {src:'imgs/A5曲目表-04.jpg', type:'spread', label:'曲目 4'},
-  {src:'imgs/A5曲目表-05.jpg', type:'spread', label:'曲目 5'},
-  {src:'imgs/A5曲目表-06.jpg', type:'spread', label:'曲目 6'},
+/* ══════════════════════════════════════════
+   DATA
+══════════════════════════════════════════ */
+// 12 single pages; A5-00=cover, A5-11=back cover
+const IMGS = [
+  'imgs/A5-00.jpg','imgs/A5-01.jpg','imgs/A5-02.jpg','imgs/A5-03.jpg',
+  'imgs/A5-04.jpg','imgs/A5-05.jpg','imgs/A5-06.jpg','imgs/A5-07.jpg',
+  'imgs/A5-08.jpg','imgs/A5-09.jpg','imgs/A5-10.jpg','imgs/A5-11.jpg',
 ];
 
-// ── State ──────────────────────────────────────────────────
-let cur = 0;
-let transitioning = false;
+// Landscape spreads
+// type: 'cover'=single right, 'pair'=left+right, 'back'=single left
+const SPREADS = [
+  {type:'cover', R:0},             // spread 0: cover alone on right
+  {type:'pair',  L:1, R:2},        // spread 1
+  {type:'pair',  L:3, R:4},        // spread 2
+  {type:'pair',  L:5, R:6},        // spread 3
+  {type:'pair',  L:7, R:8},        // spread 4
+  {type:'pair',  L:9, R:10},       // spread 5
+  {type:'back',  L:11},            // spread 6: back cover alone on left
+];
 
-const isWide = () => window.innerWidth >= 700;
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+let sIdx = 0;   // spread index (book mode)
+let pIdx = 0;   // page index (portrait mode)
+let busy = false;
 
-// ── Build thumbnail strip ──────────────────────────────────
-(function buildThumbs() {
-  const strip = document.getElementById('thumb-strip');
-  PAGES.forEach((p, i) => {
-    const img = document.createElement('img');
-    img.src = p.src;
-    img.className = 'thumb' + (i === 0 ? ' active' : '');
-    img.alt = p.label;
-    img.onclick = () => goTo(i);
-    strip.appendChild(img);
+/* ══════════════════════════════════════════
+   DOM refs
+══════════════════════════════════════════ */
+const bookMode   = document.getElementById('book-mode');
+const singleMode = document.getElementById('single-mode');
+const leaf = document.getElementById('leaf');
+const lfi  = document.getElementById('lfi');  // leaf front image
+const lbi  = document.getElementById('lbi');  // leaf back image
+const li   = document.getElementById('li');   // left-bg image
+const ri   = document.getElementById('ri');   // right-bg image
+const siEl = document.getElementById('si');   // single mode image
+const lbg  = document.getElementById('lbg');  // left bg div (for shadow class)
+const al   = document.getElementById('al');   // arrow left
+const ar   = document.getElementById('ar');   // arrow right
+
+/* ══════════════════════════════════════════
+   MODE DETECTION
+══════════════════════════════════════════ */
+function isBookMode() {
+  return window.innerWidth >= 700 && window.innerWidth > window.innerHeight;
+}
+
+/* ══════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════ */
+function img(idx) { return idx != null && idx >= 0 ? IMGS[idx] : ''; }
+
+// Silence leaf transform instantly (no CSS transition)
+function leafInstant() {
+  leaf.classList.remove('animate');
+  void leaf.offsetWidth; // reflow
+}
+
+// Setup leaf on RIGHT side (normal position, no transition)
+function leafToRight(frontSrc, backSrc) {
+  leafInstant();
+  leaf.style.left = '50%';
+  leaf.style.width = '50%';
+  leaf.style.transformOrigin = 'left center';
+  leaf.style.transform = 'rotateY(0deg)';
+  lfi.src = frontSrc;
+  lbi.src = backSrc;
+}
+
+// Setup leaf on LEFT side (for backward flip)
+function leafToLeft(frontSrc, backSrc) {
+  leafInstant();
+  leaf.style.left = '0%';
+  leaf.style.width = '50%';
+  leaf.style.transformOrigin = 'right center';
+  leaf.style.transform = 'rotateY(0deg)';
+  lfi.src = frontSrc;
+  lbi.src = backSrc;
+}
+
+/* ══════════════════════════════════════════
+   BOOK RENDER (instant, no animation)
+══════════════════════════════════════════ */
+function renderSpread(idx) {
+  const s = SPREADS[idx];
+  // left-bg
+  li.src = (s.type === 'pair' || s.type === 'back') ? img(s.L) : '';
+  // right-bg (pre-loads next right, hidden under leaf for pair/cover)
+  const nxt = SPREADS[idx + 1];
+  ri.src = nxt ? (nxt.R != null ? img(nxt.R) : '') : '';
+  // leaf sits over right, front=current right page
+  const curRight = (s.type === 'cover' || s.type === 'pair') ? img(s.R) : '';
+  const nxtLeft  = nxt ? (nxt.L != null ? img(nxt.L) : '') : '';
+  leafToRight(curRight, nxtLeft);
+}
+
+/* ══════════════════════════════════════════
+   FORWARD FLIP
+══════════════════════════════════════════ */
+function flipForward() {
+  const s   = SPREADS[sIdx];
+  const nxt = SPREADS[sIdx + 1];
+  if (!nxt) return;
+
+  // Pre-load right-bg with next right page (revealed once leaf flips away)
+  ri.src = nxt.R != null ? img(nxt.R) : '';
+  // leaf-front = current right page, leaf-back = next left page
+  lfi.src = (s.type === 'cover' || s.type === 'pair') ? img(s.R) : '';
+  lbi.src = nxt.L != null ? img(nxt.L) : '';
+
+  leafInstant();
+  leaf.style.left = '50%';
+  leaf.style.transformOrigin = 'left center';
+  leaf.style.transform = 'rotateY(0deg)';
+
+  lbg.classList.add('shadowed');
+
+  // Trigger
+  requestAnimationFrame(() => {
+    leaf.classList.add('animate');
+    leaf.style.transform = 'rotateY(-180deg)';
   });
-})();
 
-function updateThumbs() {
-  const thumbs = document.querySelectorAll('.thumb');
-  thumbs.forEach((t, i) => t.classList.toggle('active', i === cur));
-  // Scroll active thumb into view
-  const active = thumbs[cur];
-  if (active) active.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+  setTimeout(() => {
+    sIdx++;
+    lbg.classList.remove('shadowed');
+    // Settle: left-bg = new left, leaf reset to right
+    li.src = nxt.L != null ? img(nxt.L) : '';
+    const nxt2 = SPREADS[sIdx + 1];
+    const newRight = SPREADS[sIdx].R != null ? img(SPREADS[sIdx].R) : '';
+    const nxt2Left = nxt2 ? (nxt2.L != null ? img(nxt2.L) : '') : '';
+    ri.src = nxt2 ? (nxt2.R != null ? img(nxt2.R) : '') : '';
+    leafToRight(newRight, nxt2Left);
+    updateUI();
+    busy = false;
+  }, 700);
 }
 
-// ── Render ─────────────────────────────────────────────────
-function render(dir) {
-  const stage = document.getElementById('stage');
-  const p = PAGES[cur];
-  const wide = isWide();
-  const animClass = dir >= 0 ? 'anim-in-right' : 'anim-in-left';
+/* ══════════════════════════════════════════
+   BACKWARD FLIP
+══════════════════════════════════════════ */
+function flipBackward() {
+  const s   = SPREADS[sIdx];
+  const prv = SPREADS[sIdx - 1];
+  if (!prv) return;
 
-  stage.innerHTML = '';
+  // Setup: left-bg already shows current left (s.L or empty)
+  // leaf goes to LEFT side, front = current left, back = previous right
+  const curLeft = (s.type === 'pair' || s.type === 'back') ? img(s.L) : '';
+  const prvRight = (prv.type === 'cover' || prv.type === 'pair') ? img(prv.R) : '';
+  leafToLeft(curLeft, prvRight);
 
-  if (p.type === 'spread') {
-    // Spread: always single image full-width
-    stage.classList.remove('dual-mode');
-    const slot = makeSlot(p, true, animClass);
-    stage.appendChild(slot);
-  } else if (wide && cur + 1 < PAGES.length && PAGES[cur + 1].type === 'single' && cur % 2 === 1) {
-    // Desktop: show pair (left + right) — only when both are single pages and cur is odd
-    stage.classList.add('dual-mode');
-    stage.appendChild(makeSlot(p, false, animClass));
-    stage.appendChild(makeSlot(PAGES[cur + 1], false, animClass));
-  } else if (wide && cur - 1 >= 0 && PAGES[cur - 1].type === 'single' && cur % 2 === 0 && cur > 0 && dir < 0) {
-    // Desktop navigating back — show pair (cur-1, cur)
-    stage.classList.add('dual-mode');
-    stage.appendChild(makeSlot(PAGES[cur - 1], false, animClass));
-    stage.appendChild(makeSlot(p, false, animClass));
+  // Also set right-bg to current right (stays visible)
+  ri.src = s.R != null ? img(s.R) : '';
+
+  lbg.classList.add('shadowed');
+
+  requestAnimationFrame(() => {
+    leaf.classList.add('animate');
+    // Flip rightward: leaf goes from left-half to right-half
+    leaf.style.transform = 'rotateY(180deg)';
+  });
+
+  setTimeout(() => {
+    sIdx--;
+    lbg.classList.remove('shadowed');
+    // Settle: left-bg = prev left
+    li.src = prv.L != null ? img(prv.L) : '';
+    const nxt2 = SPREADS[sIdx + 1];
+    const newRight = (prv.type === 'cover' || prv.type === 'pair') ? img(prv.R) : '';
+    const nxt2Left = nxt2 ? (nxt2.L != null ? img(nxt2.L) : '') : '';
+    ri.src = nxt2 ? (nxt2.R != null ? img(nxt2.R) : '') : '';
+    leafToRight(newRight, nxt2Left);
+    updateUI();
+    busy = false;
+  }, 700);
+}
+
+/* ══════════════════════════════════════════
+   BOOK NAVIGATION
+══════════════════════════════════════════ */
+function bkNav(dir) {
+  if (busy) return;
+  if (dir > 0 && sIdx >= SPREADS.length - 1) return;
+  if (dir < 0 && sIdx <= 0) return;
+  busy = true;
+  if (dir > 0) flipForward();
+  else         flipBackward();
+}
+
+/* ══════════════════════════════════════════
+   PORTRAIT (SINGLE) NAVIGATION
+══════════════════════════════════════════ */
+function snNav(dir) {
+  const n = pIdx + dir;
+  if (n < 0 || n >= IMGS.length) return;
+  pIdx = n;
+  siEl.style.setProperty('--tx', dir > 0 ? '50px' : '-50px');
+  siEl.classList.remove('slide-anim');
+  void siEl.offsetWidth;
+  siEl.src = IMGS[pIdx];
+  siEl.classList.add('slide-anim');
+  updateUI();
+}
+
+/* ══════════════════════════════════════════
+   UPDATE UI (counters, arrows)
+══════════════════════════════════════════ */
+function updateUI() {
+  const book = isBookMode();
+  if (book) {
+    const total = SPREADS.length;
+    document.getElementById('pgn').textContent = (sIdx + 1) + ' / ' + total;
+    document.getElementById('ctr').textContent = (sIdx + 1) + ' — ' + total;
+    al.classList.toggle('off', sIdx === 0);
+    ar.classList.toggle('off', sIdx === SPREADS.length - 1);
   } else {
-    // Single
-    stage.classList.remove('dual-mode');
-    const slot = makeSlot(p, false, animClass);
-    stage.appendChild(slot);
+    document.getElementById('pgn').textContent = (pIdx + 1) + ' / ' + IMGS.length;
+    document.getElementById('ctr').textContent = (pIdx + 1) + ' — ' + IMGS.length;
   }
-
-  // Counter
-  document.getElementById('counter').textContent = (cur + 1) + ' / ' + PAGES.length;
-  document.getElementById('btn-prev').disabled = cur === 0;
-  document.getElementById('btn-next').disabled = cur >= PAGES.length - 1;
-
-  updateThumbs();
-  transitioning = false;
 }
 
-function makeSlot(page, isSpread, animClass) {
-  const slot = document.createElement('div');
-  slot.className = 'page-slot' + (isSpread ? ' is-spread' : '');
-  const img = document.createElement('img');
-  img.src = page.src;
-  img.alt = page.label;
-  img.draggable = false;
-  img.className = animClass;
-  slot.appendChild(img);
-  return slot;
+/* ══════════════════════════════════════════
+   MODE SWITCH
+══════════════════════════════════════════ */
+function applyMode() {
+  const book = isBookMode();
+  bookMode.style.display   = book ? '' : 'none';
+  singleMode.style.display = book ? 'none' : '';
+  document.getElementById('tl').style.display = book ? 'none' : '';
+  document.getElementById('tr').style.display = book ? 'none' : '';
+
+  if (book) {
+    // Sync page index → nearest spread
+    sIdx = Math.min(Math.floor(pIdx / 2), SPREADS.length - 1);
+    renderSpread(sIdx);
+  } else {
+    // Sync spread → page
+    const s = SPREADS[sIdx];
+    if (s.type === 'cover')      pIdx = 0;
+    else if (s.type === 'back')  pIdx = IMGS.length - 1;
+    else                         pIdx = s.L;
+    siEl.src = IMGS[pIdx];
+  }
+  updateUI();
 }
 
-// ── Navigation ────────────────────────────────────────────
-function navigate(dir) {
-  if (transitioning) return;
-  const next = cur + dir;
-  if (next < 0 || next >= PAGES.length) return;
-  transitioning = true;
-  cur = next;
-  render(dir);
-}
-
-function goTo(i) {
-  if (i === cur) return;
-  const dir = i > cur ? 1 : -1;
-  cur = i;
-  render(dir);
-}
-
-// ── Keyboard ──────────────────────────────────────────────
+/* ══════════════════════════════════════════
+   KEYBOARD
+══════════════════════════════════════════ */
 document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown') navigate(1);
-  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp'   || e.key === 'PageUp')   navigate(-1);
-  if (e.key === 'Home') goTo(0);
-  if (e.key === 'End')  goTo(PAGES.length - 1);
+  if (['ArrowRight','ArrowDown','PageDown'].includes(e.key)) {
+    isBookMode() ? bkNav(1) : snNav(1);
+  }
+  if (['ArrowLeft','ArrowUp','PageUp'].includes(e.key)) {
+    isBookMode() ? bkNav(-1) : snNav(-1);
+  }
+  if (e.key === 'Home') { sIdx=0; pIdx=0; isBookMode()?renderSpread(0):null; siEl.src=IMGS[0]; updateUI(); }
+  if (e.key === 'End')  { isBookMode()?bkNav(999):(pIdx=IMGS.length-1,siEl.src=IMGS[pIdx],updateUI()); }
 });
 
-// ── Touch swipe ───────────────────────────────────────────
-let touchStartX = null, touchStartY = null;
-document.addEventListener('touchstart', e => {
-  touchStartX = e.changedTouches[0].clientX;
-  touchStartY = e.changedTouches[0].clientY;
-}, {passive: true});
-document.addEventListener('touchend', e => {
-  if (touchStartX === null) return;
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  const dy = e.changedTouches[0].clientY - touchStartY;
-  // Only horizontal swipes (not scrolling)
-  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-    navigate(dx < 0 ? 1 : -1);
+/* ══════════════════════════════════════════
+   TOUCH SWIPE
+══════════════════════════════════════════ */
+let tx0=null, ty0=null;
+document.addEventListener('touchstart', e=>{
+  tx0=e.changedTouches[0].clientX;
+  ty0=e.changedTouches[0].clientY;
+},{passive:true});
+document.addEventListener('touchend', e=>{
+  if(tx0===null) return;
+  const dx=e.changedTouches[0].clientX-tx0;
+  const dy=e.changedTouches[0].clientY-ty0;
+  if(Math.abs(dx)>Math.abs(dy) && Math.abs(dx)>40){
+    isBookMode() ? bkNav(dx<0?1:-1) : snNav(dx<0?1:-1);
   }
-  touchStartX = touchStartY = null;
-}, {passive: true});
+  tx0=ty0=null;
+},{passive:true});
 
-// ── Preload first few pages, then hide loading screen ─────
-(function preload() {
-  let loaded = 0;
-  const toLoad = Math.min(3, PAGES.length);
-  PAGES.slice(0, toLoad).forEach(p => {
-    const img = new Image();
-    img.onload = img.onerror = () => {
-      loaded++;
-      if (loaded >= toLoad) {
-        render(1);
-        setTimeout(() => document.getElementById('loading').classList.add('done'), 120);
-      }
-    };
-    img.src = p.src;
-  });
+/* ══════════════════════════════════════════
+   RESIZE
+══════════════════════════════════════════ */
+let resizeTimer;
+window.addEventListener('resize', ()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(applyMode, 150);
+});
+
+/* ══════════════════════════════════════════
+   INIT — preload cover then start
+══════════════════════════════════════════ */
+(function init() {
+  const cover = new Image();
+  cover.onload = cover.onerror = () => {
+    applyMode();
+    setTimeout(()=>document.getElementById('ldr').classList.add('done'), 100);
+  };
+  cover.src = IMGS[0];
 })();
 </script>
 </body>
