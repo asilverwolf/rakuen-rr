@@ -1149,6 +1149,11 @@
     .person.touched .person-overlay {
       background: linear-gradient(to bottom,rgba(4,4,10,0.1) 0%,rgba(4,4,10,0.05) 40%,rgba(4,4,10,0.7) 80%,rgba(4,4,10,0.95) 100%) !important;
     }
+
+    /* Client strip: stack vertically on mobile */
+    #client-strip { padding: 40px 24px !important; }
+    #client-strip a { flex-direction: column !important; gap: 20px !important; }
+    #client-strip .cs-img { width: 72px !important; height: 102px !important; }
   }
 
 </style>
@@ -1355,6 +1360,22 @@
   <div class="vine-zone" id="vineZone">
     <canvas id="vine-canvas"></canvas>
   </div>
+</section>
+
+<!-- SECTION: CLIENT WORK STRIP -->
+<section id="client-strip" style="background:#04040A;padding:56px 48px;border-top:1px solid rgba(240,240,245,0.04);">
+  <a href="what-we-do.html#commission" style="text-decoration:none;display:flex;align-items:center;gap:40px;max-width:760px;">
+    <div class="cs-img" style="flex-shrink:0;width:90px;height:127px;overflow:hidden;background:#111;">
+      <img src="tsai-concert/imgs/A5-00.jpg" alt=""
+           style="width:100%;height:100%;object-fit:cover;opacity:0.72;transition:opacity 0.4s;"
+           onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.72'">
+    </div>
+    <div>
+      <span style="display:block;font-size:9px;letter-spacing:0.45em;text-transform:uppercase;color:rgba(240,240,245,0.2);margin-bottom:14px;font-family:'Space Mono',monospace;">合作案件</span>
+      <span style="display:block;font-family:'EB Garamond',serif;font-size:clamp(16px,2vw,24px);color:rgba(240,240,245,0.78);letter-spacing:0.04em;margin-bottom:12px;">蔡佩伶｜小提琴學位音樂會</span>
+      <span style="font-size:10px;color:rgba(240,240,245,0.22);letter-spacing:0.25em;text-transform:uppercase;border-bottom:1px solid rgba(240,240,245,0.1);padding-bottom:2px;font-family:'Space Mono',monospace;">See All Work ↗</span>
+    </div>
+  </a>
 </section>
 
 <!-- SECTION 4: WHO WE ARE -->
