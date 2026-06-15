@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="alternate icon" href="logo-main.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#04040A">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>蔡佩伶｜小提琴學位音樂會 — R.R</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;1,400&display=swap');
+
+  :root {
+    --black: #04040A;
+    --grey: #888899;
+    --grey-light: #BBBBCC;
+    --white: #F0F0F5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    overflow-x: hidden;
+    cursor: none;
+    font-size: 12px;
+  }
+
+  /* CURSOR */
+  .cursor {
+    position: fixed; top: 0; left: 0;
+    width: 5px; height: 5px;
+    background: #F0F0F5; border-radius: 50%;
+    pointer-events: none; z-index: 9999; will-change: transform;
+  }
+  .cursor-ring {
+    position: fixed; top: 0; left: 0;
+    width: 28px; height: 28px;
+    border: 1px solid rgba(240,240,245,0.4); border-radius: 50%;
+    pointer-events: none; z-index: 9998; will-change: transform;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 48px;
+  }
+  nav::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(4,4,10,0.7), transparent);
+    pointer-events: none;
+  }
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px; letter-spacing: 0.2em;
+    color: var(--white); text-decoration: none;
+    position: relative; z-index: 1;
+  }
+  .nav-back {
+    font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+    color: rgba(240,240,245,0.4); text-decoration: none;
+    position: relative; z-index: 1;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--white); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 48px 72px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background-image: url('client-tsai/poster-b2.jpg');
+    background-size: cover;
+    background-position: center top;
+    opacity: 0.18;
+    filter: grayscale(40%);
+  }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(4,4,10,0.2) 0%, rgba(4,4,10,0.85) 70%, #04040A 100%);
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 760px; }
+  .hero-cat {
+    font-size: 9px; letter-spacing: 0.5em; text-transform: uppercase;
+    color: rgba(240,240,245,0.3); margin-bottom: 24px; display: block;
+  }
+  .hero-title {
+    font-family: 'EB Garamond', serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 400; line-height: 1.1;
+    letter-spacing: 0.02em;
+    color: var(--white);
+    margin-bottom: 20px;
+  }
+  .hero-sub {
+    font-size: 11px; letter-spacing: 0.2em;
+    color: rgba(240,240,245,0.35);
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* CONTENT */
+  .content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 48px 120px;
+  }
+
+  /* POSTER + INVITE GRID */
+  .assets-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-bottom: 2px;
+  }
+
+  .asset-block {
+    position: relative;
+    overflow: hidden;
+    background: #0a0a14;
+  }
+  .asset-block img {
+    width: 100%;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.16,1,0.3,1), opacity 0.4s;
+    opacity: 0.88;
+  }
+  .asset-block:hover img {
+    transform: scale(1.03);
+    opacity: 1;
+  }
+  .asset-label {
+    position: absolute;
+    bottom: 16px; left: 20px;
+    font-size: 9px; letter-spacing: 0.4em; text-transform: uppercase;
+    color: rgba(240,240,245,0.35);
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* PROGRAM PREVIEW */
+  .program-block {
+    background: #0a0a14;
+    overflow: hidden;
+    position: relative;
+  }
+  .program-block img {
+    width: 100%;
+    display: block;
+    opacity: 0.82;
+    transition: opacity 0.4s;
+  }
+  .program-block:hover img { opacity: 1; }
+
+  /* FLIPBOOK CTA */
+  .flipbook-cta {
+    margin-top: 64px;
+    border-top: 1px solid rgba(240,240,245,0.06);
+    padding-top: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .cta-text { }
+  .cta-label {
+    display: block;
+    font-size: 9px; letter-spacing: 0.45em; text-transform: uppercase;
+    color: rgba(240,240,245,0.25); margin-bottom: 12px;
+  }
+  .cta-title {
+    font-family: 'EB Garamond', serif;
+    font-size: clamp(20px, 2.5vw, 28px);
+    color: rgba(240,240,245,0.7);
+    letter-spacing: 0.02em;
+  }
+  .cta-link {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase;
+    color: rgba(240,240,245,0.4);
+    text-decoration: none;
+    border: 1px solid rgba(240,240,245,0.1);
+    padding: 14px 28px;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+  .cta-link:hover {
+    color: var(--white);
+    border-color: rgba(240,240,245,0.4);
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid rgba(240,240,245,0.06);
+    padding: 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .footer-logo {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .footer-tagline {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 11px; color: rgba(240,240,245,0.2);
+    letter-spacing: 0.1em; font-weight: 300;
+  }
+  .footer-right {
+    display: flex; gap: 32px; flex-wrap: wrap;
+  }
+  .footer-right a {
+    font-size: 10px; letter-spacing: 0.2em;
+    color: rgba(240,240,245,0.2); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-right a:hover { color: var(--white); }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    nav { padding: 20px 24px; }
+    .hero { padding: 0 24px 56px; }
+    .content { padding: 56px 24px 80px; }
+    .assets-grid { grid-template-columns: 1fr; }
+    .flipbook-cta { flex-direction: column; align-items: flex-start; }
+    footer { padding: 40px 24px; flex-direction: column; gap: 24px; }
+    .footer-right { gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo">R.R</a>
+  <a href="what-we-do.html#commission" class="nav-back">← 作品</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <span class="hero-cat">合作案件 · print design · 2024</span>
+    <h1 class="hero-title">蔡佩伶<br>小提琴學位音樂會</h1>
+    <p class="hero-sub">poster · invitation · programme · digital booklet</p>
+  </div>
+</div>
+
+<!-- ASSETS -->
+<div class="content">
+
+  <div class="assets-grid">
+    <!-- POSTER -->
+    <div class="asset-block">
+      <img src="client-tsai/poster-b2.jpg" alt="B2 海報">
+      <span class="asset-label">B2 海報</span>
+    </div>
+
+    <!-- INVITE -->
+    <div class="asset-block" style="display:flex;flex-direction:column;justify-content:center;background:#0a0a14;">
+      <img src="client-tsai/invite-a6.jpg" alt="A6 邀請卡" style="width:100%;object-fit:contain;">
+      <span class="asset-label">A6 邀請卡</span>
+    </div>
+  </div>
+
+  <!-- PROGRAM PREVIEW -->
+  <div class="program-block">
+    <img src="client-tsai/program-preview.jpg" alt="節目冊">
+    <span class="asset-label" style="position:absolute;bottom:16px;left:20px;">節目冊</span>
+  </div>
+
+  <!-- FLIPBOOK CTA -->
+  <div class="flipbook-cta">
+    <div class="cta-text">
+      <span class="cta-label">線上版本</span>
+      <p class="cta-title">翻閱數位節目冊</p>
+    </div>
+    <a href="tsai-concert/" class="cta-link">
+      開啟線上翻冊 ↗
+    </a>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <img src="logo-rakuen.png" style="height:32px;opacity:0.7;" alt="R.R">
+    <span class="footer-tagline">虛構的，所以真實</span>
+  </div>
+  <div class="footer-right">
+    <a href="https://instagram.com/rakuen.rr" target="_blank">@rakuen.rr</a>
+    <a href="https://instagram.com/liu.ruoyue" target="_blank">@liu.ruoyue</a>
+    <a href="https://instagram.com/lin.shuya" target="_blank">@lin.shuya</a>
+    <a href="https://instagram.com/zang.yingran" target="_blank">@zang.yingran</a>
+  </div>
+</footer>
+
+<script>
+  // Cursor
+  const cur = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  (function loop() {
+    cur.style.transform = `translate(${mx - 2.5}px,${my - 2.5}px)`;
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.transform = `translate(${rx - 14}px,${ry - 14}px)`;
+    requestAnimationFrame(loop);
+  })();
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.asset-block, .program-block, .hero-content, .flipbook-cta');
+  const ro = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; ro.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+    ro.observe(el);
+  });
+</script>
+</body>
+</html>
