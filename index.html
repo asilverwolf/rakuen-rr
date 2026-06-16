@@ -1858,7 +1858,7 @@
     const slot = SLOTS[i];
     const a = document.createElement('a');
     a.href = card.href;
-    a.className = 'obj reveal';
+    a.className = 'obj';
     a.setAttribute('data-tag', card.type === 'music' ? String(card.gpIdx + 1).padStart(2,'0') : 'cv');
 
     if (!isMobile) {
@@ -2204,181 +2204,149 @@ if ('ontouchstart' in window) {
   resize();
   window.addEventListener('resize', resize);
 
-  // Water surface: ~72% down
-  function surface(){ return canvas.height * 0.72; }
+  // Fish drift zone: around 65–80% down the canvas
+  function driftY(){ return canvas.height * (0.65 + Math.random() * 0.12); }
 
-  // ---- Fish class ----
   class Fish {
-    constructor(type){
-      this.type = type; // 'jump' or 'glide'
-      this.done = false;
-      this.t = 0;
-      // random gold hue
-      this.hue = 28 + Math.random()*14; // 28–42
-      this.size = 18 + Math.random()*14; // 18–32px body radius-ish
+    constructor(){
+      this.done  = false;
+      this.t     = 0;
+      this.hue   = 22 + Math.random() * 20;        // warm gold 22–42
+      this.s     = 52 + Math.random() * 32;         // body half-length 52–84px
+      this.dir   = Math.random() < 0.5 ? 1 : -1;
+      // Start off-screen
+      this.x = this.dir > 0 ? -this.s * 5 : canvas.width + this.s * 5;
+      this.y = driftY();
+      this.speed = 0.6 + Math.random() * 0.7;      // slow drift
+      this.wobbleAmp = 2.5 + Math.random() * 2;    // vertical sway
+      this.alpha = 0;
+      // How far across canvas before it fades back out (40–75%)
+      this.exitFrac = 0.40 + Math.random() * 0.35;
+      this.maxAlpha = 0.55 + Math.random() * 0.25;
+      this.phase = Math.random() * Math.PI * 2;
+    }
 
-      if(type === 'jump'){
-        this.x  = canvas.width * (0.1 + Math.random()*0.8);
-        this.vy = -(5 + Math.random()*4);   // upward velocity
-        this.vx = (Math.random()-0.5)*1.2;  // slight horizontal drift
-        this.y  = surface();
-        this.angle = Math.atan2(-this.vy, this.vx || 0.01);
-        this.gravity = 0.18;
-        this.enterY  = surface();
-        this.peaked  = false;
-      } else {
-        // glide just below surface
-        this.dir  = Math.random() < 0.5 ? 1 : -1;
-        this.x    = this.dir > 0 ? -this.size*4 : canvas.width + this.size*4;
-        this.y    = surface() + this.size*0.8;
-        this.speed = 1.8 + Math.random()*1.2;
-        this.wobble = 0;
-        this.alpha  = 0;
-        this.angle  = this.dir > 0 ? 0 : Math.PI;
-      }
+    get progress(){
+      // 0→1 as fish crosses canvas (accounting for off-screen start/end)
+      const total = canvas.width + this.s * 10;
+      if (this.dir > 0) return (this.x + this.s * 5) / total;
+      return 1 - (this.x - canvas.width - this.s * 5) / -total;
     }
 
     update(){
       this.t++;
-      if(this.type === 'jump'){
-        this.vy += this.gravity;
-        this.x  += this.vx;
-        this.y  += this.vy;
-        // angle tracks velocity direction
-        this.angle = Math.atan2(this.vy, this.vx || 0.01);
-        if(this.y >= surface() + this.size*2) this.done = true;
-      } else {
-        this.x += this.dir * this.speed;
-        this.wobble = Math.sin(this.t * 0.08) * 3;
-        // fade in/out
-        const dist = this.dir > 0
-          ? (this.x + this.size*4) / (canvas.width + this.size*8)
-          : 1 - (this.x - this.size*4) / (canvas.width + this.size*8 - this.size*8);
-        // alpha: fade in first 15%, fade out last 15%
-        const p = Math.max(0, Math.min(1, dist));
-        if(p < 0.15)      this.alpha = p/0.15;
-        else if(p > 0.85) this.alpha = (1-p)/0.15;
-        else              this.alpha = 1;
-        this.alpha *= 0.55; // max opacity
-        if(this.dir > 0 && this.x > canvas.width + this.size*5) this.done = true;
-        if(this.dir < 0 && this.x < -this.size*5) this.done = true;
-      }
+      this.x += this.dir * this.speed;
+      this.y += Math.sin(this.t * 0.04 + this.phase) * 0.18; // gentle vertical drift
+
+      const p = this.progress;
+      const fadeIn  = Math.min(1, p / 0.12);
+      const fadeOut = p > this.exitFrac ? Math.max(0, 1 - (p - this.exitFrac) / 0.12) : 1;
+      this.alpha = fadeIn * fadeOut * this.maxAlpha;
+
+      if (p > this.exitFrac + 0.15) this.done = true;
     }
 
     draw(){
+      if (this.alpha <= 0.01) return;
       ctx.save();
-      const alpha = this.type === 'jump' ? 0.7 : this.alpha;
-      ctx.globalAlpha = alpha;
+      ctx.globalAlpha = this.alpha;
+      ctx.translate(this.x, this.y);
+      if (this.dir < 0) ctx.scale(-1, 1); // flip for leftward fish
 
-      const s = this.size;
-      ctx.translate(this.x, this.y + (this.type === 'glide' ? this.wobble : 0));
-      ctx.rotate(this.angle + (this.type === 'glide' ? 0 : 0));
+      const s = this.s;
+      const wag = Math.sin(this.t * 0.12 + this.phase) * 0.18; // subtle tail wag
 
-      // Body gradient
-      const grd = ctx.createRadialGradient(-s*0.2, 0, s*0.1, 0, 0, s);
-      grd.addColorStop(0, `hsl(${this.hue+10},90%,78%)`);
-      grd.addColorStop(0.6,`hsl(${this.hue},85%,58%)`);
-      grd.addColorStop(1,  `hsl(${this.hue-6},70%,38%)`);
+      // ── Body ──
+      const grd = ctx.createLinearGradient(-s, 0, s * 0.6, 0);
+      grd.addColorStop(0,    `hsla(${this.hue+8},80%,55%,1)`);
+      grd.addColorStop(0.45, `hsla(${this.hue},90%,68%,1)`);
+      grd.addColorStop(0.85, `hsla(${this.hue-4},75%,58%,1)`);
+      grd.addColorStop(1,    `hsla(${this.hue-8},65%,45%,1)`);
 
-      // Body: ellipse
       ctx.beginPath();
-      ctx.ellipse(0, 0, s, s*0.48, 0, 0, Math.PI*2);
+      ctx.ellipse(0, 0, s, s * 0.38, 0, 0, Math.PI * 2);
       ctx.fillStyle = grd;
       ctx.fill();
 
-      // Tail wag
-      const wag = Math.sin(this.t * (this.type==='glide'?0.15:0.25)) * 0.35;
-      const tailX = -s * 0.9;
-      const tailW = s * 0.85;
-      const tailH = s * 0.55;
-
+      // ── Tail (split fan) ──
       ctx.save();
-      ctx.translate(tailX, 0);
+      ctx.translate(-s * 0.85, 0);
       ctx.rotate(wag);
 
-      // Upper tail lobe
+      const tw = s * 1.0, th = s * 0.62;
       ctx.beginPath();
       ctx.moveTo(0, 0);
-      ctx.bezierCurveTo(-tailW*0.5, -tailH*0.2, -tailW, -tailH, -tailW*0.6, -tailH*0.1);
+      ctx.bezierCurveTo(-tw*0.4, -th*0.3, -tw, -th, -tw*0.7, -th*0.05);
       ctx.closePath();
-      ctx.fillStyle = `hsla(${this.hue},75%,48%,0.85)`;
+      ctx.fillStyle = `hsla(${this.hue+5},70%,52%,0.88)`;
       ctx.fill();
 
-      // Lower tail lobe
       ctx.beginPath();
       ctx.moveTo(0, 0);
-      ctx.bezierCurveTo(-tailW*0.5, tailH*0.2, -tailW, tailH, -tailW*0.6, tailH*0.1);
+      ctx.bezierCurveTo(-tw*0.4, th*0.3, -tw, th, -tw*0.7, th*0.05);
       ctx.closePath();
-      ctx.fillStyle = `hsla(${this.hue},75%,48%,0.85)`;
+      ctx.fillStyle = `hsla(${this.hue+5},70%,52%,0.88)`;
       ctx.fill();
       ctx.restore();
 
-      // Pectoral fin (small)
+      // ── Dorsal fin ──
       ctx.beginPath();
-      ctx.ellipse(s*0.1, s*0.22, s*0.32, s*0.13, 0.5, 0, Math.PI*2);
-      ctx.fillStyle = `hsla(${this.hue+5},80%,60%,0.6)`;
+      ctx.moveTo(-s*0.1, -s*0.35);
+      ctx.bezierCurveTo(s*0.1, -s*0.72, s*0.4, -s*0.65, s*0.3, -s*0.36);
+      ctx.closePath();
+      ctx.fillStyle = `hsla(${this.hue+10},75%,62%,0.6)`;
       ctx.fill();
 
-      // Eye
+      // ── Pectoral fin ──
       ctx.beginPath();
-      ctx.arc(s*0.55, -s*0.08, s*0.1, 0, Math.PI*2);
-      ctx.fillStyle = '#111';
+      ctx.ellipse(s*0.15, s*0.22, s*0.28, s*0.12, 0.6, 0, Math.PI*2);
+      ctx.fillStyle = `hsla(${this.hue},70%,65%,0.5)`;
       ctx.fill();
-      // eye shine
+
+      // ── Scales hint (subtle) ──
+      ctx.save();
+      ctx.globalAlpha = 0.12;
+      for(let i = 0; i < 3; i++){
+        const sx = s*(0.1 - i*0.28), sy = 0;
+        ctx.beginPath();
+        ctx.arc(sx, sy, s*0.22, Math.PI*0.5, Math.PI*1.5);
+        ctx.strokeStyle = `hsl(${this.hue-10},60%,30%)`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // ── Eye ──
+      const ex = s * 0.58, ey = -s * 0.07;
       ctx.beginPath();
-      ctx.arc(s*0.57, -s*0.1, s*0.04, 0, Math.PI*2);
-      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.arc(ex, ey, s * 0.09, 0, Math.PI*2);
+      ctx.fillStyle = '#1a0a00';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(ex + s*0.025, ey - s*0.03, s*0.035, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(255,255,255,0.75)';
       ctx.fill();
 
       ctx.restore();
     }
   }
 
-  // ---- Spawn + loop ----
   let fishes = [];
-  let nextSpawn = 0;
-  function scheduleNext(){
-    nextSpawn = Date.now() + 4000 + Math.random()*8000; // 4–12s
-  }
-  scheduleNext();
+  let nextSpawn = Date.now() + 2000;
 
-  function spawnFish(){
-    const type = Math.random() < 0.55 ? 'jump' : 'glide';
-    fishes.push(new Fish(type));
-    scheduleNext();
+  function scheduleNext(){
+    nextSpawn = Date.now() + 5000 + Math.random() * 9000; // 5–14s between fish
   }
 
   function loop(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // draw clipping: only show fish near/above surface for jump, below for glide
-    fishes.forEach(f => {
-      ctx.save();
-      if(f.type === 'jump'){
-        // show only above water line when above, and brief splash below
-        ctx.beginPath();
-        ctx.rect(0, 0, canvas.width, surface() + f.size*2);
-        ctx.clip();
-      } else {
-        // glide: only show in a band around the surface
-        ctx.beginPath();
-        ctx.rect(0, surface() - f.size*0.5, canvas.width, f.size*3);
-        ctx.clip();
-      }
-      f.update();
-      f.draw();
-      ctx.restore();
-    });
-
+    fishes.forEach(f => { f.update(); f.draw(); });
     fishes = fishes.filter(f => !f.done);
-
-    if(Date.now() >= nextSpawn) spawnFish();
-
+    if (Date.now() >= nextSpawn){ fishes.push(new Fish()); scheduleNext(); }
     requestAnimationFrame(loop);
   }
 
-  // Start after sumi canvas has faded in (2.5s delay)
-  setTimeout(() => requestAnimationFrame(loop), 3000);
+  setTimeout(() => requestAnimationFrame(loop), 3500);
 })();
 </script>
 </body>
