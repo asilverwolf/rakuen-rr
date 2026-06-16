@@ -1814,6 +1814,7 @@
     {col:'5/9',  row:4, mt:-12, tilt:-0.5},
     {col:'9/13', row:4, mt:18,  tilt:1.5},
     {col:'3/7',  row:5, mt:10,  tilt:-0.8},
+    {col:'7/11', row:5, mt:28,  tilt:1.2},
   ];
 
   // ── All available cards ─────────────────────────────────
@@ -1847,7 +1848,7 @@
   const cutoff = Date.now() - 60*24*60*60*1000; // 60 days
   const pinned = ALL_CARDS.filter(c => new Date(c.date).getTime() >= cutoff);
   const pool   = ALL_CARDS.filter(c => new Date(c.date).getTime() <  cutoff);
-  const needed = Math.max(0, 12 - pinned.length);
+  const needed = Math.max(0, 13 - pinned.length);
   const displayed = shuffle([...pinned, ...shuffle(pool).slice(0, needed)]);
 
   // ── Render ───────────────────────────────────────────────
