@@ -2205,7 +2205,6 @@ if ('ontouchstart' in window) {
   resize();
   window.addEventListener('resize', resize);
 
-  // Load all 29 PNGs
   const IMGS = {};
   for (let i = 1; i <= 29; i++) {
     const img = new Image();
@@ -2213,114 +2212,142 @@ if ('ontouchstart' in window) {
     IMGS[i] = img;
   }
 
-  // 4 fish characters, each with side-swim frames + a dive pose
-  const GROUPS = [
-    { swim:[2,5,7,10,15],              dive:13  }, // 銀影
-    { swim:[1,4,6,9,12,14,21,26,28,29],dive:24  }, // 橘斑
-    { swim:[3,11,16,18],               dive:27  }, // 金丸
-    { swim:[22,23],                    dive:13  }, // 熊貓
+  // Each image has an inherent travel direction.
+  // angle: radians — 0=right, PI=left, PI/2=down, -PI/2=up
+  // approach: fish faces camera → grows toward viewer
+  const CONFIGS = [
+    { id:1,  angle:0,           approach:false }, // 側面朝右
+    { id:2,  angle:Math.PI,     approach:false }, // 側面朝左
+    { id:3,  angle:0,           approach:false },
+    { id:4,  angle:0.12,        approach:false }, // 微斜向右下
+    { id:5,  angle:0,           approach:false },
+    { id:6,  angle:Math.PI,     approach:false }, // 朝左
+    { id:7,  angle:Math.PI,     approach:false }, // 朝左
+    { id:8,  angle:0,           approach:true  }, // 正面迎來
+    { id:9,  angle:0.35,        approach:false }, // 右下潛
+    { id:10, angle:0,           approach:false },
+    { id:11, angle:0,           approach:false },
+    { id:12, angle:0,           approach:false },
+    { id:13, angle:0.3,         approach:false }, // 幽靈斜下
+    { id:14, angle:0,           approach:false },
+    { id:15, angle:Math.PI,     approach:false }, // 朝左
+    { id:16, angle:-0.28,       approach:false }, // 右上跳
+    { id:17, angle:0,           approach:true  }, // 正面
+    { id:18, angle:Math.PI,     approach:false }, // 朝左
+    { id:19, angle:0,           approach:true  }, // 俯視迎來
+    { id:20, angle:0,           approach:true  }, // 幽靈正面
+    { id:21, angle:0,           approach:false },
+    { id:22, angle:0.55,        approach:false }, // 俯角右下
+    { id:23, angle:0,           approach:false },
+    { id:24, angle:0.45,        approach:false }, // 轉身斜下
+    { id:25, angle:0,           approach:true  }, // 正面
+    { id:26, angle:0.18,        approach:false }, // 微右下
+    { id:27, angle:Math.PI/2,   approach:false }, // 垂直下潛
+    { id:28, angle:0,           approach:false },
+    { id:29, angle:0,           approach:false },
   ];
-
-  const FRAME_MS = 260; // ms per swim-frame cycle
 
   class Fish {
     constructor(){
       this.done    = false;
       this.elapsed = 0;
-      this.dir     = Math.random() < 0.5 ? 1 : -1;
-      this.w       = 230 + Math.random() * 110;
-      this.h       = this.w;
 
-      const g         = GROUPS[Math.floor(Math.random() * GROUPS.length)];
-      this.swimFrames = g.swim;
-      this.diveFrame  = g.dive;
-      this.frameIdx   = Math.floor(Math.random() * this.swimFrames.length);
-      this.lastFrameT = 0;
+      const cfg     = CONFIGS[Math.floor(Math.random() * CONFIGS.length)];
+      this.img      = IMGS[cfg.id];
+      this.approach = cfg.approach;
+      this.angle    = cfg.angle;
 
-      this.maxAlpha = 0.55 + Math.random() * 0.25;
-      this.exitFrac = 0.28 + Math.random() * 0.42;
+      this.w        = 240 + Math.random() * 100;
+      this.h        = this.w;
+      this.maxAlpha = 0.52 + Math.random() * 0.28;
+      this.exitFrac = 0.28 + Math.random() * 0.44;
       this.alpha    = 0;
 
-      // Pick behaviour
-      const r = Math.random();
-      this.behavior = r < 0.50 ? 'swim' : r < 0.78 ? 'jump' : 'dive';
-      this.duration = 11000 + Math.random() * 8000;
-      this._buildPath();
-    }
-
-    _buildPath(){
       const cw = canvas.width, ch = canvas.height;
-      const baseY = ch * (0.50 + Math.random() * 0.20);
-      const sx = this.dir > 0 ? -this.w * 1.2 : cw + this.w * 1.2;
-      const ex = this.dir > 0 ? cw + this.w * 1.2 : -this.w * 1.2;
 
-      if (this.behavior === 'swim') {
-        const amp  = ch * (0.03 + Math.random() * 0.05);
-        const freq = 2 + Math.random() * 2;
-        this.getPos = p => ({
-          x: sx + p * (ex - sx),
-          y: baseY + Math.sin(p * Math.PI * freq) * amp,
-          rot: 0, useDive: false
-        });
+      if (this.approach) {
+        // 淡入放大，像從遠處游來
+        this.cx = cw * (0.22 + Math.random() * 0.56);
+        this.cy = ch * (0.46 + Math.random() * 0.24);
+        this.startScale = 0.18 + Math.random() * 0.14;
+        this.endScale   = 1.0  + Math.random() * 0.35;
+        this.duration   = 5000 + Math.random() * 4000;
+        this.scale      = this.startScale;
+      } else {
+        // 從畫面外進入，沿魚頭方向游去
+        const cos = Math.cos(this.angle), sin = Math.sin(this.angle);
+        const margin = this.w * 1.6;
+        const baseY  = ch * (0.46 + Math.random() * 0.24);
 
-      } else if (this.behavior === 'jump') {
-        const peakY = baseY - ch * (0.14 + Math.random() * 0.14);
-        this.getPos = p => {
-          const y  = baseY + (peakY - baseY) * Math.sin(p * Math.PI);
-          const dy = (peakY - baseY) * Math.PI * Math.cos(p * Math.PI);
-          const dx = ex - sx;
-          const rot = Math.atan2(-dy, Math.abs(dx)) * 0.28;
-          return { x: sx + p*(ex-sx), y, rot, useDive: false };
-        };
+        if (Math.abs(cos) >= Math.abs(sin)) {
+          // 主要水平方向
+          this.cx = cos > 0 ? -margin : cw + margin;
+          this.cy = baseY;
+        } else {
+          // 主要垂直方向
+          this.cx = cw * (0.2 + Math.random() * 0.6);
+          this.cy = sin > 0 ? -margin : ch + margin;
+        }
 
-      } else { // dive
-        const dipY = baseY + ch * (0.14 + Math.random() * 0.10);
-        this.getPos = p => {
-          const diving = p > 0.32 && p < 0.72;
-          const y = baseY + (dipY - baseY) * Math.sin(p * Math.PI);
-          const rot = diving ? (this.dir > 0 ? 0.38 : -0.38) : 0;
-          return { x: sx + p*(ex-sx), y, rot, useDive: diving };
-        };
+        // 垂直於行進方向的晃動
+        this.wobbleAmp   = ch * (0.022 + Math.random() * 0.028);
+        this.wobbleFreq  = 1.8 + Math.random() * 1.5;
+        this.wobblePhase = Math.random() * Math.PI * 2;
+        this.perpX       = -sin;
+        this.perpY       = cos;
+
+        // 速度：讓橫跨全螢幕約 9–14 秒
+        const diagonal = Math.sqrt(cw * cw + ch * ch);
+        this.speed    = (diagonal + margin * 2) / (9000 + Math.random() * 5000); // px/ms
+        this.duration = 15000; // 上限，done 由出界判斷
+        this.scale    = 1;
       }
     }
 
-    update(dt, now){
+    update(dt){
       this.elapsed += dt;
-      if (now - this.lastFrameT > FRAME_MS) {
-        this.frameIdx  = (this.frameIdx + 1) % this.swimFrames.length;
-        this.lastFrameT = now;
-      }
-      const p   = Math.min(this.elapsed / this.duration, 1);
-      const pos = this.getPos(p);
-      this.px       = pos.x;
-      this.py       = pos.y;
-      this.rot      = pos.rot;
-      this.useDive  = pos.useDive;
+      const p = Math.min(this.elapsed / this.duration, 1);
 
-      const fadeIn  = Math.min(1, p / 0.08);
-      const fadeOut = p > this.exitFrac ? Math.max(0, 1-(p-this.exitFrac)/0.10) : 1;
+      if (this.approach) {
+        this.scale = this.startScale + (this.endScale - this.startScale) * p;
+      } else {
+        const dist   = this.speed * this.elapsed;
+        const wobble = Math.sin(this.elapsed * 0.001 * this.wobbleFreq * Math.PI * 2 + this.wobblePhase) * this.wobbleAmp;
+        this.cx += Math.cos(this.angle) * this.speed * dt;
+        this.cy += Math.sin(this.angle) * this.speed * dt;
+        this.cx += this.perpX * wobble * 0.01;
+        this.cy += this.perpY * wobble * 0.01;
+      }
+
+      const fadeIn  = Math.min(1, this.elapsed / (this.duration * 0.09 + 500));
+      const fadeOut = p > this.exitFrac ? Math.max(0, 1 - (p - this.exitFrac) / 0.12) : 1;
       this.alpha    = fadeIn * fadeOut * this.maxAlpha;
-      if (p >= 1 || p > this.exitFrac + 0.12) this.done = true;
+
+      // 出界判斷（非 approach 魚）
+      if (!this.approach) {
+        const cw = canvas.width, ch = canvas.height;
+        const margin = this.w * 2;
+        if (this.cx < -margin || this.cx > cw + margin ||
+            this.cy < -margin || this.cy > ch + margin) {
+          this.done = true;
+        }
+      }
+      if (p >= 1 || (p > this.exitFrac + 0.13 && this.approach)) this.done = true;
     }
 
     draw(){
-      if (this.alpha < 0.01) return;
-      const key = this.useDive ? this.diveFrame : this.swimFrames[this.frameIdx];
-      const img = IMGS[key];
-      if (!img.complete) return;
+      if (this.alpha < 0.01 || !this.img.complete) return;
+      const w = this.w * this.scale, h = this.h * this.scale;
       ctx.save();
       ctx.globalAlpha = this.alpha;
-      ctx.translate(this.px, this.py);
-      ctx.rotate(this.rot);
-      ctx.scale(this.dir > 0 ? -1 : 1, 1);
-      ctx.drawImage(img, -this.w*0.5, -this.h*0.5, this.w, this.h);
+      ctx.drawImage(this.img, this.cx - w * 0.5, this.cy - h * 0.5, w, h);
       ctx.restore();
     }
   }
 
   const MAX_FISH = 3;
   let fishes    = [];
-  let nextSpawn = Date.now() + 3500;
+  let nextSpawn = Date.now() + 3000;
   let lastTime  = null;
 
   function scheduleNext(){
@@ -2332,7 +2359,7 @@ if ('ontouchstart' in window) {
     const dt = now - lastTime;
     lastTime = now;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    fishes.forEach(f => { f.update(dt, now); f.draw(); });
+    fishes.forEach(f => { f.update(dt); f.draw(); });
     fishes = fishes.filter(f => !f.done);
     if (Date.now() >= nextSpawn && fishes.length < MAX_FISH){
       fishes.push(new Fish());
