@@ -2205,29 +2205,37 @@ if ('ontouchstart' in window) {
   resize();
   window.addEventListener('resize', resize);
 
-  // Load SVG goldfish
-  const fishImg = new Image();
-  let imgReady = false;
-  fishImg.onload = () => { imgReady = true; };
-  fishImg.src = 'goldfish.svg';
+  // Pre-load all 29 real goldfish PNGs
+  const FISH_COUNT = 29;
+  const fishImgs = [];
+  let loadedCount = 0;
+  for (let i = 1; i <= FISH_COUNT; i++) {
+    const img = new Image();
+    img.onload = () => { loadedCount++; };
+    img.src = `fish/${String(i).padStart(2,'0')}.png`;
+    fishImgs.push(img);
+  }
 
-  // Drift zone: 58–78% down the hero
-  function randY(){ return canvas.height * (0.58 + Math.random() * 0.18); }
+  // Drift zone: 52–78% down the hero
+  function randY(){ return canvas.height * (0.52 + Math.random() * 0.24); }
 
   class Fish {
     constructor(){
       this.done  = false;
       this.t     = 0;
       this.dir   = Math.random() < 0.5 ? 1 : -1;
-      // Display size: SVG is 520x310, scale to 180-280px wide
-      this.w     = 180 + Math.random() * 100;
-      this.h     = this.w * (310 / 520);
+      this.img   = fishImgs[Math.floor(Math.random() * FISH_COUNT)];
+      // Display size: 200–340px wide
+      this.w     = 200 + Math.random() * 140;
+      this.h     = this.img.naturalHeight
+        ? this.w * (this.img.naturalHeight / this.img.naturalWidth)
+        : this.w;
       this.x     = this.dir > 0 ? -this.w * 1.5 : canvas.width + this.w * 1.5;
       this.y     = randY();
-      this.speed = 0.45 + Math.random() * 0.55;
+      this.speed = 0.4 + Math.random() * 0.5;
       this.phase = Math.random() * Math.PI * 2;
-      this.maxAlpha = 0.52 + Math.random() * 0.22;
-      this.exitFrac = 0.38 + Math.random() * 0.32;
+      this.maxAlpha = 0.55 + Math.random() * 0.25;
+      this.exitFrac = 0.35 + Math.random() * 0.35;
       this.alpha = 0;
     }
 
@@ -2240,21 +2248,21 @@ if ('ontouchstart' in window) {
     update(){
       this.t++;
       this.x += this.dir * this.speed;
-      this.y += Math.sin(this.t * 0.030 + this.phase) * 0.22;
+      this.y += Math.sin(this.t * 0.028 + this.phase) * 0.20;
       const p = this.progress;
-      const fadeIn  = Math.min(1, p / 0.10);
-      const fadeOut = p > this.exitFrac ? Math.max(0, 1 - (p - this.exitFrac) / 0.10) : 1;
+      const fadeIn  = Math.min(1, p / 0.09);
+      const fadeOut = p > this.exitFrac ? Math.max(0, 1 - (p - this.exitFrac) / 0.09) : 1;
       this.alpha = fadeIn * fadeOut * this.maxAlpha;
-      if (p > this.exitFrac + 0.12) this.done = true;
+      if (p > this.exitFrac + 0.11) this.done = true;
     }
 
     draw(){
-      if (!imgReady || this.alpha < 0.01) return;
+      if (!this.img.complete || this.alpha < 0.01) return;
       ctx.save();
       ctx.globalAlpha = this.alpha;
       ctx.translate(this.x, this.y);
       if (this.dir < 0) ctx.scale(-1, 1);
-      ctx.drawImage(fishImg, -this.w * 0.5, -this.h * 0.5, this.w, this.h);
+      ctx.drawImage(this.img, -this.w * 0.5, -this.h * 0.5, this.w, this.h);
       ctx.restore();
     }
   }
