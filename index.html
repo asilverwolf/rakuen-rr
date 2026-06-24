@@ -1841,6 +1841,10 @@
     {type:'client',title:'ARBOURE Q',               meta:'commission · brand identity', href:'client-arboure.html', img:'client-arboure/hero.jpg',   date:'2026-01-21'},
     {type:'client',title:'空蔵 KURA',               meta:'commission · logo design',    href:'client-kura.html',    img:'client-kura/logo-c.png',    date:'2026-01-23'},
   ];
+  // ── Shop products — always pinned ───────────────────────
+  const SHOP = [
+    {type:'product', title:'復古領足球衣', meta:'VOAR × RakuenɒuyɘЯ', href:'shop/jersey-01.html', img:'assets/shop/jersey-01/hero.jpg', price:'NT$1,580'},
+  ];
   const ALL_CARDS = [...MUSIC, ...CLIENTS];
 
   // ── Select 12 ───────────────────────────────────────────
@@ -1849,8 +1853,9 @@
   const cutoff = Date.now() - 60*24*60*60*1000; // 60 days
   const pinned = ALL_CARDS.filter(c => new Date(c.date).getTime() >= cutoff);
   const pool   = ALL_CARDS.filter(c => new Date(c.date).getTime() <  cutoff);
-  const needed = Math.max(0, 13 - pinned.length);
-  const displayed = shuffle([...pinned, ...shuffle(pool).slice(0, needed)]);
+  // SHOP always occupies 1 slot; fill remaining from pinned + pool
+  const needed = Math.max(0, 13 - SHOP.length - pinned.length);
+  const displayed = shuffle([...SHOP, ...pinned, ...shuffle(pool).slice(0, needed)]);
 
   // ── Render ───────────────────────────────────────────────
   const grid = document.getElementById('objGrid');
@@ -1861,7 +1866,8 @@
     const a = document.createElement('a');
     a.href = card.href;
     a.className = 'obj';
-    a.setAttribute('data-tag', card.type === 'music' ? String(card.gpIdx + 1).padStart(2,'0') : 'cv');
+    const tagLabel = card.type === 'music' ? String(card.gpIdx + 1).padStart(2,'0') : card.type === 'product' ? 'shop' : 'cv';
+    a.setAttribute('data-tag', tagLabel);
 
     if (!isMobile) {
       a.style.cssText = `grid-column:${slot.col};grid-row:${slot.row};margin-top:${slot.mt}px;--tilt:${slot.tilt}deg;`;
@@ -1870,15 +1876,23 @@
     const isBgLight = card.type === 'client' && (card.img.endsWith('.png') || card.img.includes('kura') || card.img.includes('arboure'));
     const bgStyle = isBgLight ? 'background:#fafaf8;' : '';
 
-    const playBtn = card.type === 'music'
-      ? `<button class="play-btn" onclick="event.preventDefault();event.stopPropagation();gpLoad(${card.gpIdx},true);">▶ 播放</button>`
-      : '';
+    let cardBottom = '';
+    if (card.type === 'music') {
+      cardBottom = `<button class="play-btn" onclick="event.preventDefault();event.stopPropagation();gpLoad(${card.gpIdx},true);">▶ 播放</button>`;
+    } else if (card.type === 'product') {
+      cardBottom = `<p class="obj-price">${card.price}</p><span style="display:inline-block;margin-top:10px;font-size:10px;letter-spacing:0.2em;color:#666;text-transform:uppercase;">查看商品 →</span>`;
+    }
+
+    // Product cards: show dark placeholder if image missing (matches shop page aesthetic)
+    const imgTag = card.type === 'product'
+      ? `<img src="${card.img}" alt="${card.title}" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`
+      : `<img src="${card.img}" alt="${card.title}" loading="lazy" style="width:100%;height:100%;object-fit:${isBgLight?'contain':'cover'};">`;
 
     a.innerHTML = `<div class="obj-inner">
-      <div class="obj-visual" style="${bgStyle}"><img src="${card.img}" alt="${card.title}" loading="lazy" style="width:100%;height:100%;object-fit:${isBgLight?'contain':'cover'};"></div>
+      <div class="obj-visual" style="${bgStyle}">${imgTag}</div>
       <p class="obj-title">${card.title}</p>
       <p class="obj-meta">${card.meta}</p>
-      ${playBtn}
+      ${cardBottom}
     </div>`;
 
     grid.appendChild(a);
