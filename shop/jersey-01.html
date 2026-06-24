@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<title>復古領足球衣｜RakuenɒuyɘЯ Shop</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;1,400&display=swap');
+  :root {
+    --black: #04040A;
+    --deep: #080810;
+    --grey-dark: #1A1A2A;
+    --grey: #888899;
+    --grey-light: #BBBBCC;
+    --white: #F0F0F5;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--black); color:var(--white); font-family:'Space Mono',monospace; font-size:12px; }
+
+  /* NAV */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:24px 40px;
+    background:linear-gradient(to bottom,rgba(4,4,10,0.95) 0%,transparent 100%);
+  }
+  .nav-logo img { height:28px; opacity:0.9; }
+  .nav-links { display:flex; gap:32px; }
+  .nav-links a { color:var(--grey); text-decoration:none; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; transition:color 0.2s; }
+  .nav-links a:hover, .nav-links a.active { color:var(--white); }
+
+  /* ── S1: HERO ───────────────────────────────── */
+  #hero {
+    height:100vh; position:relative;
+    display:flex; align-items:flex-end;
+    overflow:hidden; background:#0a0a0a;
+  }
+  .hero-bg {
+    position:absolute; inset:0;
+    background:#1a1a1a;
+    display:flex; align-items:center; justify-content:center;
+    font-size:10px; color:rgba(255,255,255,0.1); letter-spacing:0.12em;
+  }
+  .hero-bg img { width:100%; height:100%; object-fit:cover; }
+  .hero-mask {
+    position:absolute; inset:0;
+    background:linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.25) 60%, transparent 100%);
+  }
+  .hero-text {
+    position:relative; z-index:2;
+    padding:0 60px 60px;
+  }
+  .hero-collab {
+    font-size:clamp(28px,5vw,60px);
+    font-family:'EB Garamond',serif; font-weight:400;
+    color:rgba(240,240,245,0.88); letter-spacing:0.06em;
+    line-height:1.1; margin-bottom:12px;
+  }
+  .hero-sub {
+    font-size:11px; letter-spacing:0.20em; color:var(--grey-light);
+    text-transform:uppercase;
+  }
+  .hero-scroll {
+    position:absolute; bottom:28px; right:48px; z-index:2;
+    font-size:9px; letter-spacing:0.16em; color:var(--grey);
+    writing-mode:vertical-rl; opacity:0.5;
+  }
+
+  /* ── S2: BUY ────────────────────────────────── */
+  #buy {
+    max-width:680px; margin:0 auto;
+    padding:80px 40px 80px;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .product-name-zh { font-family:'Noto Serif TC',serif; font-size:clamp(22px,4vw,36px); font-weight:300; letter-spacing:0.06em; margin-bottom:6px; }
+  .product-name-en { font-size:11px; color:var(--grey); letter-spacing:0.12em; margin-bottom:4px; }
+  .product-collab   { font-size:10px; color:var(--grey); letter-spacing:0.08em; margin-bottom:28px; }
+  .product-price    { font-size:28px; font-weight:700; letter-spacing:0.02em; margin-bottom:32px; color:var(--white); }
+
+  /* Sizes */
+  .label { font-size:10px; letter-spacing:0.14em; color:var(--grey); margin-bottom:10px; }
+  .size-group { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px; }
+  .size-btn {
+    width:52px; height:36px; border:1px solid rgba(255,255,255,0.18);
+    background:transparent; color:var(--grey-light); font-family:'Space Mono',monospace;
+    font-size:11px; letter-spacing:0.08em; cursor:pointer;
+    transition:all 0.18s;
+  }
+  .size-btn:hover { border-color:var(--white); color:var(--white); }
+  .size-btn.selected { background:var(--white); color:var(--black); border-color:var(--white); font-weight:700; }
+
+  /* Quantity */
+  .qty-group { display:flex; align-items:center; gap:0; margin-bottom:28px; width:fit-content; }
+  .qty-btn {
+    width:36px; height:36px; border:1px solid rgba(255,255,255,0.18);
+    background:transparent; color:var(--white); font-size:16px; cursor:pointer;
+    font-family:'Space Mono',monospace; transition:background 0.15s;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .qty-btn:hover { background:rgba(255,255,255,0.08); }
+  .qty-display {
+    width:48px; height:36px; border-top:1px solid rgba(255,255,255,0.18); border-bottom:1px solid rgba(255,255,255,0.18);
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; color:var(--white);
+  }
+
+  /* Region */
+  .region-group { display:flex; gap:8px; margin-bottom:32px; }
+  .region-btn {
+    padding:8px 16px; border:1px solid rgba(255,255,255,0.18);
+    background:transparent; color:var(--grey); font-family:'Space Mono',monospace;
+    font-size:10px; letter-spacing:0.10em; cursor:pointer; transition:all 0.18s;
+  }
+  .region-btn:hover { border-color:var(--white); color:var(--white); }
+  .region-btn.selected { border-color:rgba(255,255,255,0.5); color:var(--white); }
+
+  .shipping-note { font-size:10px; color:var(--grey); letter-spacing:0.08em; margin-bottom:8px; }
+  .total-line { font-size:13px; color:var(--grey-light); margin-bottom:28px; }
+  .total-line span { color:var(--white); font-weight:700; }
+
+  /* Buy button */
+  .buy-btn {
+    width:100%; padding:16px; background:var(--white); color:var(--black);
+    border:none; font-family:'Space Mono',monospace; font-size:12px;
+    letter-spacing:0.16em; font-weight:700; cursor:pointer;
+    transition:opacity 0.2s; text-transform:uppercase;
+  }
+  .buy-btn:hover { opacity:0.88; }
+  .buy-btn:disabled { opacity:0.3; cursor:not-allowed; }
+  .buy-note { font-size:10px; color:var(--grey); letter-spacing:0.08em; margin-top:14px; text-align:center; }
+  .error-msg { font-size:10px; color:#ff8877; letter-spacing:0.08em; margin-top:10px; min-height:16px; }
+
+  /* ── S3: DETAILS ────────────────────────────── */
+  #details { padding:80px 60px; border-bottom:1px solid rgba(255,255,255,0.06); }
+  .section-title { font-size:10px; letter-spacing:0.20em; color:var(--grey); margin-bottom:40px; text-transform:uppercase; }
+
+  .detail-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; margin-bottom:60px; }
+  .detail-img {
+    aspect-ratio:1; background:#1a1a1a;
+    display:flex; align-items:center; justify-content:center;
+    font-size:9px; color:rgba(255,255,255,0.12); letter-spacing:0.10em; text-align:center; padding:12px;
+  }
+  .detail-img img { width:100%; height:100%; object-fit:cover; }
+
+  .spec-table { width:100%; max-width:480px; border-collapse:collapse; }
+  .spec-table td { padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:11px; vertical-align:top; }
+  .spec-table td:first-child { color:var(--grey); width:100px; letter-spacing:0.08em; }
+  .spec-table td:last-child  { color:var(--white); }
+
+  .size-chart { margin-top:48px; }
+  .size-chart-table { width:100%; max-width:480px; border-collapse:collapse; margin-top:16px; }
+  .size-chart-table th { text-align:left; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.12); font-size:10px; letter-spacing:0.10em; color:var(--grey); font-weight:400; }
+  .size-chart-table td { padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:11px; color:var(--white); }
+  .size-chart-table td:first-child { color:var(--grey-light); font-weight:700; width:60px; }
+
+  /* ── S4: WEARING ────────────────────────────── */
+  #wearing { padding:80px 60px; border-bottom:1px solid rgba(255,255,255,0.06); }
+  .wearing-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; }
+  .wearing-img {
+    aspect-ratio:2/3; background:#111115;
+    display:flex; align-items:center; justify-content:center;
+    font-size:9px; color:rgba(255,255,255,0.12); letter-spacing:0.10em; text-align:center; padding:12px;
+  }
+  .wearing-img img { width:100%; height:100%; object-fit:cover; }
+
+  /* ── S5: COLLAB ─────────────────────────────── */
+  #collab {
+    padding:120px 60px;
+    text-align:center;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .collab-line {
+    font-family:'EB Garamond',serif; font-size:clamp(20px,3.5vw,40px);
+    font-weight:400; letter-spacing:0.04em; color:var(--white);
+    line-height:1.6;
+  }
+
+  /* ── S6: INFO ───────────────────────────────── */
+  #info { padding:80px 60px; }
+  .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:60px; max-width:760px; }
+  .info-block h3 { font-size:10px; letter-spacing:0.16em; color:var(--grey); margin-bottom:16px; text-transform:uppercase; }
+  .info-row {
+    display:flex; justify-content:space-between;
+    padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06);
+    font-size:11px;
+  }
+  .info-row span:first-child { color:var(--grey); }
+  .info-row span:last-child  { color:var(--white); }
+  .info-note { font-size:10px; color:var(--grey); letter-spacing:0.06em; line-height:1.7; margin-top:12px; }
+  .info-email { margin-top:20px; font-size:11px; color:var(--grey); letter-spacing:0.08em; }
+  .info-email a { color:var(--white); text-decoration:none; }
+  .info-email a:hover { text-decoration:underline; }
+
+  /* Sticky buy bar (mobile) */
+  .sticky-buy {
+    display:none; position:fixed; bottom:0; left:0; right:0;
+    background:rgba(4,4,10,0.96); border-top:1px solid rgba(255,255,255,0.08);
+    padding:16px 24px; z-index:50; align-items:center; gap:16px;
+  }
+  .sticky-price { font-size:15px; font-weight:700; flex:1; }
+  .sticky-btn {
+    padding:12px 24px; background:var(--white); color:var(--black);
+    border:none; font-family:'Space Mono',monospace; font-size:11px;
+    letter-spacing:0.12em; font-weight:700; cursor:pointer;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top:1px solid rgba(255,255,255,0.06);
+    padding:40px 60px;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
+  }
+  footer a { color:var(--grey); text-decoration:none; font-size:11px; letter-spacing:0.08em; }
+  footer a:hover { color:var(--white); }
+  .footer-copy { color:rgba(255,255,255,0.2); font-size:10px; letter-spacing:0.06em; }
+
+  /* RWD */
+  @media (max-width:900px) {
+    .detail-grid, .wearing-grid { grid-template-columns:repeat(2,1fr); }
+    .info-grid { grid-template-columns:1fr; gap:40px; }
+    #details, #wearing, #collab, #info { padding:60px 32px; }
+  }
+  @media (max-width:640px) {
+    nav { padding:20px 24px; }
+    #hero .hero-text { padding:0 28px 48px; }
+    #buy { padding:60px 24px; }
+    .detail-grid, .wearing-grid { grid-template-columns:repeat(2,1fr); }
+    .sticky-buy { display:flex; }
+    #collab { padding:80px 28px; }
+    #info { padding:60px 24px; }
+    footer { padding:32px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html" class="nav-logo"><img src="../logo-rakuen.png" alt="RakuenɒuyɘЯ"></a>
+  <div class="nav-links">
+    <a href="../index.html">Home</a>
+    <a href="index.html" class="active">Shop</a>
+  </div>
+</nav>
+
+<!-- S1: HERO -->
+<section id="hero">
+  <div class="hero-bg">
+    <!-- 替換: <img src="../assets/shop/jersey-01/hero.jpg" alt="復古領足球衣"> -->
+    HERO IMAGE · hero.jpg
+  </div>
+  <div class="hero-mask"></div>
+  <div class="hero-text">
+    <div class="hero-collab">VOAR × RakuenɒuyɘЯ</div>
+    <div class="hero-sub">Retro Collar Football Jersey</div>
+  </div>
+  <div class="hero-scroll">scroll</div>
+</section>
+
+<!-- S2: BUY -->
+<section id="buy">
+  <div class="product-name-zh">復古領足球衣</div>
+  <div class="product-name-en">Retro Collar Football Jersey</div>
+  <div class="product-collab">VOAR × RakuenɒuyɘЯ</div>
+  <div class="product-price">NT$1,580</div>
+
+  <div class="label">尺寸 SIZE</div>
+  <div class="size-group" id="sizeGroup">
+    <button class="size-btn" data-size="XS">XS</button>
+    <button class="size-btn" data-size="S">S</button>
+    <button class="size-btn" data-size="M">M</button>
+    <button class="size-btn" data-size="L">L</button>
+    <button class="size-btn" data-size="XL">XL</button>
+  </div>
+
+  <div class="label">數量 QTY</div>
+  <div class="qty-group" style="margin-bottom:24px;">
+    <button class="qty-btn" id="qtyMinus">−</button>
+    <div class="qty-display" id="qtyDisplay">1</div>
+    <button class="qty-btn" id="qtyPlus">＋</button>
+  </div>
+
+  <div class="label">運送地區 REGION</div>
+  <div class="region-group">
+    <button class="region-btn selected" data-region="taiwan">台灣本島 +NT$100</button>
+    <button class="region-btn" data-region="intl">海外 International +NT$400</button>
+  </div>
+
+  <div class="shipping-note" id="shippingNote">運費：NT$100（台灣本島）</div>
+  <div class="total-line">合計：<span id="totalAmt">NT$1,680</span></div>
+
+  <button class="buy-btn" id="buyBtn">立即購買 BUY NOW</button>
+  <div class="error-msg" id="errorMsg"></div>
+  <div class="buy-note">每批截單後生產，不常開。</div>
+</section>
+
+<!-- S3: DETAILS -->
+<section id="details">
+  <div class="section-title">衣服細節 Details</div>
+  <div class="detail-grid">
+    <div class="detail-img">
+      <!-- <img src="../assets/shop/jersey-01/flat-front.jpg" alt="正面"> -->
+      正面展開圖<br>flat-front.jpg
+    </div>
+    <div class="detail-img">
+      <!-- <img src="../assets/shop/jersey-01/flat-back.jpg" alt="背面"> -->
+      背面展開圖<br>flat-back.jpg
+    </div>
+    <div class="detail-img">
+      <!-- <img src="../assets/shop/jersey-01/detail-collar.jpg" alt="領口"> -->
+      領口 + VOAR logo<br>detail-collar.jpg
+    </div>
+    <div class="detail-img">
+      <!-- <img src="../assets/shop/jersey-01/detail-stripe.jpg" alt="條紋"> -->
+      條紋折射細節<br>detail-stripe.jpg
+    </div>
+  </div>
+
+  <table class="spec-table">
+    <tr>
+      <td>材質</td>
+      <td>熱昇華印製</td>
+    </tr>
+    <tr>
+      <td>工藝</td>
+      <td>VOAR 製作・台灣製造</td>
+    </tr>
+    <tr>
+      <td>版型</td>
+      <td>寬鬆落肩 Oversized</td>
+    </tr>
+  </table>
+
+  <div class="size-chart">
+    <div class="label">尺寸參考 Size Guide</div>
+    <table class="size-chart-table">
+      <thead>
+        <tr><th>尺寸</th><th>適合身高</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>XS</td><td>身高約 155cm 以下</td></tr>
+        <tr><td>S</td><td>身高約 160cm（參考：Ari）</td></tr>
+        <tr><td>M</td><td>身高約 163–168cm（參考：Irene / Luna）</td></tr>
+        <tr><td>L</td><td>身高約 175–180cm</td></tr>
+        <tr><td>XL</td><td>身高約 180cm 以上</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- S4: WEARING -->
+<section id="wearing">
+  <div class="section-title">著裝情境 Lookbook</div>
+  <div class="wearing-grid">
+    <div class="wearing-img">
+      <!-- <img src="../assets/shop/jersey-01/irene-full.jpg" alt="Irene 全身"> -->
+      Irene 全身<br>irene-full.jpg
+    </div>
+    <div class="wearing-img">
+      <!-- <img src="../assets/shop/jersey-01/irene-half.jpg" alt="Irene 半身"> -->
+      Irene 半身<br>irene-half.jpg
+    </div>
+    <div class="wearing-img">
+      <!-- <img src="../assets/shop/jersey-01/luna-side.jpg" alt="Luna 側身"> -->
+      Luna 側身<br>luna-side.jpg
+    </div>
+    <div class="wearing-img">
+      <!-- <img src="../assets/shop/jersey-01/trio.jpg" alt="三人組合"> -->
+      三人組合<br>trio.jpg
+    </div>
+  </div>
+</section>
+
+<!-- S5: COLLAB -->
+<section id="collab">
+  <div class="collab-line">
+    VOAR makes it move.<br>
+    RakuenɒuyɘЯ makes it stay.
+  </div>
+</section>
+
+<!-- S6: INFO -->
+<section id="info">
+  <div class="section-title">購買資訊 Order Info</div>
+  <div class="info-grid">
+    <div class="info-block">
+      <h3>運費 Shipping</h3>
+      <div class="info-row"><span>台灣本島</span><span>NT$100</span></div>
+      <div class="info-row"><span>International</span><span>NT$400</span></div>
+    </div>
+    <div class="info-block">
+      <h3>出貨時間 Fulfillment</h3>
+      <div class="info-note">
+        截單後 1 週出貨<br>
+        Orders ship within 1 week after batch closes.<br><br>
+        International buyers are responsible for any customs duties or import taxes.
+      </div>
+    </div>
+  </div>
+  <div class="info-email">
+    問題或協助 · <a href="mailto:studio@rakuen-rr.com">studio@rakuen-rr.com</a>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <a href="../index.html"><img src="../logo-rakuen.png" style="height:24px;opacity:0.6;"></a>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:6px;text-align:right;">
+    <a href="mailto:studio@rakuen-rr.com">studio@rakuen-rr.com</a>
+    <span class="footer-copy">© 2026 RakuenɒuyɘЯ · rakuen-rr.com</span>
+  </div>
+</footer>
+
+<!-- Mobile sticky bar -->
+<div class="sticky-buy">
+  <div class="sticky-price">NT$1,580</div>
+  <button class="sticky-btn" onclick="document.getElementById('buy').scrollIntoView({behavior:'smooth'})">選購 →</button>
+</div>
+
+<script>
+// ── 尺寸選擇 ──────────────────────────────────
+let selectedSize = null;
+let qty          = 1;
+let region       = 'taiwan';
+
+const PRICE    = 1580;
+const SHIPPING = { taiwan: 100, intl: 400 };
+
+document.querySelectorAll('.size-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedSize = btn.dataset.size;
+    document.getElementById('errorMsg').textContent = '';
+  });
+});
+
+// ── 數量 ──────────────────────────────────────
+document.getElementById('qtyMinus').addEventListener('click', () => {
+  if (qty > 1) { qty--; updateTotal(); }
+});
+document.getElementById('qtyPlus').addEventListener('click', () => {
+  if (qty < 10) { qty++; updateTotal(); }
+});
+
+// ── 地區 ──────────────────────────────────────
+document.querySelectorAll('.region-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    region = btn.dataset.region;
+    updateTotal();
+  });
+});
+
+function updateTotal(){
+  document.getElementById('qtyDisplay').textContent = qty;
+  const shipping = SHIPPING[region];
+  const total    = PRICE * qty + shipping;
+  document.getElementById('shippingNote').textContent =
+    `運費：NT$${shipping}（${region === 'taiwan' ? '台灣本島' : 'International'}）`;
+  document.getElementById('totalAmt').textContent = `NT$${total.toLocaleString()}`;
+}
+
+// ── 購買按鈕 ──────────────────────────────────
+document.getElementById('buyBtn').addEventListener('click', async () => {
+  if (!selectedSize) {
+    document.getElementById('errorMsg').textContent = '請先選擇尺寸 Please select a size';
+    return;
+  }
+
+  const btn = document.getElementById('buyBtn');
+  btn.disabled = true;
+  btn.textContent = '處理中…';
+
+  const shipping = SHIPPING[region];
+  const total    = PRICE * qty + shipping;
+
+  try {
+    // ── 送到 Cloudflare Worker 建立 Stripe Checkout Session ──
+    // Worker 部署後把 URL 填入此處
+    const WORKER_URL = 'https://rakuen-checkout.YOUR_SUBDOMAIN.workers.dev/checkout';
+
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        size:   selectedSize,
+        qty:    qty,
+        region: region,
+      })
+    });
+
+    if (!res.ok) throw new Error('checkout failed');
+    const data = await res.json();
+
+    // Stripe 回傳 Checkout Session URL → 跳轉
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error('no checkout url');
+    }
+  } catch(e) {
+    // Worker 未上線時顯示提示
+    document.getElementById('errorMsg').textContent =
+      '金流串接準備中，請來信訂購：studio@rakuen-rr.com';
+    btn.disabled = false;
+    btn.textContent = '立即購買 BUY NOW';
+  }
+});
+</script>
+</body>
+</html>
