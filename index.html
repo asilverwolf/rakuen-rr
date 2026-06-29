@@ -1045,6 +1045,52 @@
   /* push page content up so player doesn't cover */
   body { padding-bottom: 72px; }
 
+  /* HERO PLAY BUTTON */
+  .hero-play {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-top: 40px;
+    opacity: 0;
+    animation: fade-in 1s 2.5s forwards;
+  }
+  .hero-play-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 28px;
+    border: 1px solid rgba(240,240,245,0.25);
+    background: transparent;
+    color: var(--grey-light);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: border-color 0.3s, color 0.3s, background 0.3s;
+    position: relative;
+    z-index: 10;
+  }
+  .hero-play-btn:hover {
+    border-color: rgba(240,240,245,0.7);
+    color: var(--white);
+    background: rgba(240,240,245,0.04);
+  }
+  .hero-play-btn.playing {
+    border-color: rgba(240,240,245,0.5);
+    color: var(--white);
+  }
+  .hero-play-track {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--grey);
+    text-transform: uppercase;
+    font-family: 'Space Mono', monospace;
+    position: relative;
+    z-index: 10;
+  }
+
 
   .d-tile {
     position: absolute;
@@ -1184,6 +1230,13 @@
 
   <div class="hero-center">
     <div id="heroLogo" style="background:transparent;isolation:auto;"><img src="logo-main.png" alt="R.R" style="width:clamp(180px,24vw,340px);display:block;margin:0 auto;opacity:0.95;"></div>
+    <div class="hero-play" id="heroPlayArea">
+      <button class="hero-play-btn" id="heroPlayBtn" onclick="heroPlayToggle()">
+        <span id="heroPlayIcon">▶</span>
+        <span>play</span>
+      </button>
+      <span class="hero-play-track" id="heroPlayTrack">NO PROOF</span>
+    </div>
   </div>
 
   <div class="scroll-hint">
@@ -1912,7 +1965,7 @@
 </script>
 
 <!-- GLOBAL MUSIC PLAYER -->
-<div id="global-player">
+<div id="global-player" class="hidden">
   <img class="gp-cover" id="gp-cover" src="cover-noproof.jpg" alt="cover">
   <div class="gp-info">
     <div class="gp-title" id="gp-title">NO PROOF</div>
@@ -1986,6 +2039,29 @@ function gpNext(){gpResume=0;gpLoad(gi+1,true);}
 function gpPrev(){gpResume=0;gpLoad(gi-1,true);}
 function gpUpdateBtn(){gpUpd();}
 function gpHide(){const w=$g('global-player')||$g('gp');if(w)w.classList.add('hidden');}
+
+// Hero play button sync
+function heroPlayToggle(){
+  const player=$g('global-player');
+  if(player)player.classList.remove('hidden');
+  gpToggle();
+  heroPlaySync();
+}
+function heroPlaySync(){
+  const btn=$g('heroPlayBtn'), icon=$g('heroPlayIcon'), track=$g('heroPlayTrack');
+  if(!btn)return;
+  if(gp){
+    btn.classList.add('playing');
+    if(icon)icon.textContent='■';
+    if(track&&GP[gi])track.textContent=GP[gi].title;
+  } else {
+    btn.classList.remove('playing');
+    if(icon)icon.textContent='▶';
+  }
+}
+// Patch gpUpd to also sync hero button
+const _origGpUpd=gpUpd;
+function gpUpd(){ if(typeof _origGpUpd==='function')_origGpUpd(); heroPlaySync(); }
 function gpSeek(e){if(!ga.duration)return;const r=e.currentTarget.getBoundingClientRect();ga.currentTime=((e.clientX-r.left)/r.width)*ga.duration;gpSave();}
 ga.addEventListener('timeupdate',()=>{if(!ga.duration)return;
   if(ge.f)ge.f.style.width=(ga.currentTime/ga.duration*100)+'%';
@@ -1995,7 +2071,7 @@ ga.addEventListener('loadedmetadata',()=>{if(ge.d)ge.d.textContent=gpFmt(ga.dura
 ga.addEventListener('ended',()=>{gpNext();});
 window.addEventListener('pagehide',gpSave);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!gp&&!userPaused)gpTry();});
-gpLoad(gi,!userPaused);
+gpLoad(gi,false); // no auto-play — user must click
 </script>
 
 <script>
