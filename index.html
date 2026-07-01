@@ -929,15 +929,21 @@
     z-index: 2000;
     background: rgba(4,4,10,0.96);
     backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border-top: 1px solid rgba(240,240,245,0.08);
     padding: 12px 32px;
     display: flex;
     align-items: center;
     gap: 20px;
-    transform: translateY(0);
+    -webkit-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
     transition: transform 0.3s;
+    will-change: transform;
   }
-  #global-player.hidden { transform: translateY(100%); }
+  #global-player.hidden {
+    -webkit-transform: translate3d(0,100%,0);
+    transform: translate3d(0,100%,0);
+  }
 
   .gp-cover {
     width: 40px; height: 40px;
@@ -1041,9 +1047,19 @@
     flex-shrink: 0;
   }
   .gp-toggle:hover { color: var(--white); }
+  .gp-btn.active { color: var(--white); opacity: 1; }
 
   /* push page content up so player doesn't cover */
   body { padding-bottom: 72px; }
+
+  @media (max-width: 768px) {
+    #global-player { padding: 10px 14px; gap: 10px; }
+    .gp-cover { width: 32px; height: 32px; }
+    .gp-page-link { display: none; }
+    .gp-progress-wrap { max-width: 120px; }
+    .gp-controls { gap: 10px; }
+    .gp-btn { font-size: 11px; }
+  }
 
   /* HERO PLAY BUTTON */
   .hero-play {
@@ -1985,9 +2001,11 @@
     </div>
   </div>
   <div class="gp-controls">
+    <button class="gp-btn" id="gp-shuffle" onclick="gpToggleShuffle()" title="隨機播放">⇄</button>
     <button class="gp-btn" onclick="gpPrev()" title="上一首">&#9664;&#9664;</button>
     <button class="gp-btn play" id="gp-play" onclick="gpToggle()">&#9654;</button>
     <button class="gp-btn" onclick="gpNext()" title="下一首">&#9654;&#9654;</button>
+    <button class="gp-btn" id="gp-repeat" onclick="gpToggleRepeat()" title="單曲循環">↻</button>
   </div>
   <a class="gp-page-link" id="gp-link" href="music-noproof.html">Lyrics ↗</a>
   <button class="gp-toggle" onclick="gpHide()" title="hide">✕</button>
@@ -2039,7 +2057,10 @@ function gpLoad(i,play){gi=(i+GP.length)%GP.length;const t=GP[gi];
   if(play)gpTry();else gpUpd();
   gpSave();}
 function gpToggle(){if(gp){ga.pause();gp=false;userPaused=true;gpUpd();gpSave();}else{gpTry();}}
-function gpNext(){gpResume=0;gpLoad(gi+1,true);}
+let gpShuffle=false,gpRepeat=false;
+function gpToggleShuffle(){gpShuffle=!gpShuffle;const b=$g('gp-shuffle');if(b)b.classList.toggle('active',gpShuffle);}
+function gpToggleRepeat(){gpRepeat=!gpRepeat;const b=$g('gp-repeat');if(b)b.classList.toggle('active',gpRepeat);}
+function gpNext(){gpResume=0;if(gpShuffle){let n=Math.floor(Math.random()*GP.length);if(GP.length>1)while(n===gi)n=Math.floor(Math.random()*GP.length);gpLoad(n,true);}else{gpLoad(gi+1,true);}}
 function gpPrev(){gpResume=0;gpLoad(gi-1,true);}
 function gpUpdateBtn(){gpUpd();}
 function gpHide(){const w=$g('global-player')||$g('gp');if(w)w.classList.add('hidden');}
@@ -2072,7 +2093,7 @@ ga.addEventListener('timeupdate',()=>{if(!ga.duration)return;
   if(ge.cu)ge.cu.textContent=gpFmt(ga.currentTime);
   const n=Date.now();if(n-gpLastSave>1000){gpLastSave=n;gpSave();}});
 ga.addEventListener('loadedmetadata',()=>{if(ge.d)ge.d.textContent=gpFmt(ga.duration);});
-ga.addEventListener('ended',()=>{gpNext();});
+ga.addEventListener('ended',()=>{if(gpRepeat){ga.currentTime=0;gpTry();}else{gpNext();}});
 window.addEventListener('pagehide',gpSave);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!gp&&!userPaused)gpTry();});
 gpLoad(gi,false); // no auto-play — user must click
