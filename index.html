@@ -1986,7 +1986,7 @@
 
 <!-- GLOBAL MUSIC PLAYER -->
 <div id="global-player" class="hidden">
-  <img class="gp-cover" id="gp-cover" src="cover-noproof.jpg" alt="cover">
+  <a id="gp-cover-link" href="music-noproof.html" style="flex-shrink:0;display:block;"><img class="gp-cover" id="gp-cover" src="cover-noproof.jpg" alt="cover"></a>
   <div class="gp-info">
     <div class="gp-title" id="gp-title">NO PROOF</div>
     <div class="gp-artist" id="gp-artist">Luna Liu · Irene Zang · Ari Lin</div>
@@ -2049,7 +2049,7 @@ function gpArm(){if(gpArmed)return;gpArmed=true;
 function gpTry(){ga.play().then(()=>{gp=true;userPaused=false;gpUpd();gpSave();}).catch(()=>{gp=false;gpUpd();gpArm();});}
 function gpLoad(i,play){gi=(i+GP.length)%GP.length;const t=GP[gi];
   if(ge.t)ge.t.textContent=t.title;if(ge.a)ge.a.textContent=t.artist;
-  if(ge.c)ge.c.src=t.cover;if(ge.l)ge.l.href=t.page;
+  if(ge.c)ge.c.src=t.cover;if(ge.l)ge.l.href=t.page;const cl=$g('gp-cover-link');if(cl)cl.href=t.page;
   if(ge.f)ge.f.style.width='0%';if(ge.cu)ge.cu.textContent='0:00';if(ge.d)ge.d.textContent='—';
   ga.src=t.src;
   if(gpResume>0.5){const r=gpResume;gpResume=0;
