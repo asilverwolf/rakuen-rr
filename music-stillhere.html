@@ -23,7 +23,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .nav-links a:hover{color:var(--white);}
 .hero{min-height:100vh;position:relative;overflow:hidden;display:flex;align-items:flex-end;}
 .hero-bg{position:absolute;inset:0;}
-.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center center;}
+.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center top;}
 .hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(4,4,10,0.15) 0%,rgba(4,4,10,0.5) 50%,rgba(4,4,10,0.96) 100%);}
 .hero-info{position:relative;z-index:2;padding:0 64px 80px;max-width:680px;}
 .hero-num{font-size:11px;letter-spacing:0.5em;text-transform:uppercase;color:var(--grey);display:block;margin-bottom:16px;}
@@ -69,6 +69,7 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
 .gp-ctrl{display:flex;align-items:center;gap:14px;flex-shrink:0;}
 .gp-btn{background:none;border:none;color:var(--grey);cursor:none;font-size:11px;padding:4px;transition:color 0.2s;font-family:'Space Mono',monospace;}
 .gp-btn:hover{color:var(--white);}
+.gp-btn.active{color:var(--white);opacity:1;}
 .gp-btn.play{width:30px;height:30px;border:1px solid rgba(240,240,245,0.18);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;}
 .gp-link{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--grey);text-decoration:none;border-bottom:1px solid rgba(136,136,153,0.2);padding-bottom:1px;flex-shrink:0;transition:color 0.2s;}
 .gp-link:hover{color:var(--white);}
@@ -191,9 +192,11 @@ You don't say it
     <div class="gp-time"><span id="gpCur">0:00</span><span id="gpDur">—</span></div>
   </div>
   <div class="gp-ctrl">
+    <button class="gp-btn active" id="gp-shuffle" onclick="gpToggleShuffle()" title="隨機播放" style="font-size:10px;">⇄</button>
     <button class="gp-btn" onclick="gpPrev()">&#9664;&#9664;</button>
     <button class="gp-btn play" id="gpPlay" onclick="gpToggle()">&#9654;</button>
     <button class="gp-btn" onclick="gpNext()">&#9654;&#9654;</button>
+    <button class="gp-btn" id="gp-repeat" onclick="gpToggleRepeat()" title="單曲循環" style="font-size:10px;">↻</button>
   </div>
   <a class="gp-link" id="gpLink" href="music-stillhere.html">Lyrics ↗</a>
   <button class="gp-x" onclick="document.getElementById('gp').classList.add('hidden')">✕</button>
@@ -250,7 +253,10 @@ function gpLoad(i,play){gi=(i+GP.length)%GP.length;const t=GP[gi];
   if(play)gpTry();else gpUpd();
   gpSave();}
 function gpToggle(){if(gp){ga.pause();gp=false;userPaused=true;gpUpd();gpSave();}else{gpTry();}}
-function gpNext(){gpResume=0;gpLoad(gi+1,true);}
+let gpShuffle=true,gpRepeat=false;
+function gpToggleShuffle(){gpShuffle=!gpShuffle;const b=document.getElementById("gp-shuffle");if(b)b.classList.toggle("active",gpShuffle);}
+function gpToggleRepeat(){gpRepeat=!gpRepeat;const b=document.getElementById("gp-repeat");if(b)b.classList.toggle("active",gpRepeat);}
+function gpNext(){gpResume=0;if(gpShuffle){let n=Math.floor(Math.random()*GP.length);if(GP.length>1)while(n===gi)n=Math.floor(Math.random()*GP.length);gpLoad(n,true);}else{gpLoad(gi+1,true);}}
 function gpPrev(){gpResume=0;gpLoad(gi-1,true);}
 function gpUpdateBtn(){gpUpd();}
 function gpHide(){const w=$g('global-player')||$g('gp');if(w)w.classList.add('hidden');}
@@ -260,7 +266,7 @@ ga.addEventListener('timeupdate',()=>{if(!ga.duration)return;
   if(ge.cu)ge.cu.textContent=gpFmt(ga.currentTime);
   const n=Date.now();if(n-gpLastSave>1000){gpLastSave=n;gpSave();}});
 ga.addEventListener('loadedmetadata',()=>{if(ge.d)ge.d.textContent=gpFmt(ga.duration);});
-ga.addEventListener('ended',()=>{gpNext();});
+ga.addEventListener('ended',()=>{if(gpRepeat){ga.currentTime=0;gpTry();}else{gpNext();}});
 window.addEventListener('pagehide',gpSave);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!gp&&!userPaused)gpTry();});
 gpLoad(gi,!userPaused);
