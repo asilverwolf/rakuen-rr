@@ -47,7 +47,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .section-line-rule{flex:1;height:1px;background:var(--line);}
 .lyrics-btn{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--grey);background:none;border:1px solid rgba(240,240,245,0.1);padding:8px 16px;cursor:none;transition:all 0.2s;font-family:'Space Mono',monospace;}
 .lyrics-btn:hover{color:var(--white);border-color:rgba(240,240,245,0.3);}
-.lyrics-body{overflow:hidden;max-height:0;transition:max-height 0.7s ease;}
+.lyrics-body{}
 .lyrics-body.open{max-height:4000px;}
 .lyrics-text{font-family:'Noto Serif TC',serif;font-size:13px;font-weight:300;line-height:3;color:rgba(240,240,245,0.5);padding:40px 0;white-space:pre-line;}
 .music-nav{padding:60px 64px;display:flex;justify-content:space-between;border-top:1px solid var(--line);}
@@ -140,8 +140,7 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
     <span class="section-line-label">Lyrics</span>
     <div class="section-line-rule"></div>
   </div>
-  <button class="lyrics-btn" id="lyricsBtn" onclick="toggleLyrics()">+ Show</button>
-  <div class="lyrics-body" id="lyricsBody">
+  <div class="lyrics-body open" id="lyricsBody">
     <div class="lyrics-text">[ Opening ]
 ここに 立ってる
 どちらでもない 場所に

@@ -2001,11 +2001,11 @@
     </div>
   </div>
   <div class="gp-controls">
-    <button class="gp-btn" id="gp-shuffle" onclick="gpToggleShuffle()" title="隨機播放">⇄</button>
+    <button class="gp-btn active" id="gp-shuffle" onclick="gpToggleShuffle()" title="隨機播放" style="font-size:10px;">⇄</button>
     <button class="gp-btn" onclick="gpPrev()" title="上一首">&#9664;&#9664;</button>
     <button class="gp-btn play" id="gp-play" onclick="gpToggle()">&#9654;</button>
     <button class="gp-btn" onclick="gpNext()" title="下一首">&#9654;&#9654;</button>
-    <button class="gp-btn" id="gp-repeat" onclick="gpToggleRepeat()" title="單曲循環">↻</button>
+    <button class="gp-btn" id="gp-repeat" onclick="gpToggleRepeat()" title="單曲循環" style="font-size:10px;">↻</button>
   </div>
   <a class="gp-page-link" id="gp-link" href="music-noproof.html">Lyrics ↗</a>
   <button class="gp-toggle" onclick="gpHide()" title="hide">✕</button>
@@ -2042,7 +2042,7 @@ if(PAGE_IDX>=0){gi=PAGE_IDX;if(gpFresh&&gpSt.i===gi)gpResume=gpSt.t||0;}
 else if(gpFresh){gi=gpSt.i;gpResume=gpSt.t||0;}
 else{gi=Math.floor(Math.random()*GP.length);userPaused=false;}
 function gpSave(){try{localStorage.setItem('rr_gp',JSON.stringify({i:gi,t:ga.currentTime||0,u:userPaused,ts:Date.now()}))}catch(e){}}
-function gpUpd(){if(ge.p)ge.p.innerHTML=gp?'&#9646;&#9646;':'&#9654;';}
+function gpUpd(){if(ge.p)ge.p.innerHTML=gp?'&#9646;&#9646;':'&#9654;';if(typeof heroPlaySync==='function')heroPlaySync();}
 function gpArm(){if(gpArmed)return;gpArmed=true;
   const h=()=>{gpArmed=false;document.removeEventListener('pointerdown',h,true);document.removeEventListener('keydown',h,true);if(!userPaused)gpTry();};
   document.addEventListener('pointerdown',h,true);document.addEventListener('keydown',h,true);}
@@ -2057,7 +2057,7 @@ function gpLoad(i,play){gi=(i+GP.length)%GP.length;const t=GP[gi];
   if(play)gpTry();else gpUpd();
   gpSave();}
 function gpToggle(){if(gp){ga.pause();gp=false;userPaused=true;gpUpd();gpSave();}else{gpTry();}}
-let gpShuffle=false,gpRepeat=false;
+let gpShuffle=true,gpRepeat=false;
 function gpToggleShuffle(){gpShuffle=!gpShuffle;const b=$g('gp-shuffle');if(b)b.classList.toggle('active',gpShuffle);}
 function gpToggleRepeat(){gpRepeat=!gpRepeat;const b=$g('gp-repeat');if(b)b.classList.toggle('active',gpRepeat);}
 function gpNext(){gpResume=0;if(gpShuffle){let n=Math.floor(Math.random()*GP.length);if(GP.length>1)while(n===gi)n=Math.floor(Math.random()*GP.length);gpLoad(n,true);}else{gpLoad(gi+1,true);}}
@@ -2084,9 +2084,7 @@ function heroPlaySync(){
     if(icon)icon.textContent='▶';
   }
 }
-// Patch gpUpd to also sync hero button
-const _origGpUpd=gpUpd;
-function gpUpd(){ if(typeof _origGpUpd==='function')_origGpUpd(); heroPlaySync(); }
+// (gpUpd already calls heroPlaySync — no override needed)
 function gpSeek(e){if(!ga.duration)return;const r=e.currentTarget.getBoundingClientRect();ga.currentTime=((e.clientX-r.left)/r.width)*ga.duration;gpSave();}
 ga.addEventListener('timeupdate',()=>{if(!ga.duration)return;
   if(ge.f)ge.f.style.width=(ga.currentTime/ga.duration*100)+'%';
@@ -2097,6 +2095,8 @@ ga.addEventListener('ended',()=>{if(gpRepeat){ga.currentTime=0;gpTry();}else{gpN
 window.addEventListener('pagehide',gpSave);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!gp&&!userPaused)gpTry();});
 gpLoad(gi,false); // no auto-play — user must click
+// Init: shuffle on by default
+setTimeout(()=>{const b=$g('gp-shuffle');if(b)b.classList.add('active');},0);
 </script>
 
 <script>
