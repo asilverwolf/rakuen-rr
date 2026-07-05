@@ -293,6 +293,17 @@ function gpTry(){ga.play().then(()=>{gp=true;userPaused=false;gpUpd();gpSave();}
 function gpLoad(i,play){gi=(i+GP.length)%GP.length;const t=GP[gi];
   if(ge.t)ge.t.textContent=t.title;if(ge.a)ge.a.textContent=t.artist;
   if(ge.c)ge.c.src=t.cover;if(ge.l)ge.l.href=t.page;
+  // Media Session API — lock screen cover art
+  if('mediaSession' in navigator){
+    navigator.mediaSession.metadata=new MediaMetadata({
+      title:t.title,artist:t.artist,album:'RakuenɒuyɘЯ',
+      artwork:[{src:window.location.origin+'/'+t.cover,sizes:'512x512',type:'image/jpeg'}]
+    });
+    navigator.mediaSession.setActionHandler('previoustrack',()=>gpPrev());
+    navigator.mediaSession.setActionHandler('nexttrack',()=>gpNext());
+    navigator.mediaSession.setActionHandler('play',()=>gpTry());
+    navigator.mediaSession.setActionHandler('pause',()=>{ga.pause();gp=false;userPaused=true;gpUpd();if(typeof gpSave==='function')gpSave();});
+  }
   if(ge.f)ge.f.style.width='0%';if(ge.cu)ge.cu.textContent='0:00';if(ge.d)ge.d.textContent='—';
   ga.src=t.src;
   if(gpResume>0.5){const r=gpResume;gpResume=0;

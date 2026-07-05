@@ -995,7 +995,7 @@
 <footer>
   <div class="footer-logo">
     <img src="logo-rakuen.png" style="height:36px;opacity:0.8;" alt="R.R">
-    <span class="footer-tagline">虛構的，所以真實</span>
+    <span class="footer-tagline">FICTIONAL, THEREFORE REAL.</span><span style="font-size:10px;color:rgba(136,136,153,0.4);letter-spacing:0.1em;display:block;margin-top:4px;">虛構的，所以真實</span>
   </div>
   <div class="footer-right">
     <a href="https://instagram.com/rakuen.rr" target="_blank">@rakuen.rr</a>
@@ -1267,6 +1267,9 @@ const GP=[
   {title:'비의 밤',artist:'Irene Zang',src:'audio/rainnight.mp3',cover:'cover-rainnight.jpg',page:'music-rainnight.html'},
   {title:'AIDA',artist:'Luna Liu',src:'audio/aida.mp3',cover:'cover-aida.jpg',page:'music-aida.html'},
   {title:'金魚が漂う',artist:'Ari Lin',src:'audio/kingyo.mp3',cover:'cover-kingyo.jpg',page:'music-kingyo.html'},
+
+  {title:'幽滅',artist:'Ari Lin',src:'audio/youmetsu.mp3',cover:'cover-youmetsu.jpg',page:'music-youmetsu.html'},
+  {title:'共犯',artist:'Luna Liu',src:'audio/kyouhan.mp3',cover:'cover-kyouhan.jpg',page:'music-kyouhan.html'},
 ];
 const PAGE_IDX=-1;
 const $g=i=>document.getElementById(i);
@@ -1289,6 +1292,17 @@ function gpTry(){ga.play().then(()=>{gp=true;userPaused=false;gpUpd();gpSave();}
 function gpLoad(i,play){gi=(i+GP.length)%GP.length;const t=GP[gi];
   if(ge.t)ge.t.textContent=t.title;if(ge.a)ge.a.textContent=t.artist;
   if(ge.c)ge.c.src=t.cover;if(ge.l)ge.l.href=t.page;const cl=document.getElementById("gp-cover-link");if(cl)cl.href=t.page;
+  // Media Session API — lock screen cover art
+  if('mediaSession' in navigator){
+    navigator.mediaSession.metadata=new MediaMetadata({
+      title:t.title,artist:t.artist,album:'RakuenɒuyɘЯ',
+      artwork:[{src:window.location.origin+'/'+t.cover,sizes:'512x512',type:'image/jpeg'}]
+    });
+    navigator.mediaSession.setActionHandler('previoustrack',()=>gpPrev());
+    navigator.mediaSession.setActionHandler('nexttrack',()=>gpNext());
+    navigator.mediaSession.setActionHandler('play',()=>gpTry());
+    navigator.mediaSession.setActionHandler('pause',()=>{ga.pause();gp=false;userPaused=true;gpUpd();if(typeof gpSave==='function')gpSave();});
+  }
   if(ge.f)ge.f.style.width='0%';if(ge.cu)ge.cu.textContent='0:00';if(ge.d)ge.d.textContent='—';
   ga.src=t.src;
   if(gpResume>0.5){const r=gpResume;gpResume=0;

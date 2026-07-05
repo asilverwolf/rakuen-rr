@@ -258,6 +258,27 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
     </div>
   </div>
 
+
+  <div class="track-item">
+    <span class="track-num">14</span>
+    <img class="track-cover" src="cover-youmetsu.jpg" alt="幽滅">
+    <div><div class="track-title">幽滅</div><div class="track-artist">Ari Lin</div></div>
+    <div class="track-actions">
+      <button class="btn" onclick="gpLoad(13,true)">▶</button>
+      <span class="btn" style="opacity:0.35;cursor:default;">↓ MP3</span>
+    </div>
+  </div>
+
+  <div class="track-item">
+    <span class="track-num">15</span>
+    <img class="track-cover" src="cover-kyouhan.jpg" alt="共犯">
+    <div><div class="track-title">共犯</div><div class="track-artist">Luna Liu</div></div>
+    <div class="track-actions">
+      <button class="btn" onclick="gpLoad(14,true)">▶</button>
+      <span class="btn" style="opacity:0.35;cursor:default;">↓ MP3</span>
+    </div>
+  </div>
+
 </div>
 
 <div style="padding:24px 64px 0;font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:rgba(136,136,153,0.35);">Downloads — Coming Soon</div>
@@ -308,6 +329,8 @@ const GP=[
   {title:'비의 밤',artist:'Irene Zang',src:'audio/rainnight.mp3',cover:'cover-rainnight.jpg'},
   {title:'AIDA',artist:'Luna Liu',src:'audio/aida.mp3',cover:'cover-aida.jpg'},
   {title:'金魚が漂う',artist:'Ari Lin',src:'audio/kingyo.mp3',cover:'cover-kingyo.jpg'},
+  {title:'幽滅',artist:'Ari Lin',src:'audio/youmetsu.mp3',cover:'cover-youmetsu.jpg'},
+  {title:'共犯',artist:'Luna Liu',src:'audio/kyouhan.mp3',cover:'cover-kyouhan.jpg'},
 ];
 const ga=document.getElementById('gpAudio');
 const $=i=>document.getElementById(i);
