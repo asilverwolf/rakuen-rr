@@ -62,6 +62,22 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .note{padding:48px 64px;font-size:12px;color:rgba(136,136,153,0.3);line-height:2;letter-spacing:0.05em;max-width:600px;}
 .note a{color:var(--grey);text-decoration:none;}
 
+/* MEMBERSHIP */
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);margin:40px 64px 0;}
+.plan-card{background:var(--black);padding:36px 32px 32px;display:flex;flex-direction:column;position:relative;transition:background 0.3s;}
+.plan-card:hover{background:rgba(240,240,245,0.03);}
+.plan-card.featured{background:rgba(240,240,245,0.035);}
+.plan-tag{position:absolute;top:0;left:0;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--black);background:var(--grey-light);padding:4px 10px;}
+.plan-name{font-family:'EB Garamond',serif;font-size:23px;font-weight:400;letter-spacing:0.02em;margin-bottom:6px;}
+.plan-price{font-size:14px;letter-spacing:0.08em;color:var(--grey-light);margin-bottom:20px;}
+.plan-price b{font-size:20px;color:var(--white);font-weight:700;}
+.plan-desc{font-family:'Noto Serif TC',serif;font-size:13px;font-weight:300;color:var(--grey);line-height:1.9;margin-bottom:24px;flex:1;}
+.plan-desc .en{color:var(--grey-light);display:block;margin-bottom:6px;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.02em;}
+.plan-cta{display:block;text-align:center;font-size:12px;letter-spacing:0.2em;text-transform:uppercase;color:var(--grey);text-decoration:none;border:1px solid rgba(240,240,245,0.14);padding:12px;transition:all 0.25s;}
+.plan-cta:hover{color:var(--black);background:var(--white);border-color:var(--white);}
+.plan-card.featured .plan-cta{color:var(--white);border-color:rgba(240,240,245,0.4);}
+.plan-card.featured .plan-cta:hover{color:var(--black);background:var(--white);}
+
 footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);margin-top:40px;}
 .footer-logo img{height:20px;opacity:0.55;}
 .footer-copy{font-size:12px;color:rgba(136,136,153,0.25);}
@@ -78,6 +94,7 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
   .track-num{display:none;}
   .track-actions{flex-direction:column;gap:6px;align-items:flex-end;}
   .note{padding:32px 24px;}
+  .plan-grid{grid-template-columns:1fr;margin:32px 24px 0;}
   footer{padding:24px;}
 }
 </style>
@@ -279,8 +296,46 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
 
 <div class="note">Streaming is free — always. Take one home for $2.<br>Payments are handled by Lemon Squeezy. Your downloads, receipts and subscriptions all live in <a href="https://app.lemonsqueezy.com/my-orders" target="_blank" rel="noopener" style="text-decoration:underline;">your order page</a> — sign in with the email you used, no password needed.<br>Cancel a subscription anytime from that page, or via the &ldquo;Manage subscription&rdquo; link in your receipt email. No questions asked.<br>Need help? <a href="mailto:studio@rakuen-rr.com" style="text-decoration:underline;">studio@rakuen-rr.com</a></div>
 
+<!-- MEMBERSHIP -->
+<div class="section-divider" id="support" style="margin-top:60px;">
+  <span class="section-divider-label">Membership · 支持</span>
+  <div class="section-divider-rule"></div>
+</div>
+
+<div style="padding:24px 64px 0;font-family:'Noto Serif TC',serif;font-size:14px;font-weight:300;color:var(--grey);line-height:2;max-width:520px;">
+  歌可以一直免費聽。<br>如果你想讓它繼續下去 —— 這裡有三種方式。<br><span style="color:rgba(136,136,153,0.5);font-size:13px;">Streaming stays free. If you want us to keep going, here's how.</span>
+</div>
+
+<div class="plan-grid">
+
+  <div class="plan-card">
+    <div class="plan-name">Supporter</div>
+    <div class="plan-price"><b>$3</b> / month</div>
+    <div class="plan-desc"><span class="en">just because you want us to keep going.</span>純贊助，不綁下載。你的名字，我們放在心上。</div>
+    <a class="plan-cta" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/70887274-c381-40d4-bf62-2c7f6783ff50" target="_blank" rel="noopener">Become a supporter</a>
+  </div>
+
+  <div class="plan-card featured">
+    <span class="plan-tag">Most</span>
+    <div class="plan-name">Full Membership</div>
+    <div class="plan-price"><b>$8</b> / month</div>
+    <div class="plan-desc"><span class="en">every song we've made, and every song we will.</span>14 首全下載 ＋ 訂閱限定內容，隨新歌更新。</div>
+    <a class="plan-cta" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/329f6fa2-8634-4562-949c-982b0e470a61" target="_blank" rel="noopener">Get everything</a>
+  </div>
+
+  <div class="plan-card">
+    <div class="plan-name">Annual Pack</div>
+    <div class="plan-price"><b>$25</b> / year</div>
+    <div class="plan-desc"><span class="en">one year. every song. unlimited downloads.</span>一次到位，等於省下兩個月。</div>
+    <a class="plan-cta" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/618d20ad-2adb-49f1-87cb-5b70fbc65318" target="_blank" rel="noopener">Take the year</a>
+  </div>
+
+</div>
+
+<div class="note" style="padding-top:28px;">Subscriptions renew automatically. Cancel anytime from <a href="https://app.lemonsqueezy.com/my-orders" target="_blank" rel="noopener" style="text-decoration:underline;">your order page</a> — no questions asked.<br>訂閱到期自動續訂；隨時可在訂單頁一鍵取消，不留人、不問原因。</div>
+
 <!-- SHOP -->
-<div class="section-divider" style="margin-top:60px;">
+<div class="section-divider" style="margin-top:40px;">
   <span class="section-divider-label">Shop</span>
   <div class="section-divider-rule"></div>
 </div>
