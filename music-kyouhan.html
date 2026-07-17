@@ -108,17 +108,17 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
   </div>
 </nav>
 <section class="hero">
-  <div class="hero-bg"><img src="cover-kyouhan.jpg" alt="NO PROOF"></div>
+  <div class="hero-bg"><img src="cover-kyouhan.jpg" alt="共犯"></div>
   <div class="hero-info">
     <span class="hero-num">R.R · 15</span>
     <h1 class="hero-title">共犯</h1>
-    <span class="hero-title-sub"></span>
-    <p class="hero-artist">Luna Liu · Irene Zang · Ari Lin</p>
-    <p class="hero-meta">2026 · Electronic · F minor · BPM 100</p>
+    <span class="hero-title-sub">gòngfàn · accomplice</span>
+    <p class="hero-artist">Luna Liu</p>
+    <p class="hero-meta">2026 · Mandarin Alternative · Post-Rock Ballad</p>
   </div>
 </section>
 <section class="cover-section">
-  <img src="cover-kyouhan.jpg" alt="NO PROOF — cover" id="coverFull">
+  <img src="cover-kyouhan.jpg" alt="共犯 — cover" id="coverFull">
 </section>
 
 <section class="words-section">
@@ -137,7 +137,7 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
   <span class="words-sig">— Luna Liu</span>
 </section>
 <section class="stream-section">
-  <span class="stream-link" style="opacity:0.35;cursor:default;pointer-events:none;">↓&nbsp;&nbsp;Download · Coming Soon</span>
+  <a class="stream-link" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/7af4081c-f07d-4457-acb1-ab4a69485de6" target="_blank" rel="noopener">↓&nbsp;&nbsp;Download · $2</a>
 </section>
 <section class="lyrics-section">
   <div class="section-line">
@@ -145,38 +145,8 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
     <div class="section-line-rule"></div>
   </div>
   <div class="lyrics-body open" id="lyricsBody">
-    <div class="lyrics-text">[ Intro ] Luna
-We don't need a name…
-We don't need a place…
-存在就夠了
-even if it fades…
-
-[ Verse 1 ] Luna
-You see me in the static light
-like a glitch you can't define
-靠近一點 又太真實
-then I disappear on time
-
-[ Chorus ]
-We don't need no proof, no proof
-我們不需要任何證明
-even if we're not the truth
-No proof, no proof
-you and me invisible youth
-只要你還在 就不算虛無
-
-[ Verse 2 ] Irene
-너는 몰라 이 감각
-越像假的，越真實
-
-[ Bridge ] Ari
-ねえ ここにいるよ
-触れられないけど
-名前もないまま
-
-[ Outro ] Luna
-If no one knows…
-maybe that's why it's real</div>
+    <div class="lyrics-text" style="color:rgba(240,240,245,0.4);font-style:italic;">歌詞整理中，即將補上。
+Lyrics coming soon.</div>
   </div>
 </section>
 <div class="music-nav">
@@ -191,8 +161,8 @@ maybe that's why it's real</div>
 <div id="gp">
   <img class="gp-cover" id="gpCover" src="cover-kyouhan.jpg" alt="">
   <div class="gp-info">
-    <div class="gp-title" id="gpTitle">NO PROOF</div>
-    <div class="gp-artist" id="gpArtist">Luna Liu · Irene Zang · Ari Lin</div>
+    <div class="gp-title" id="gpTitle">共犯</div>
+    <div class="gp-artist" id="gpArtist">Luna Liu</div>
   </div>
   <div class="gp-pw">
     <div class="gp-bar" onclick="gpSeek(event)"><div class="gp-fill" id="gpFill"></div></div>
@@ -217,7 +187,7 @@ let mx=0,my=0,rx=0,ry=0;
 let lo=false;
 function toggleLyrics(){lo=!lo;document.getElementById('lyricsBody').classList.toggle('open',lo);document.getElementById('lyricsBtn').textContent=(lo?'− Hide':'+ Show');}
 const GP=[
-  {title:'NO PROOF',artist:'Luna Liu · Irene Zang · Ari Lin',src:'audio/kyouhan.mp3',cover:'cover-noproof.jpg',page:'music-noproof.html'},
+  {title:'NO PROOF',artist:'Luna Liu · Irene Zang · Ari Lin',src:'audio/noproof.mp3',cover:'cover-noproof.jpg',page:'music-noproof.html'},
   {title:'SIGNAL',artist:'Irene Zang',src:'audio/signal.mp3',cover:'cover-signal.jpg',page:'music-signal.html'},
   {title:'界線',artist:'Ari Lin',src:'audio/jiexian.mp3',cover:'cover-jiexian.jpg',page:'music-jiexian.html'},
   {title:'BETWEEN',artist:'Luna Liu',src:'audio/between.mp3',cover:'cover-between.jpg',page:'music-between.html'},

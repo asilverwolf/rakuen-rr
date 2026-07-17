@@ -286,7 +286,8 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
     <img class="track-cover" src="cover-kyouhan.jpg" alt="共犯">
     <div><div class="track-title">共犯</div><div class="track-artist">Luna Liu</div></div>
     <div class="track-actions">
-      <span class="btn" style="opacity:0.35;cursor:default;">in the making</span>
+      <button class="btn" onclick="gpLoad(14,true)">▶</button>
+      <a class="btn" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/7af4081c-f07d-4457-acb1-ab4a69485de6" target="_blank" rel="noopener">↓ $2</a>
     </div>
   </div>
 
@@ -399,6 +400,7 @@ const GP=[
   {title:'AIDA',artist:'Luna Liu',src:'audio/aida.mp3',cover:'cover-aida.jpg'},
   {title:'金魚が漂う',artist:'Ari Lin',src:'audio/kingyo.mp3',cover:'cover-kingyo.jpg'},
   {title:'幽滅',artist:'Ari Lin',src:'audio/youmetsu.mp3',cover:'cover-youmetsu.jpg'},
+  {title:'共犯',artist:'Luna Liu',src:'audio/kyouhan.mp3',cover:'cover-kyouhan.jpg'},
 ];
 const ga=document.getElementById('gpAudio');
 const $=i=>document.getElementById(i);
