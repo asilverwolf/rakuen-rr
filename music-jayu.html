@@ -88,6 +88,11 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
 .words-rule{display:none;}
 .cover-section img{width:min(320px,70vw);aspect-ratio:1/1;object-fit:cover;display:block;box-shadow:0 30px 90px rgba(0,0,0,0.55);transition:transform 0.4s;}
 .cover-section img:hover{transform:scale(1.015);}
+.bts-section{padding:0 64px 80px;}
+.bts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px;margin-top:24px;}
+.bts-grid img{width:100%;display:block;cursor:none;transition:opacity 0.3s;}
+.bts-grid img:hover{opacity:0.72;}
+@media(max-width:768px){.bts-section{padding:0 24px 60px;}.bts-grid{grid-template-columns:repeat(2,1fr);gap:4px;}}
 #lightbox{position:fixed;inset:0;z-index:3000;background:rgba(4,4,10,0.94);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;}
 #lightbox.open{opacity:1;pointer-events:all;}
 #lightbox img{max-width:92vw;max-height:86vh;object-fit:contain;}
@@ -254,6 +259,22 @@ to own eternity
 …</div>
   </div>
 </section>
+<section class="bts-section">
+  <div class="section-line">
+    <span class="section-line-label">Behind the Track</span>
+    <div class="section-line-rule"></div>
+  </div>
+  <div class="bts-grid">
+    <img src="bts/bts-jayu-0.jpg" alt="자유 얼마야? BTS" class="bts-photo" loading="lazy">
+    <img src="bts/bts-jayu-1.jpg" alt="자유 얼마야? BTS" class="bts-photo" loading="lazy">
+    <img src="bts/bts-jayu-2.jpg" alt="자유 얼마야? BTS" class="bts-photo" loading="lazy">
+    <img src="bts/bts-jayu-3.jpg" alt="자유 얼마야? BTS" class="bts-photo" loading="lazy">
+    <img src="bts/bts-jayu-4.jpg" alt="자유 얼마야? BTS" class="bts-photo" loading="lazy">
+    <img src="bts/bts-jayu-5.jpg" alt="자유 얼마야? BTS" class="bts-photo" loading="lazy">
+    <img src="bts/bts-jayu-6.jpg" alt="자유 얼마야? BTS" class="bts-photo" loading="lazy">
+    <img src="bts/bts-jayu-7.jpg" alt="자유 얼마야? BTS" class="bts-photo" loading="lazy">
+  </div>
+</section>
 <div class="music-nav">
   <a href="what-we-do.html">← All Music</a>
   <a href="music-kyouhan.html">共犯 →</a>
@@ -369,6 +390,7 @@ gpLoad(gi,!userPaused);
 // Cover lightbox
 const lb=document.getElementById('lightbox'),lbImg=document.getElementById('lbImg');
 document.getElementById('coverFull').addEventListener('click',function(){lbImg.src=this.src;lb.classList.add('open');});
+document.querySelectorAll('.bts-photo').forEach(img=>{img.addEventListener('click',function(){lbImg.src=this.src;lb.classList.add('open');});});
 document.getElementById('lbX').addEventListener('click',()=>lb.classList.remove('open'));
 lb.addEventListener('click',e=>{if(e.target===lb)lb.classList.remove('open');});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('open');});
