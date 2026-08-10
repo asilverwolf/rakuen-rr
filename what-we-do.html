@@ -156,6 +156,15 @@
   .item-card[data-cat="字型"] { background:#0D0D17; }
   .item-card[data-cat="訂閱"] { background:#050508; }
   .item-card.hidden { display:none; }
+  .item-play, .item-buy {
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    padding:7px 14px; border:1px solid rgba(240,240,245,0.22);
+    background:transparent; color:rgba(240,240,245,0.72);
+    cursor:pointer; text-decoration:none; transition:all 0.25s; white-space:nowrap;
+  }
+  .item-play:hover { border-color:rgba(240,240,245,0.7); color:#F0F0F5; }
+  .item-buy { border-color:rgba(240,240,245,0.35); color:#F0F0F5; }
+  .item-buy:hover { background:#F0F0F5; color:#04040A; }
 
   /* Scan line on hover */
   .item-card::before {
@@ -413,26 +422,22 @@
   <div class="nav-links">
     <a href="what-we-do.html" class="active">Music</a>
     <a href="index.html#who">Who</a>
-    <a href="take.html">Shop</a>
+    <a href="what-we-do.html#membership">Membership</a>
   </div>
 </nav>
 
 <!-- PAGE HEADER -->
 <header class="page-header">
   <span class="page-header-label">Rakuen — Everything</span>
-  <h1>What We Do</h1>
-  <p>Everything here can be taken.<br>Music to listen. Clothes to wear. Art to print. Type to use. Cards to keep.</p>
+  <h1>All You Can Take</h1>
+  <p>Everything here can be taken.<br>免費聽完整首。$2 帶走無損母帶。</p>
 </header>
 
 <!-- FILTER BAR -->
 <div class="filter-bar" id="filterBar">
   <button class="filter-btn active" data-filter="all" onclick="filterItems('all')">All <span class="filter-count" id="count-all"></span></button>
   <button class="filter-btn" data-filter="音樂" onclick="filterItems('音樂')">Listen <span class="filter-count" id="count-音樂"></span></button>
-  <button class="filter-btn" data-filter="服飾" onclick="filterItems('服飾')">Wear <span class="filter-count" id="count-服飾"></span></button>
-  <button class="filter-btn" data-filter="印刷" onclick="filterItems('印刷')">Print <span class="filter-count" id="count-印刷"></span></button>
-  <button class="filter-btn" data-filter="酷卡" onclick="filterItems('酷卡')">Cards <span class="filter-count" id="count-酷卡"></span></button>
-  <button class="filter-btn" data-filter="字型" onclick="filterItems('字型')">Type <span class="filter-count" id="count-字型"></span></button>
-  <button class="filter-btn" data-filter="訂閱" onclick="filterItems('訂閱')">Enter <span class="filter-count" id="count-訂閱"></span></button>
+  <button class="filter-btn" data-filter="訂閱" onclick="filterItems('訂閱')">Membership <span class="filter-count" id="count-訂閱"></span></button>
 </div>
 
 <!-- ITEMS -->
@@ -464,8 +469,8 @@
         <p class="item-title">NO PROOF</p>
         <p class="item-sub">Luna · Ari · Irene 三人合唱 · 2026<br>Electro Pop · F minor</p>
         <div class="item-footer">
-          <span class="item-price free">Free</span>
-          <span class="item-action">▶ Play</span>
+          <button class="item-play" onclick="event.preventDefault();event.stopPropagation();gpLoad(0,true);">&#9654; Play</button>
+          <a class="item-buy" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/a738f74f-fbdc-42cf-a5f4-ad1ade03ec8d" target="_blank" rel="noopener" onclick="event.stopPropagation();">&darr; $2</a>
         </div>
       </div>
     </a>
@@ -493,8 +498,8 @@
         <p class="item-title">Between</p>
         <p class="item-sub">Luna Liu 劉若玥 · 個人單曲 · 2026</p>
         <div class="item-footer">
-          <span class="item-price free">Free</span>
-          <span class="item-action">▶ Play</span>
+          <button class="item-play" onclick="event.preventDefault();event.stopPropagation();gpLoad(3,true);">&#9654; Play</button>
+          <a class="item-buy" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/c2306965-52f0-41b7-9983-fdf0716c5796" target="_blank" rel="noopener" onclick="event.stopPropagation();">&darr; $2</a>
         </div>
       </div>
     </a>
@@ -522,8 +527,8 @@
         <p class="item-title">Signal</p>
         <p class="item-sub">Irene Zang 臧映然 · 個人單曲 · 2026</p>
         <div class="item-footer">
-          <span class="item-price free">Free</span>
-          <span class="item-action">▶ Play</span>
+          <button class="item-play" onclick="event.preventDefault();event.stopPropagation();gpLoad(1,true);">&#9654; Play</button>
+          <a class="item-buy" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/518df83c-4e3b-425b-9057-1daa76fca22f" target="_blank" rel="noopener" onclick="event.stopPropagation();">&darr; $2</a>
         </div>
       </div>
     </a>
@@ -551,8 +556,8 @@
         <p class="item-title">界線</p>
         <p class="item-sub">Ari Lin 林書亞 · 個人單曲 · 2026</p>
         <div class="item-footer">
-          <span class="item-price free">Free</span>
-          <span class="item-action">▶ Play</span>
+          <button class="item-play" onclick="event.preventDefault();event.stopPropagation();gpLoad(2,true);">&#9654; Play</button>
+          <a class="item-buy" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/7b952bfc-2749-44a7-8aa3-354e12d05c78" target="_blank" rel="noopener" onclick="event.stopPropagation();">&darr; $2</a>
         </div>
       </div>
     </a>
@@ -567,8 +572,8 @@
         <p class="item-title">Hey Dirty Boy</p>
         <p class="item-sub">Irene Zang 臧映然 · 個人單曲 · 2026<br>Dark Trap Pop · F minor</p>
         <div class="item-footer">
-          <span class="item-price free">Free</span>
-          <span class="item-action">▶ Play</span>
+          <button class="item-play" onclick="event.preventDefault();event.stopPropagation();gpLoad(4,true);">&#9654; Play</button>
+          <a class="item-buy" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/890c5c31-6fcb-4cae-a29a-60a6be53e018" target="_blank" rel="noopener" onclick="event.stopPropagation();">&darr; $2</a>
         </div>
       </div>
     </a>
@@ -583,8 +588,8 @@
         <p class="item-title">自由のままで</p>
         <p class="item-sub">Ari Lin 林書亞 · 個人單曲 · 2026<br>Japanese Art Pop · F minor</p>
         <div class="item-footer">
-          <span class="item-price free">Free</span>
-          <span class="item-action">▶ Play</span>
+          <button class="item-play" onclick="event.preventDefault();event.stopPropagation();gpLoad(5,true);">&#9654; Play</button>
+          <a class="item-buy" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/6983dfc4-c9cd-4ac4-8943-17249c6051de" target="_blank" rel="noopener" onclick="event.stopPropagation();">&darr; $2</a>
         </div>
       </div>
     </a>
@@ -599,8 +604,8 @@
         <p class="item-title">STILL HERE</p>
         <p class="item-sub">Luna Liu 劉若玥 · 個人單曲 · 2026<br>Emotional Indie Pop · D minor</p>
         <div class="item-footer">
-          <span class="item-price free">Free</span>
-          <span class="item-action">▶ Play</span>
+          <button class="item-play" onclick="event.preventDefault();event.stopPropagation();gpLoad(6,true);">&#9654; Play</button>
+          <a class="item-buy" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/453c007c-dd49-4d37-85f6-c45c20fc1b76" target="_blank" rel="noopener" onclick="event.stopPropagation();">&darr; $2</a>
         </div>
       </div>
     </a>
@@ -615,8 +620,8 @@
         <p class="item-title">ARE YOU SURE</p>
         <p class="item-sub">Luna Liu 劉若玥 · 個人單曲 · 2026<br>Dark Indie Pop · E minor</p>
         <div class="item-footer">
-          <span class="item-price free">Free</span>
-          <span class="item-action">▶ Play</span>
+          <button class="item-play" onclick="event.preventDefault();event.stopPropagation();gpLoad(7,true);">&#9654; Play</button>
+          <a class="item-buy" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/9aba26a3-77ba-43cc-8601-406fd559d7b2" target="_blank" rel="noopener" onclick="event.stopPropagation();">&darr; $2</a>
         </div>
       </div>
     </a>
@@ -631,8 +636,8 @@
         <p class="item-title">SAY IT</p>
         <p class="item-sub">Irene Zang 臧映然 · 個人單曲 · 2026<br>Dark Pop · C minor</p>
         <div class="item-footer">
-          <span class="item-price free">Free</span>
-          <span class="item-action">▶ Play</span>
+          <button class="item-play" onclick="event.preventDefault();event.stopPropagation();gpLoad(8,true);">&#9654; Play</button>
+          <a class="item-buy" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/028d7b68-3812-4102-8732-dde533824840" target="_blank" rel="noopener" onclick="event.stopPropagation();">&darr; $2</a>
         </div>
       </div>
     </a>
@@ -647,8 +652,8 @@
         <p class="item-title">またね</p>
         <p class="item-sub">Ari Lin 林書亞 · 個人單曲 · 2026<br>Hyperpop Art Pop · F major/minor</p>
         <div class="item-footer">
-          <span class="item-price free">Free</span>
-          <span class="item-action">▶ Play</span>
+          <button class="item-play" onclick="event.preventDefault();event.stopPropagation();gpLoad(9,true);">&#9654; Play</button>
+          <a class="item-buy" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/8dde7569-37c1-4f9c-810b-e430c87b6c1f" target="_blank" rel="noopener" onclick="event.stopPropagation();">&darr; $2</a>
         </div>
       </div>
     </a>
@@ -663,8 +668,8 @@
         <p class="item-title">비의 밤</p>
         <p class="item-sub">Irene Zang 臧映然 · 個人單曲 · 2026<br>Dark Korean Ballad · C minor</p>
         <div class="item-footer">
-          <span class="item-price free">Free</span>
-          <span class="item-action">▶ Play</span>
+          <button class="item-play" onclick="event.preventDefault();event.stopPropagation();gpLoad(10,true);">&#9654; Play</button>
+          <a class="item-buy" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/061beeb2-56c4-433d-9539-326c61f86f43" target="_blank" rel="noopener" onclick="event.stopPropagation();">&darr; $2</a>
         </div>
       </div>
     </a>
@@ -679,8 +684,8 @@
         <p class="item-title">AIDA</p>
         <p class="item-sub">Luna Liu 劉若玥 · 個人單曲 · 2026<br>Dark Alternative Rock · A minor</p>
         <div class="item-footer">
-          <span class="item-price free">Free</span>
-          <span class="item-action">▶ Play</span>
+          <button class="item-play" onclick="event.preventDefault();event.stopPropagation();gpLoad(11,true);">&#9654; Play</button>
+          <a class="item-buy" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/458ced5a-022b-4c3f-b300-38a6a8e6ebca" target="_blank" rel="noopener" onclick="event.stopPropagation();">&darr; $2</a>
         </div>
       </div>
     </a>
@@ -695,8 +700,8 @@
         <p class="item-title">金魚が漂う</p>
         <p class="item-sub">Ari Lin 林書亞 · 個人單曲 · 2026<br>Japanese Art Pop Fusion · F minor</p>
         <div class="item-footer">
-          <span class="item-price free">Free</span>
-          <span class="item-action">▶ Play</span>
+          <button class="item-play" onclick="event.preventDefault();event.stopPropagation();gpLoad(12,true);">&#9654; Play</button>
+          <a class="item-buy" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/70a55b5d-1fe4-449c-a8dc-a39f896ae062" target="_blank" rel="noopener" onclick="event.stopPropagation();">&darr; $2</a>
         </div>
       </div>
     </a>
@@ -711,8 +716,8 @@
         <p class="item-title">幽滅</p>
         <p class="item-sub">Ari Lin 林書亞 · Single · 2026</p>
         <div class="item-footer">
-          <span class="item-price free">Free</span>
-          <span class="item-action">▶ Play</span>
+          <button class="item-play" onclick="event.preventDefault();event.stopPropagation();gpLoad(13,true);">&#9654; Play</button>
+          <a class="item-buy" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/5ba28b49-4bb4-4818-8418-de0a48864f51" target="_blank" rel="noopener" onclick="event.stopPropagation();">&darr; $2</a>
         </div>
       </div>
     </a>
@@ -727,8 +732,8 @@
         <p class="item-title">共犯</p>
         <p class="item-sub">Luna Liu 劉若玥 · Single · 2026</p>
         <div class="item-footer">
-          <span class="item-price free">Free</span>
-          <span class="item-action">▶ Play</span>
+          <button class="item-play" onclick="event.preventDefault();event.stopPropagation();gpLoad(14,true);">&#9654; Play</button>
+          <a class="item-buy" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/7af4081c-f07d-4457-acb1-ab4a69485de6" target="_blank" rel="noopener" onclick="event.stopPropagation();">&darr; $2</a>
         </div>
       </div>
     </a>
@@ -743,194 +748,32 @@
         <p class="item-title">자유 얼마야?</p>
         <p class="item-sub">Irene Zang 臧映然 · Single · 2026</p>
         <div class="item-footer">
-          <span class="item-price free">Free</span>
-          <span class="item-action">▶ Play</span>
+          <button class="item-play" onclick="event.preventDefault();event.stopPropagation();gpLoad(15,true);">&#9654; Play</button>
+          <a class="item-buy" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/76441bba-969e-4df7-85c4-21d69d10af3c" target="_blank" rel="noopener" onclick="event.stopPropagation();">&darr; $2</a>
         </div>
       </div>
     </a>
 
     <!-- R.R Tee -->
-    <a class="item-card reveal" data-cat="服飾" href="#" onclick="return false;" style="animation-delay:0.05s;cursor:default;opacity:0.6;">
-      <div class="item-visual" style="background:#0A0A0F;">
-        <div style="display:flex;align-items:center;justify-content:center;height:100%;padding:40px;">
-          <svg width="100" height="120" viewBox="0 0 100 120" fill="none">
-            <path d="M25,14 L2,28 L14,38 L14,108 L86,108 L86,38 L98,28 L75,14 C72,4 28,4 25,14 Z" fill="rgba(240,240,245,0.08)" stroke="rgba(240,240,245,0.2)" stroke-width="1"/>
-            <text x="50" y="68" text-anchor="middle" font-family="Space Mono" font-size="9" fill="rgba(240,240,245,0.25)" letter-spacing="2">R · R</text>
-          </svg>
-        </div>
-      </div>
-      <div class="item-body">
-        <span class="item-cat">Apparel</span>
-        <p class="item-title">R.R Tee</p>
-        <p class="item-sub">重磅純棉 · 黑色 · 符號版型<br>尺寸：S / M / L / XL</p>
-        <div class="item-footer">
-          <span class="item-price">NT$980</span>
-          <span class="item-action" style="opacity:0.4;letter-spacing:0.15em;font-size:11px;">Coming Soon</span>
-        </div>
-      </div>
-    </a>
-
     <!-- A3 Poster Luna -->
-    <a class="item-card reveal" data-cat="印刷" href="#" onclick="return false;" style="cursor:default;opacity:0.55;">
-      <div class="item-visual" style="background:#0A0A12;">
-        <div style="display:flex;align-items:center;justify-content:center;height:100%;padding:32px;">
-          <div style="border:1px solid rgba(240,240,245,0.08);padding:24px 16px;text-align:center;width:140px;">
-            <div style="font-family:'Noto Serif TC',serif;font-size:28px;color:rgba(240,240,245,0.15);letter-spacing:0.2em;">劉若玥</div>
-            <div style="font-size:12px;color:rgba(240,240,245,0.06);letter-spacing:0.3em;margin-top:8px;">A3 · 297×420mm</div>
-          </div>
-        </div>
-      </div>
-      <div class="item-body">
-        <span class="item-cat">Print</span>
-        <p class="item-title">A3 海報 · Luna</p>
-        <p class="item-sub">劉若玥 · 黑白高對比 · 297×420mm<br>霧面特種紙</p>
-        <div class="item-footer">
-          <span class="item-price">NT$350</span>
-          <span class="item-action" style="opacity:0.4;letter-spacing:0.15em;font-size:11px;">Coming Soon</span>
-        </div>
-      </div>
-    </a>
-
     <!-- A3 Poster Irene -->
-    <a class="item-card reveal" data-cat="印刷" href="#" onclick="return false;" style="cursor:default;opacity:0.55;animation-delay:0.05s">
-      <div class="item-visual" style="background:#0A0A12;">
-        <div style="display:flex;align-items:center;justify-content:center;height:100%;padding:32px;">
-          <div style="border:1px solid rgba(240,240,245,0.08);padding:24px 16px;text-align:center;width:140px;">
-            <div style="font-family:'Noto Serif TC',serif;font-size:28px;color:rgba(240,240,245,0.15);letter-spacing:0.2em;">臧映然</div>
-            <div style="font-size:12px;color:rgba(240,240,245,0.06);letter-spacing:0.3em;margin-top:8px;">A3 · 297×420mm</div>
-          </div>
-        </div>
-      </div>
-      <div class="item-body">
-        <span class="item-cat">Print</span>
-        <p class="item-title">A3 海報 · Irene</p>
-        <p class="item-sub">臧映然 · 黑白高對比 · 297×420mm<br>霧面特種紙</p>
-        <div class="item-footer">
-          <span class="item-price">NT$350</span>
-          <span class="item-action" style="opacity:0.4;letter-spacing:0.15em;font-size:11px;">Coming Soon</span>
-        </div>
-      </div>
-    </a>
-
     <!-- A2 Limited Irene -->
-    <a class="item-card reveal" data-cat="印刷" href="#" onclick="return false;" style="cursor:default;opacity:0.55;animation-delay:0.1s">
-      <div class="item-visual" style="background:#080810;position:relative;">
-        <div style="position:absolute;top:12px;right:12px;font-size:12px;letter-spacing:0.2em;color:rgba(240,240,245,0.3);font-family:'Space Mono',monospace;">限量 50</div>
-        <div style="display:flex;align-items:center;justify-content:center;height:100%;padding:32px;">
-          <div style="border:1px solid rgba(240,240,245,0.12);padding:32px 20px;text-align:center;width:160px;">
-            <div style="font-family:'Noto Serif TC',serif;font-size:32px;color:rgba(240,240,245,0.2);letter-spacing:0.2em;">臧映然</div>
-            <div style="font-size:12px;color:rgba(240,240,245,0.1);letter-spacing:0.3em;margin-top:8px;">A2 · 420×594mm</div>
-            <div style="font-size:12px;color:rgba(240,240,245,0.08);letter-spacing:0.1em;margin-top:4px;">含手寫符號</div>
-          </div>
-        </div>
-      </div>
-      <div class="item-body">
-        <span class="item-cat">Print</span>
-        <p class="item-title">A2 限量海報 · Irene</p>
-        <p class="item-sub">含手寫符號 · 編號限量 50 份<br>420×594mm · 霧面特種紙</p>
-        <div class="item-footer">
-          <span class="item-price">NT$880</span>
-          <span class="item-action" style="opacity:0.4;letter-spacing:0.15em;font-size:11px;">Coming Soon</span>
-        </div>
-      </div>
-    </a>
-
     <!-- Cool Card Bundle -->
-    <a class="item-card reveal" data-cat="酷卡" href="#" onclick="return false;" style="cursor:default;opacity:0.55;">
-      <div class="item-visual" style="background:#080812;">
-        <div style="display:flex;align-items:center;justify-content:center;height:100%;padding:32px;">
-          <div style="position:relative;width:160px;height:100px;">
-            <div style="position:absolute;transform:rotate(-8deg) translate(-20px,8px);width:90px;height:60px;border:1px solid rgba(240,240,245,0.15);background:#0C0C18;"></div>
-            <div style="position:absolute;transform:rotate(-3deg) translate(-5px,3px);width:90px;height:60px;border:1px solid rgba(240,240,245,0.2);background:#111120;"></div>
-            <div style="position:absolute;transform:rotate(2deg);width:90px;height:60px;border:1px solid rgba(240,240,245,0.3);background:#16162A;display:flex;align-items:center;justify-content:center;">
-              <span style="font-size:13px;color:rgba(240,240,245,0.3);letter-spacing:0.1em;font-family:'Space Mono',monospace;">R · R</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="item-body">
-        <span class="item-cat">Cards</span>
-        <p class="item-title">酷卡組合 · 四首全集</p>
-        <p class="item-sub">4首歌 × 各1張 · 各含 QRcode 掃碼聽歌<br>限定外盒包裝</p>
-        <div class="item-footer">
-          <span class="item-price">NT$580 / 套</span>
-          <span class="item-action" style="opacity:0.4;letter-spacing:0.15em;font-size:11px;">Coming Soon</span>
-        </div>
-      </div>
-    </a>
-
     <!-- Cool Card Single -->
-    <a class="item-card reveal" data-cat="酷卡" href="#" onclick="return false;" style="cursor:default;opacity:0.55;animation-delay:0.05s">
-      <div class="item-visual" style="background:#080812;">
-        <div style="display:flex;align-items:center;justify-content:center;height:100%;padding:32px;">
-          <div style="width:90px;height:60px;border:1px solid rgba(240,240,245,0.25);background:#16162A;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;">
-            <span style="font-size:13px;color:rgba(240,240,245,0.3);letter-spacing:0.1em;font-family:'Space Mono',monospace;">R · R</span>
-            <div style="width:28px;height:28px;border:1px solid rgba(240,240,245,0.15);display:grid;grid-template-columns:repeat(4,1fr);gap:1px;padding:3px;">
-              <div style="background:rgba(240,240,245,0.2)"></div><div></div><div style="background:rgba(240,240,245,0.2)"></div><div></div>
-              <div></div><div style="background:rgba(240,240,245,0.2)"></div><div></div><div style="background:rgba(240,240,245,0.2)"></div>
-              <div style="background:rgba(240,240,245,0.2)"></div><div></div><div></div><div style="background:rgba(240,240,245,0.2)"></div>
-              <div></div><div style="background:rgba(240,240,245,0.2)"></div><div style="background:rgba(240,240,245,0.2)"></div><div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="item-body">
-        <span class="item-cat">Cards</span>
-        <p class="item-title">酷卡單組</p>
-        <p class="item-sub">選擇一首歌 × 同款 3 張<br>含 QRcode · 掃碼聽歌</p>
-        <div class="item-footer">
-          <span class="item-price">NT$180 / 組</span>
-          <span class="item-action" style="opacity:0.4;letter-spacing:0.15em;font-size:11px;">Coming Soon</span>
-        </div>
-      </div>
-    </a>
-
     <!-- AIDA Typeface -->
-    <a class="item-card reveal" data-cat="字型" href="#" onclick="return false;" style="cursor:default;opacity:0.55;">
-      <div class="item-visual" style="background:#0A0A14;overflow:hidden;">
-        <div style="display:flex;align-items:center;justify-content:center;height:100%;padding:24px;">
-          <div style="text-align:center;">
-            <div class="type-visual">Aa</div>
-            <div style="font-family:'Space Mono',monospace;font-size:12px;color:rgba(240,240,245,0.15);letter-spacing:0.3em;margin-top:8px;">AIDA TYPEFACE</div>
-          </div>
-        </div>
-      </div>
-      <div class="item-body">
-        <span class="item-cat">Type</span>
-        <p class="item-title">AIDA Typeface</p>
-        <p class="item-sub">R.R 品牌字型 · TTF + OTF<br>使用請標註來源</p>
-        <div class="item-footer">
-          <span class="item-price free">Free</span>
-          <span class="item-action" style="opacity:0.4;letter-spacing:0.15em;font-size:11px;">Coming Soon</span>
-        </div>
-      </div>
-    </a>
-
     <!-- 樂園內層 -->
-    <a class="item-card reveal" data-cat="訂閱" href="#" onclick="return false;" style="cursor:default;opacity:0.55;animation-delay:0.1s">
-      <div class="item-visual" style="background:#030306;border:1px solid rgba(240,240,245,0.04);">
-        <div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:12px;padding:32px;text-align:center;">
-          <div style="font-family:'Noto Serif TC',serif;font-size:22px;color:rgba(240,240,245,0.15);letter-spacing:0.15em;line-height:1.6;">進入<br>樂園內層</div>
-          <div style="font-size:12px;color:rgba(240,240,245,0.08);letter-spacing:0.2em;font-family:'Space Mono',monospace;">限定圖 · 音樂 · 互動</div>
-        </div>
-      </div>
-      <div class="item-body">
-        <span class="item-cat">Subscription</span>
-        <p class="item-title">樂園內層</p>
-        <p class="item-sub">每月限定圖 · 未公開音樂 · 與三人互動<br>隨時可取消</p>
-        <div class="item-footer">
-          <span class="item-price">NT$199 / 月</span>
-          <span class="item-action" style="opacity:0.4;letter-spacing:0.15em;font-size:11px;">Coming Soon</span>
-        </div>
-      </div>
-    </a>
-
   </div>
 </section>
 
 <!-- COMMISSION WORK — 2026.07.18 Aida 指示暫時下架：專注音樂與自製周邊。client-*.html 檔案保留未刪，需要時可從 git 還原本區塊。 -->
 
 <!-- FOOTER -->
+
+<div style="max-width:900px;margin:0 auto;padding:36px 32px 0;font-size:12px;line-height:2;color:rgba(136,136,153,0.75);text-align:center;">
+  Subscriptions renew automatically. Cancel anytime from <a href="https://app.lemonsqueezy.com/my-orders" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">your order page</a> — no questions asked.<br>
+  訂閱自動續訂；隨時可在訂單頁一鍵取消，不留人、不問原因。
+</div>
+
 <footer>
   <div class="footer-logo">
     <img src="logo-rakuen.png" style="height:36px;opacity:0.8;" alt="R.R">
@@ -1188,6 +1031,70 @@
     <button class="gp-btn" id="gp-repeat" onclick="gpToggleRepeat()" title="單曲循環" style="font-size:12px;">↻</button>
   </div>
   <a class="gp-page-link" id="gp-link" href="music-noproof.html">Lyrics ↗</a>
+
+    <!-- Lossless Collection -->
+    <a class="item-card reveal" data-cat="訂閱" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/fffbc4a2-e231-4183-a55e-540d032dd05a" target="_blank" rel="noopener" style="animation-delay:0.00s">
+      <div class="item-visual" style="padding:0;">
+        <img src="cover-lossless.jpg" style="width:100%;height:100%;object-fit:cover;" alt="Lossless Collection">
+      </div>
+      <div class="item-body">
+        <span class="item-cat">Collection</span>
+        <p class="item-title">Lossless Collection</p>
+        <p class="item-sub">16 首 FLAC 無損 ＋ MP3 ＋ 3000×3000 封面<br>一次下載，整張目錄</p>
+        <div class="item-footer">
+          <span class="item-price">$20</span>
+          <span class="item-buy">&rarr; Get</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Full Membership -->
+    <a class="item-card reveal" data-cat="訂閱" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/329f6fa2-8634-4562-949c-982b0e470a61" target="_blank" rel="noopener" style="animation-delay:0.05s">
+      <div class="item-visual" style="padding:0;">
+        <img src="cover-membership.png" style="width:100%;height:100%;object-fit:cover;" alt="Full Membership">
+      </div>
+      <div class="item-body">
+        <span class="item-cat">Membership</span>
+        <p class="item-title">Full Membership</p>
+        <p class="item-sub">已發行的每一首，加上之後發行的每一首<br>新歌上架當天自動加入</p>
+        <div class="item-footer">
+          <span class="item-price">$8 / month</span>
+          <span class="item-buy">&rarr; Get</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Annual Pack -->
+    <a class="item-card reveal" data-cat="訂閱" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/618d20ad-2adb-49f1-87cb-5b70fbc65318" target="_blank" rel="noopener" style="animation-delay:0.10s">
+      <div class="item-visual" style="padding:0;">
+        <img src="cover-annual.png" style="width:100%;height:100%;object-fit:cover;" alt="Annual Pack">
+      </div>
+      <div class="item-body">
+        <span class="item-cat">Membership</span>
+        <p class="item-title">Annual Pack</p>
+        <p class="item-sub">一整年的全部，用三個月的價格<br>FLAC ＋ MP3 ＋ 封面</p>
+        <div class="item-footer">
+          <span class="item-price">$25 / year</span>
+          <span class="item-buy">&rarr; Get</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Supporter -->
+    <a class="item-card reveal" data-cat="訂閱" href="https://rakuen-rr.lemonsqueezy.com/checkout/buy/70887274-c381-40d4-bf62-2c7f6783ff50" target="_blank" rel="noopener" style="animation-delay:0.15s">
+      <div class="item-visual" style="padding:0;">
+        <img src="cover-supporter.png" style="width:100%;height:100%;object-fit:cover;" alt="Supporter">
+      </div>
+      <div class="item-body">
+        <span class="item-cat">Support</span>
+        <p class="item-title">Supporter</p>
+        <p class="item-sub">沒有下載，沒有特典<br>只是支持，讓下一首歌被做出來</p>
+        <div class="item-footer">
+          <span class="item-price">$3 / month</span>
+          <span class="item-buy">&rarr; Get</span>
+        </div>
+      </div>
+    </a>
   <button class="gp-toggle" onclick="gpHide()">✕</button>
 </div>
 <audio id="gp-audio" preload="none"></audio>
@@ -1267,6 +1174,21 @@ ga.addEventListener('ended',()=>{if(gpRepeat){ga.currentTime=0;gpTry();}else{gpN
 window.addEventListener('pagehide',gpSave);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!gp&&!userPaused)gpTry();});
 gpLoad(gi,!userPaused);
+</script>
+<script>
+  // #membership → 直接切到訂閱篩選
+  function applyHashFilter(){
+    if (location.hash === '#membership') {
+      filterItems('\u8a02\u95b1');
+      document.querySelectorAll('.filter-btn').forEach(b=>{
+        b.classList.toggle('active', b.dataset.filter === '\u8a02\u95b1');
+      });
+      const bar = document.getElementById('filterBar');
+      if (bar) bar.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  }
+  window.addEventListener('load', applyHashFilter);
+  window.addEventListener('hashchange', applyHashFilter);
 </script>
 </body>
 </html>
