@@ -1227,7 +1227,7 @@
   <div class="nav-links">
     <a href="#collage">Music</a>
     <a href="#who">Who</a>
-    <a href="take.html">Shop</a>
+    <a href="what-we-do.html#membership">Membership</a>
   </div>
 </nav>
 
@@ -1285,6 +1285,156 @@
   </div>
 
   </div>
+
+
+<!-- ═══ 專輯封面橫向輪播（16 首無縫）═══ -->
+<div class="cover-rail-wrap">
+  <span class="collage-label" style="display:block;margin-bottom:28px;">全部 16 首 — 左右滑，點封面即播</span>
+
+  <button class="rail-arrow rail-prev" id="railPrev" aria-label="上一張">&#8249;</button>
+  <div class="cover-rail" id="coverRail"></div>
+  <button class="rail-arrow rail-next" id="railNext" aria-label="下一張">&#8250;</button>
+</div>
+
+<style>
+  .cover-rail-wrap { position:relative; padding:80px 0 40px; }
+  .cover-rail {
+    display:flex; gap:18px; overflow-x:auto; scroll-behavior:auto;
+    padding:4px 48px 8px; scrollbar-width:none; -ms-overflow-style:none;
+    -webkit-overflow-scrolling:touch;
+  }
+  .cover-rail::-webkit-scrollbar { display:none; }
+
+  .rail-item { flex:0 0 auto; width:196px; text-decoration:none; color:inherit; }
+  .rail-art {
+    position:relative; width:196px; height:196px; overflow:hidden;
+    background:#0C0C16; border:1px solid rgba(240,240,245,0.06);
+  }
+  .rail-art img {
+    width:100%; height:100%; object-fit:cover; display:block;
+    filter:grayscale(30%); transition:filter 0.4s, transform 0.6s;
+  }
+  .rail-item:hover .rail-art img { filter:grayscale(0%); transform:scale(1.05); }
+
+  .rail-play {
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    background:rgba(4,4,10,0.42); opacity:0; transition:opacity 0.28s;
+    border:none; cursor:pointer; padding:0;
+  }
+  .rail-play span {
+    width:46px; height:46px; border:1px solid rgba(240,240,245,0.85); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    color:#F0F0F5; font-size:14px; padding-left:3px;
+    background:rgba(4,4,10,0.35); backdrop-filter:blur(4px);
+  }
+  .rail-item:hover .rail-play { opacity:1; }
+
+  .rail-title {
+    font-family:'EB Garamond',serif; font-size:15px; color:#F0F0F5;
+    margin:12px 0 2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .rail-meta {
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.12em;
+    color:rgba(136,136,153,0.85); text-transform:uppercase;
+  }
+  .rail-more {
+    display:inline-block; margin-top:8px; font-family:'Space Mono',monospace;
+    font-size:11px; letter-spacing:0.16em; color:rgba(136,136,153,0.6);
+    border-bottom:1px solid transparent; transition:color 0.25s, border-color 0.25s;
+  }
+  .rail-item:hover .rail-more { color:#F0F0F5; border-bottom-color:rgba(240,240,245,0.4); }
+
+  .rail-arrow {
+    position:absolute; top:calc(80px + 98px); transform:translateY(-50%);
+    width:44px; height:44px; z-index:5; cursor:pointer;
+    background:rgba(4,4,10,0.55); backdrop-filter:blur(6px);
+    border:1px solid rgba(240,240,245,0.18); color:#F0F0F5;
+    font-size:22px; line-height:1; display:flex; align-items:center; justify-content:center;
+    opacity:0; transition:opacity 0.3s, background 0.25s;
+  }
+  .cover-rail-wrap:hover .rail-arrow { opacity:1; }
+  .rail-arrow:hover { background:rgba(4,4,10,0.85); }
+  .rail-prev { left:10px; }
+  .rail-next { right:10px; }
+
+  @media (hover:none) {
+    /* 手機：箭頭常駐半透明 */
+    .rail-arrow { opacity:0.55; }
+    .rail-play  { opacity:0.9; background:rgba(4,4,10,0.28); }
+    .rail-play span { width:38px; height:38px; font-size:12px; }
+  }
+  @media (max-width:768px) {
+    .cover-rail { padding-left:20px; padding-right:20px; gap:14px; }
+    .rail-item, .rail-art { width:150px; }
+    .rail-art { height:150px; }
+    .rail-arrow { top:calc(80px + 75px); width:38px; height:38px; font-size:19px; }
+    .rail-prev { left:6px; } .rail-next { right:6px; }
+  }
+</style>
+
+<script>
+(function(){
+  const rail = document.getElementById('coverRail');
+  if (!rail || typeof GP === 'undefined') return;
+
+  // 渲染三組，捲到中間那組 → 左右都滑不到底，視覺上無縫
+  const SETS = 3;
+  function build(){
+    let html = '';
+    for (let s = 0; s < SETS; s++) {
+      GP.forEach((t, i) => {
+        html += '<a class="rail-item" href="' + t.page + '">' +
+          '<div class="rail-art">' +
+            '<img src="' + t.cover + '" alt="' + t.title + '" loading="lazy">' +
+            '<button class="rail-play" aria-label="播放 ' + t.title + '" ' +
+              'onclick="event.preventDefault();event.stopPropagation();gpLoad(' + i + ',true);">' +
+              '<span>&#9654;</span></button>' +
+          '</div>' +
+          '<p class="rail-title">' + t.title + '</p>' +
+          '<p class="rail-meta">' + t.artist + '</p>' +
+          '<span class="rail-more">看更多 &rarr;</span>' +
+        '</a>';
+      });
+    }
+    rail.innerHTML = html;
+  }
+  build();
+
+  function setWidth(){ return rail.scrollWidth / SETS; }
+  function itemStep(){
+    const first = rail.querySelector('.rail-item');
+    if (!first) return 214;
+    const gap = parseFloat(getComputedStyle(rail).gap) || 18;
+    return first.getBoundingClientRect().width + gap;
+  }
+
+  // 起始停在中間那組
+  function center(){ rail.scrollLeft = setWidth(); }
+  window.addEventListener('load', center);
+  setTimeout(center, 60);
+  window.addEventListener('resize', center);
+
+  // 捲到任一端就無聲跳回中間那組的等價位置
+  let ticking = false;
+  rail.addEventListener('scroll', function(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){
+      const w = setWidth();
+      if (rail.scrollLeft < w * 0.5)      rail.scrollLeft += w;
+      else if (rail.scrollLeft > w * 1.5) rail.scrollLeft -= w;
+      ticking = false;
+    });
+  }, {passive:true});
+
+  document.getElementById('railPrev').onclick = function(){
+    rail.scrollBy({left:-itemStep()*2, behavior:'smooth'});
+  };
+  document.getElementById('railNext').onclick = function(){
+    rail.scrollBy({left: itemStep()*2, behavior:'smooth'});
+  };
+})();
+</script>
 
   <!-- VINE ZONE -->
   <div class="vine-zone" id="vineZone">
@@ -1469,7 +1619,7 @@
   <span style="font-size:12px;letter-spacing:0.5em;text-transform:uppercase;color:var(--grey);display:block;margin-bottom:28px;">support · 支持</span>
   <h2 style="font-family:'EB Garamond',serif;font-weight:400;font-size:clamp(30px,4.5vw,52px);letter-spacing:0.02em;margin-bottom:20px;">Keep the songs coming.</h2>
   <p style="font-family:'Noto Serif TC',serif;font-weight:300;font-size:15px;color:var(--grey);line-height:2;max-width:440px;margin:0 auto 40px;">聽，永遠免費。<br>想讓它繼續 —— 一杯咖啡的價格，就能養一首歌。<br><span style="color:rgba(136,136,153,0.55);font-size:13px;">Streaming is free. Membership from $3/mo.</span></p>
-  <a href="take.html#support" style="display:inline-block;font-size:13px;letter-spacing:0.25em;text-transform:uppercase;color:var(--white);text-decoration:none;border:1px solid rgba(240,240,245,0.3);padding:15px 34px;transition:all 0.25s;" onmouseover="this.style.background='#F0F0F5';this.style.color='#04040A';" onmouseout="this.style.background='transparent';this.style.color='#F0F0F5';">Become a member ↗</a>
+  <a href="what-we-do.html#membership" style="display:inline-block;font-size:13px;letter-spacing:0.25em;text-transform:uppercase;color:var(--white);text-decoration:none;border:1px solid rgba(240,240,245,0.3);padding:15px 34px;transition:all 0.25s;" onmouseover="this.style.background='#F0F0F5';this.style.color='#04040A';" onmouseout="this.style.background='transparent';this.style.color='#F0F0F5';">Become a member ↗</a>
 </section>
 
 <!-- FOOTER -->
@@ -1888,16 +2038,9 @@
     {col:'1/5',  row:1, mt:0,   tilt:-1},
     {col:'5/9',  row:1, mt:40,  tilt:1},
     {col:'9/13', row:1, mt:0,   tilt:-0.5},
-    {col:'1/4',  row:2, mt:-20, tilt:1.5},
-    {col:'4/8',  row:2, mt:20,  tilt:-1},
-    {col:'8/12', row:2, mt:0,   tilt:0.5},
-    {col:'2/6',  row:3, mt:30,  tilt:-1.5},
-    {col:'6/10', row:3, mt:-10, tilt:1},
-    {col:'1/5',  row:4, mt:24,  tilt:1},
-    {col:'5/9',  row:4, mt:-12, tilt:-0.5},
-    {col:'9/13', row:4, mt:18,  tilt:1.5},
-    {col:'3/7',  row:5, mt:10,  tilt:-0.8},
-    {col:'7/11', row:5, mt:28,  tilt:1.2},
+    {col:'2/6',  row:2, mt:10,  tilt:1.5},
+    {col:'6/10', row:2, mt:44,  tilt:-1},
+    {col:'10/13',row:2, mt:4,   tilt:0.8},
   ];
 
   // ── All available cards ─────────────────────────────────
@@ -1923,9 +2066,7 @@
     // client / commission 項目 2026.07.18 暫時下架（Aida 指示：專注音樂與自製周邊）；client-*.html 保留，可從 git 還原
   ];
   // ── Shop products — always pinned ───────────────────────
-  const SHOP = [
-    {type:'product', title:'復古領足球衣', meta:'VOAR × RakuenɒuyɘЯ', href:'shop/jersey-01.html', img:'assets/shop/jersey-01/hero.jpg', price:'NT$1,580'},
-  ];
+  const SHOP = []; // 2026.08.10 球衣頁已刪除，實體商品未上線前不釘卡
   const ALL_CARDS = [...MUSIC, ...CLIENTS];
 
   // ── Select 12 ───────────────────────────────────────────
@@ -1935,8 +2076,8 @@
   const pinned = ALL_CARDS.filter(c => new Date(c.date).getTime() >= cutoff);
   const pool   = ALL_CARDS.filter(c => new Date(c.date).getTime() <  cutoff);
   // SHOP always occupies 1 slot; fill remaining from pinned + pool
-  const needed = Math.max(0, 13 - SHOP.length - pinned.length);
-  const displayed = shuffle([...SHOP, ...pinned, ...shuffle(pool).slice(0, needed)]);
+  const needed = Math.max(0, 6 - SHOP.length - pinned.length);
+  const displayed = shuffle([...SHOP, ...pinned, ...shuffle(pool).slice(0, needed)]).slice(0, 6);
 
   // ── Render ───────────────────────────────────────────────
   const grid = document.getElementById('objGrid');
