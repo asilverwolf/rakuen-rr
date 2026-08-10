@@ -966,6 +966,9 @@
     document.querySelectorAll('.item-card').forEach(card => {
       const match = cat === 'all' || card.dataset.cat === cat;
       card.classList.toggle('hidden', !match);
+      // 篩選後直接顯示，不要再等 IntersectionObserver
+      // （切到 Membership 時 4 張卡已在畫面內，observer 不會再觸發 → 會一片空白）
+      if (match) card.classList.add('visible');
     });
   }
 
