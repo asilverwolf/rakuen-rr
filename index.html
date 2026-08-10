@@ -1583,11 +1583,18 @@
   }, 8000 + Math.random() * 4000);
 
   // ── SMOOTH NAV ──────────────────────────────────────────
-  document.getElementById('nav-whatwedo').addEventListener('click', e => {
-    e.preventDefault(); window.location.href = 'what-we-do.html';
-  });
-  document.getElementById('nav-whoweare').addEventListener('click', e => {
-    e.preventDefault(); document.getElementById('who').scrollIntoView({ behavior: 'smooth' });
+  // 2026.08.10 修：舊版寫死 #nav-whatwedo / #nav-whoweare 兩個 id，
+  // 導覽改版後那兩個 id 不存在 → getElementById 回 null → 這裡整段 throw，
+  // 底下所有程式一起死掉。改成不依賴 id、且找不到目標就安靜跳過。
+  document.querySelectorAll('.nav-links a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var sel = a.getAttribute('href');
+      var t = document.querySelector(sel);
+      if (!t) return;
+      e.preventDefault();
+      t.scrollIntoView({ behavior:'smooth', block:'start' });
+      if (history.replaceState) history.replaceState(null, '', sel);
+    });
   });
 
   // ── PHOTO SWAP ──────────────────────────────────────────
@@ -2627,5 +2634,3 @@ window.addEventListener('load', function(){
 
 </body>
 </html>
-
-<!-- build 222444 -->
