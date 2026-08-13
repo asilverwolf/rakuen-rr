@@ -96,17 +96,20 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
 @media(max-width:768px){.cover-section{padding:24px 24px 0;}}
 </style>
 
+
 <style>
   .rr-social{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;
-    gap:14px 26px;width:100%;padding:26px 20px 4px;}
+    gap:12px 28px;padding:22px 24px 26px;background:#04040A;
+    border-top:1px solid rgba(240,240,245,0.06);}
   .rr-social-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.42em;
-    text-transform:uppercase;color:rgba(136,136,153,.55);}
+    text-transform:uppercase;color:rgba(136,136,153,.5);}
   .rr-social a{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.2em;
     text-transform:uppercase;color:rgba(240,240,245,.72);text-decoration:none;
     border-bottom:1px solid transparent;transition:color .25s,border-color .25s;}
   .rr-social a:hover{color:#F0F0F5;border-bottom-color:rgba(240,240,245,.45);}
-  @media(max-width:768px){.rr-social{gap:12px 18px;padding-top:20px;}
-    .rr-social a{font-size:11px;letter-spacing:.16em;}}
+  @media(max-width:768px){.rr-social{gap:10px 18px;padding:18px 16px 22px;}
+    .rr-social a{font-size:11px;letter-spacing:.14em;}
+    .rr-social-label{font-size:9px;letter-spacing:.3em;width:100%;text-align:center;}}
 </style>
 </head>
 <body>
@@ -276,14 +279,14 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
 <footer>
   <a href="index.html" class="footer-logo"><img src="logo-main.png" alt="R.R" style="height:36px;opacity:1;"></a>
   <span class="footer-copy">© 2026 RakuenɒuyɘЯ</span>
-
-  <div class="rr-social">
-    <span class="rr-social-label">Follow</span>
-    <a href="https://instagram.com/rakuen.rr" target="_blank" rel="noopener">Instagram</a>
-    <a href="https://www.threads.com/@rakuen.rr" target="_blank" rel="noopener">Threads</a>
-    <a href="https://www.youtube.com/channel/UCKLhxoUzGmeJGRhbIO4Co2A" target="_blank" rel="noopener">YouTube</a>
-  </div>
 </footer>
+<div class="rr-social">
+  <span class="rr-social-label">Follow</span>
+  <a href="https://instagram.com/rakuen.rr" target="_blank" rel="noopener">Instagram</a>
+  <a href="https://www.threads.com/@rakuen.rr" target="_blank" rel="noopener">Threads</a>
+  <a href="https://www.youtube.com/channel/UCKLhxoUzGmeJGRhbIO4Co2A" target="_blank" rel="noopener">YouTube</a>
+</div>
+
 <div id="lightbox"><img id="lbImg" alt=""><button class="lb-x" id="lbX">✕</button></div>
 <div id="gp">
   <img class="gp-cover" id="gpCover" src="cover-matane.jpg" alt="">
