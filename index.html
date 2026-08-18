@@ -1383,12 +1383,39 @@
     </div>
 
     <div class="block-head">
-      <span class="block-tag">Take</span>
+      <span class="block-tag">Look</span>
       <span class="block-rule"></span>
     </div>
-    <span class="collage-label" style="display:block;margin-bottom:44px;">樂園 Rakuen — everything here can be yours</span>
+    <span class="collage-label" style="display:block;margin-bottom:36px;">影像 — 全部我們自己做的</span>
 
-    <div class="objects-grid" id="objGrid"></div>
+    <style>
+      .look-sheet{display:block;width:100%;max-width:820px;margin:0 auto 64px;line-height:0;
+        border:1px solid rgba(0,0,0,.10);background:#e9e9ea;}
+      .look-sheet img{width:100%;height:auto;display:block;}
+      .look-sheet-cap{display:block;line-height:1.6;margin-top:12px;text-align:center;
+        font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.34em;
+        text-transform:uppercase;color:#8a8a94;}
+      .video-wall{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:8px;}
+      .vw-item{position:relative;margin:0;padding:0;border:0;background:#0a0a0a;
+        aspect-ratio:9/16;overflow:hidden;cursor:pointer;display:block;width:100%;}
+      .vw-item video{width:100%;height:100%;object-fit:cover;display:block;}
+      .vw-cap{position:absolute;left:0;right:0;bottom:0;padding:26px 10px 8px;
+        font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.22em;
+        text-transform:uppercase;color:#f2f2f2;text-align:left;
+        background:linear-gradient(180deg,transparent,rgba(0,0,0,.72));pointer-events:none;}
+      .vw-item.on{outline:1px solid rgba(0,0,0,.55);outline-offset:2px;}
+      .vw-hint{display:block;margin-top:18px;font-family:'Space Mono',monospace;
+        font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#9a9aa4;}
+      @media (max-width:860px){ .video-wall{grid-template-columns:repeat(2,1fr);gap:10px;} }
+    </style>
+
+    <div class="look-sheet">
+      <img src="sheet-trio.jpg" alt="Luna・Ari・Irene 角色設定：線稿、上色、異界" loading="lazy">
+    </div>
+    <span class="look-sheet-cap">Character sheets — Luna · Ari · Irene</span>
+
+    <div class="video-wall" id="videoWall"></div>
+    <span class="vw-hint">點一下有聲音 — tap for sound</span>
   </div>
 
   <!-- VINE ZONE -->
@@ -2672,6 +2699,61 @@ window.addEventListener('load', function(){
 });
 </script>
 
+
+<!-- ═══ VIDEO WALL（2026.08.18）═══ -->
+<script>
+(function(){
+  var WALL = [
+    ['reel-waveform-trio.mp4','聲紋 · 三人 30s'],
+    ['reel-yumetsu.mp4','幽滅 · MV'],
+    ['reel-kyouhan-bts.mp4','共犯 · BTS'],
+    ['reel-jayu.mp4','자유 얼마야'],
+    ['reel-noproof.mp4','NO PROOF'],
+    ['reel-between.mp4','BETWEEN'],
+    ['reel-signal.mp4','SIGNAL'],
+    ['reel-stillhere.mp4','STILL HERE'],
+    ['reel-heydirtyboy.mp4','HEY DIRTY BOY'],
+    ['reel-jiyuu.mp4','自由のままで'],
+    ['reel-kaisen.mp4','界線'],
+    ['reel-yumetsu-okuribi.mp4','幽滅 · 送り火'],
+    ['reel-yumetsu-chugen.mp4','幽滅 · 中元']
+  ];
+  function build(){
+    var wall = document.getElementById('videoWall');
+    if (!wall) return;
+    WALL.forEach(function(it){
+      var b = document.createElement('button');
+      b.className = 'vw-item'; b.type = 'button'; b.setAttribute('aria-label', it[1]);
+      var v = document.createElement('video');
+      v.src = it[0]; v.muted = true; v.loop = true; v.playsInline = true;
+      v.setAttribute('playsinline',''); v.setAttribute('muted',''); v.preload = 'metadata';
+      var c = document.createElement('span'); c.className = 'vw-cap'; c.textContent = it[1];
+      b.appendChild(v); b.appendChild(c); wall.appendChild(b);
+      b.addEventListener('click', function(){
+        var on = v.muted === false;
+        wall.querySelectorAll('video').forEach(function(o){ o.muted = true; });
+        wall.querySelectorAll('.vw-item').forEach(function(o){ o.classList.remove('on'); });
+        if (!on) { v.muted = false; b.classList.add('on'); v.play().catch(function(){}); }
+      });
+    });
+    // 只播看得到的，省流量
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(es){
+        es.forEach(function(e){
+          var v = e.target.querySelector('video'); if (!v) return;
+          if (e.isIntersecting) { v.play().catch(function(){}); }
+          else { v.pause(); v.muted = true; e.target.classList.remove('on'); }
+        });
+      }, { rootMargin: '120px' });
+      wall.querySelectorAll('.vw-item').forEach(function(el){ io.observe(el); });
+    } else {
+      wall.querySelectorAll('video').forEach(function(v){ v.play().catch(function(){}); });
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
+  else build();
+})();
+</script>
 </body>
 </html>
 <!-- build 20260817-2 -->
