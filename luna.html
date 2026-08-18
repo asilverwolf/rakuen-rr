@@ -183,6 +183,33 @@
   </div>
 </section>
 
+<section class="film-section" id="design">
+  <span class="film-label">Design</span>
+  <style>
+    #design .dsg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:0 48px;}
+    #design .dsg-item{aspect-ratio:4/5;overflow:hidden;position:relative;background:#0c0c10;}
+    #design .dsg-item img{width:100%;height:100%;object-fit:cover;display:block;}
+    #design .dsg-tag{position:absolute;left:10px;bottom:8px;font-size:10px;letter-spacing:.28em;
+      text-transform:uppercase;color:rgba(240,240,245,.72);text-shadow:0 1px 6px rgba(0,0,0,.8);}
+    #design .dsg-sheet{padding:24px 48px 0;line-height:0;}
+    #design .dsg-sheet img{width:100%;height:auto;display:block;
+      border:1px solid rgba(240,240,245,.08);}
+    #design .dsg-note{display:block;padding:14px 48px 0;font-size:11px;letter-spacing:.22em;
+      text-transform:uppercase;color:var(--grey);}
+    @media (max-width:760px){
+      #design .dsg-grid{grid-template-columns:repeat(3,1fr);gap:2px;padding:0 16px;}
+      #design .dsg-sheet,#design .dsg-note{padding-left:16px;padding-right:16px;}
+    }
+  </style>
+  <div class="dsg-grid">
+    <div class="dsg-item"><img src="design-luna-line.jpg" alt="Luna Liu 線稿" loading="lazy"><span class="dsg-tag">Line</span></div>
+    <div class="dsg-item"><img src="design-luna-color.jpg" alt="Luna Liu 上色" loading="lazy"><span class="dsg-tag">Color</span></div>
+    <div class="dsg-item"><img src="design-luna-alt.jpg" alt="Luna Liu 異界戰鬥服" loading="lazy"><span class="dsg-tag">Alt</span></div>
+  </div>
+  <div class="dsg-sheet"><img src="sheet-luna.jpg" alt="Luna Liu／劉若玥 角色設定表" loading="lazy"></div>
+  <span class="dsg-note">Character sheet — Luna Liu</span>
+</section>
+
 <section class="music-section">
   <span class="music-label">Music</span>
   <div class="music-cards">
