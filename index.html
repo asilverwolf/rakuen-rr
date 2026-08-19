@@ -1392,6 +1392,9 @@
       .look-sheet{display:block;width:100%;max-width:820px;margin:0 auto 64px;line-height:0;
         border:1px solid rgba(0,0,0,.10);background:#e9e9ea;}
       .look-sheet img{width:100%;height:auto;display:block;}
+      .look-sheet-cap a{color:#4a4a52;text-decoration:none;border-bottom:1px solid rgba(0,0,0,.22);padding-bottom:2px;}
+      .look-sheet-cap a:hover{color:#111;}
+      .look-sheet{cursor:zoom-in;}
       .look-sheet-cap{display:block;line-height:1.6;margin-top:12px;text-align:center;
         font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.34em;
         text-transform:uppercase;color:#8a8a94;}
@@ -1412,10 +1415,13 @@
     <div class="look-sheet">
       <img src="sheet-trio.jpg" alt="Luna・Ari・Irene 角色設定：線稿、上色、異界" loading="lazy">
     </div>
-    <span class="look-sheet-cap">Character sheets — Luna · Ari · Irene</span>
+    <span class="look-sheet-cap">
+      Character sheets —
+      <a href="luna.html">Luna</a> · <a href="ari.html">Ari</a> · <a href="irene.html">Irene</a>
+    </span>
 
     <div class="video-wall" id="videoWall"></div>
-    <span class="vw-hint">點一下有聲音 — tap for sound</span>
+    <span class="vw-hint">點一下放大播放 — tap to enlarge</span>
   </div>
 
   <!-- VINE ZONE -->
@@ -2765,6 +2771,79 @@ window.addEventListener('load', function(){
     }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
+  else build();
+})();
+</script>
+
+<!-- ═══ LOOK LIGHTBOX（2026.08.19）═══ -->
+<div id="lookLb" aria-hidden="true"></div>
+<style>
+  #lookLb{position:fixed;inset:0;z-index:9999;display:none;
+    background:rgba(4,4,10,.94);backdrop-filter:blur(6px);
+    align-items:center;justify-content:center;padding:32px;}
+  #lookLb.open{display:flex;}
+  #lookLb video,#lookLb img{max-width:min(92vw,560px);max-height:88vh;
+    width:auto;height:auto;display:block;background:#000;
+    box-shadow:0 20px 80px rgba(0,0,0,.7);}
+  #lookLb img{max-width:min(94vw,1100px);}
+  #lookLbX{position:fixed;top:18px;right:20px;z-index:10000;
+    background:none;border:0;color:#f0f0f5;font-size:34px;line-height:1;
+    cursor:pointer;opacity:.75;padding:6px 12px;}
+  #lookLbX:hover{opacity:1;}
+  #lookLbCap{position:fixed;left:0;right:0;bottom:22px;text-align:center;
+    font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.3em;
+    text-transform:uppercase;color:rgba(240,240,245,.6);pointer-events:none;}
+  @media (max-width:640px){ #lookLb{padding:12px;} #lookLb video{max-width:96vw;} }
+</style>
+<script>
+(function(){
+  var lb, x, cap;
+  function build(){
+    lb = document.getElementById('lookLb'); if(!lb) return;
+    x = document.createElement('button'); x.id='lookLbX'; x.type='button';
+    x.setAttribute('aria-label','關閉'); x.innerHTML='&times;';
+    cap = document.createElement('div'); cap.id='lookLbCap';
+    function close(){
+      lb.classList.remove('open'); lb.setAttribute('aria-hidden','true');
+      lb.innerHTML=''; document.body.style.overflow='';
+    }
+    function open(node, text){
+      lb.innerHTML=''; lb.appendChild(x); lb.appendChild(node);
+      cap.textContent = text || ''; lb.appendChild(cap);
+      lb.classList.add('open'); lb.setAttribute('aria-hidden','false');
+      document.body.style.overflow='hidden';
+    }
+    lb.addEventListener('click', function(e){ if(e.target===lb) close(); });
+    x.addEventListener('click', close);
+    document.addEventListener('keydown', function(e){
+      if(e.key==='Escape' && lb.classList.contains('open')) close();
+    });
+
+    // 影片牆：點一下放大＋有聲
+    var wall = document.getElementById('videoWall');
+    if (wall) wall.addEventListener('click', function(e){
+      var item = e.target.closest ? e.target.closest('.vw-item') : null;
+      if(!item) return;
+      var src = item.querySelector('video') && item.querySelector('video').getAttribute('src');
+      if(!src) return;
+      e.preventDefault(); e.stopPropagation();
+      var v = document.createElement('video');
+      v.src=src; v.controls=true; v.autoplay=true; v.loop=true;
+      v.playsInline=true; v.setAttribute('playsinline','');
+      open(v, item.getAttribute('aria-label')||'');
+      v.play().catch(function(){});
+    }, true);
+
+    // 3×3 設定圖：點一下看大圖
+    var sheet = document.querySelector('.look-sheet');
+    if (sheet) sheet.addEventListener('click', function(){
+      var im = sheet.querySelector('img'); if(!im) return;
+      var big = document.createElement('img');
+      big.src = im.getAttribute('src'); big.alt = im.alt || '';
+      open(big, 'Character sheets — Luna · Ari · Irene');
+    });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',build);
   else build();
 })();
 </script>
