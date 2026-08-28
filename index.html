@@ -2748,15 +2748,17 @@ window.addEventListener('load', function(){
       var b = document.createElement('button');
       b.className = 'vw-item'; b.type = 'button'; b.setAttribute('aria-label', it[1]);
       var v = document.createElement('video');
-      v.src = it[0]; v.muted = true; v.loop = true; v.playsInline = true;
-      v.setAttribute('playsinline',''); v.setAttribute('muted',''); v.preload = 'metadata';
+      // ⚠️ 不要在這裡設 src。14 支影片同時開始下載會吃光瀏覽器連線，
+      //    害同一頁的封面圖被 ERR_ABORTED（2026.08.28 實測，首頁封面整排空白）。
+      v.dataset.src = it[0]; v.muted = true; v.loop = true; v.playsInline = true;
+      v.setAttribute('playsinline',''); v.setAttribute('muted',''); v.preload = 'none';
       var c = document.createElement('span'); c.className = 'vw-cap'; c.textContent = it[1];
       b.appendChild(v); b.appendChild(c); wall.appendChild(b);
       b.addEventListener('click', function(){
         var on = v.muted === false;
         wall.querySelectorAll('video').forEach(function(o){ o.muted = true; });
         wall.querySelectorAll('.vw-item').forEach(function(o){ o.classList.remove('on'); });
-        if (!on) { v.muted = false; b.classList.add('on'); v.play().catch(function(){}); }
+        if (!on) { if(!v.src&&v.dataset.src)v.src=v.dataset.src; v.muted = false; b.classList.add('on'); v.play().catch(function(){}); }
       });
     });
     // 只播看得到的，省流量
@@ -2764,13 +2766,16 @@ window.addEventListener('load', function(){
       var io = new IntersectionObserver(function(es){
         es.forEach(function(e){
           var v = e.target.querySelector('video'); if (!v) return;
-          if (e.isIntersecting) { v.play().catch(function(){}); }
+          if (e.isIntersecting) {
+            if (!v.src && v.dataset.src) { v.src = v.dataset.src; }   // 進視窗才開始載
+            v.play().catch(function(){});
+          }
           else { v.pause(); v.muted = true; e.target.classList.remove('on'); }
         });
       }, { rootMargin: '120px' });
       wall.querySelectorAll('.vw-item').forEach(function(el){ io.observe(el); });
     } else {
-      wall.querySelectorAll('video').forEach(function(v){ v.play().catch(function(){}); });
+      wall.querySelectorAll('video').forEach(function(v){ if(!v.src&&v.dataset.src)v.src=v.dataset.src; v.play().catch(function(){}); });
     }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
