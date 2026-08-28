@@ -106,7 +106,7 @@ footer a{color:var(--grey);text-decoration:none;margin:0 8px;}
     每一條線的長度，是那首歌在那一刻的真實音量。<br>
     十六張共用同一把尺 —— 大聲的歌就是比較大朵。
   </p>
-  <p class="hint">Click any shape to hear it play</p>
+  <p class="hint">Click any shape — it moves with the song</p>
 </header>
 
 <div class="grid" id="grid">
@@ -193,7 +193,8 @@ if(!g.children.length){
 /* ── lightbox ＋ 會跟著歌動的聲紋 ───────────────────────── */
 var lb=document.getElementById('lb'), au=document.getElementById('au'),
     cv=document.getElementById('cv'), cx=cv.getContext('2d'),
-    idx=-1, arr=null, raf=null, live=0;
+    idx=-1, base=null, raf=null, rot=0, last=0,
+    AC=null, an=null, td=null, fd=null, srcNode=null, lvl=0, kick=0;
 
 function decode(b64){
   var bin=atob(b64), out=new Float32Array(bin.length);
@@ -202,24 +203,58 @@ function decode(b64){
 }
 function fmt(t){ if(!isFinite(t))return '0:00'; var m=Math.floor(t/60),s=Math.floor(t%60); return m+':'+(s<10?'0':'')+s; }
 
-function draw(){
-  var W=cv.width, C=W/2, R0=W*0.165, N=arr?arr.length:0;
+/* Web Audio：拿到「此刻」的音量，形狀才會活。沒有它就只是一個時鐘。 */
+function ensureAudio(){
+  if(an) return;
+  try{
+    var C=window.AudioContext||window.webkitAudioContext; if(!C) return;
+    AC=new C();
+    srcNode=AC.createMediaElementSource(au);
+    an=AC.createAnalyser(); an.fftSize=1024; an.smoothingTimeConstant=0.72;
+    srcNode.connect(an); an.connect(AC.destination);
+    td=new Uint8Array(an.fftSize); fd=new Uint8Array(an.frequencyBinCount);
+  }catch(e){ an=null; }
+}
+
+function readLevel(){
+  if(!an||au.paused) return;
+  an.getByteTimeDomainData(td);
+  var s=0; for(var i=0;i<td.length;i+=2){ var d=(td[i]-128)/128; s+=d*d; }
+  var rms=Math.sqrt(s/(td.length/2));
+  var p=Math.min(1, rms*3.1);
+  lvl += (p-lvl)*0.30;                       // 平滑，但保留衝擊
+  an.getByteFrequencyData(fd);
+  var lo=0; for(var j=1;j<10;j++) lo+=fd[j];  // 低頻＝鼓點
+  kick += ((lo/9/255)-kick)*0.45;
+}
+
+function draw(dt){
+  var W=cv.width, C=W/2, R0=W*0.165, N=base?base.length:0;
   cx.clearRect(0,0,W,W);
-  var prog = (au.duration && isFinite(au.duration)) ? (au.currentTime/au.duration) : -1;
-  var head = prog>=0 ? Math.floor(prog*N) : -1;
-  var pulse = 1 + live*0.16;                       // 整體隨音量呼吸
+  if(!N) return;
+  var p = au.paused ? lvl*0.94 : lvl;
+  if(au.paused) lvl=p;
+  rot += (0.055 + kick*0.10) * dt;            // 慢慢轉，鼓點時轉快一點
+
+  var prog = (au.duration&&isFinite(au.duration)) ? au.currentTime/au.duration : -1;
+  var swell = 1 + kick*0.10;
+
   for(var i=0;i<N;i++){
-    var a=-Math.PI/2 + 2*Math.PI*i/N;
-    var v=arr[i];
-    var played = head>=0 && i<=head;
-    var boost = (head>=0 && Math.abs(i-head)<7) ? 1.22 : 1;   // 播放頭附近推出去
-    var r1=R0 + W*0.028 + W*0.248*v*(played?pulse:1)*boost;
-    var g0 = played ? (72+183*v) : (44+104*v);
-    if(head>=0 && Math.abs(i-head)<7) g0=245;
+    var a = -Math.PI/2 + 2*Math.PI*i/N + rot;
+    var v = base[i];
+    /* 固定形狀 × 此刻音量 —— 跟三人聲紋 Reel 同一條公式 */
+    var r1 = R0 + W*(0.026 + (0.088 + 0.168*p) * v) * swell;
+    var g  = 26 + (48 + 190*p) * v;
+    if(g>255) g=255;
     var ca=Math.cos(a), sa=Math.sin(a);
-    cx.strokeStyle='rgb('+(g0|0)+','+(g0|0)+','+(g0|0)+')';
+    cx.strokeStyle='rgb('+(g|0)+','+(g|0)+','+(g|0)+')';
     cx.lineWidth=W/540;
     cx.beginPath(); cx.moveTo(C+R0*ca,C+R0*sa); cx.lineTo(C+r1*ca,C+r1*sa); cx.stroke();
+  }
+  /* 進度只留內圈一條細弧，不搶戲 */
+  if(prog>=0){
+    cx.strokeStyle='rgba(240,240,245,0.5)'; cx.lineWidth=W/300;
+    cx.beginPath(); cx.arc(C,C,R0-W*0.016,-Math.PI/2,-Math.PI/2+2*Math.PI*prog); cx.stroke();
   }
   cx.fillStyle='#E4E4E4';
   cx.font='700 '+Math.round(W*0.052)+'px "Space Mono",monospace';
@@ -227,28 +262,30 @@ function draw(){
   var o=SONGS[idx]; if(o) cx.fillText(o.t, C, C);
   document.getElementById('lbTime').textContent=fmt(au.currentTime)+' / '+fmt(au.duration);
 }
-function loop(){
-  live = au.paused ? live*0.9 : Math.min(1, live + 0.06);
-  draw(); raf=requestAnimationFrame(loop);
+function loop(ts){
+  var dt = last ? Math.min(0.05,(ts-last)/1000) : 0.016; last=ts;
+  readLevel(); draw(dt);
+  raf=requestAnimationFrame(loop);
 }
 
 function open_(i){
   idx=(i+SONGS.length)%SONGS.length;
   var o=SONGS[idx];
-  arr = (window.WFDATA && WFDATA[o.s]) ? decode(WFDATA[o.s]) : new Float32Array(560).fill(.5);
+  base = (window.WFDATA && WFDATA[o.s]) ? decode(WFDATA[o.s]) : new Float32Array(560).fill(.5);
   document.getElementById('lbTitle').textContent=o.t;
   document.getElementById('lbArtist').textContent=o.a;
   document.getElementById('lbPage').href=o.p;
-  au.pause(); au.src='audio/'+o.s+'.mp3'; au.currentTime=0; live=0;
-  setPlayLabel();
-  lb.classList.add('on');
-  if(!raf) loop();
+  au.pause(); au.src='audio/'+o.s+'.mp3'; au.currentTime=0; lvl=0; kick=0; rot=0;
+  setPlayLabel(); lb.classList.add('on');
+  if(!raf){ last=0; raf=requestAnimationFrame(loop); }
   play();
 }
 function setPlayLabel(){ document.getElementById('lbPlay').textContent = au.paused ? '▶ Play' : '❚❚ Pause'; }
 function play(){
-  var p=au.play();
-  if(p&&p.catch) p.catch(function(){ setPlayLabel(); });   // 瀏覽器擋自動播放時安靜失敗
+  ensureAudio();
+  if(AC && AC.state==='suspended') AC.resume();
+  var pr=au.play();
+  if(pr&&pr.catch) pr.catch(function(){ setPlayLabel(); });
   setTimeout(setPlayLabel,120);
 }
 function close_(){ lb.classList.remove('on'); au.pause(); if(raf){cancelAnimationFrame(raf);raf=null;} }
@@ -269,11 +306,10 @@ document.addEventListener('keydown',function(e){
 document.getElementById('lbPlay').addEventListener('click',function(){
   if(au.paused) play(); else { au.pause(); setPlayLabel(); }
 });
-au.addEventListener('timeupdate',function(){ if(!raf) draw(); });
 au.addEventListener('ended',setPlayLabel);
 au.addEventListener('pause',setPlayLabel);
 au.addEventListener('play',setPlayLabel);
-/* 點聲紋任何位置＝跳到歌的那一刻 */
+au.addEventListener('timeupdate',function(){ if(!raf) draw(0.016); });
 cv.addEventListener('click',function(e){
   if(!au.duration||!isFinite(au.duration)) return;
   var r=cv.getBoundingClientRect();
