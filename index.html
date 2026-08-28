@@ -1383,11 +1383,33 @@
       <button class="rail-arrow rail-next" id="railNext" aria-label="下一張">&#8250;</button>
     </div>
 
+    <!-- ═══ SHAPES 入口區（2026.08.28 新增：原本只有右上角小字，等於沒有入口）═══ -->
+    <div class="block-head">
+      <span class="block-tag">Shapes</span>
+      <span class="block-rule"></span>
+    </div>
+    <span class="collage-label" style="display:block;margin-bottom:26px;">16 首歌長什麼樣 — 沒有一張是畫的</span>
+    <a href="shapes.html" class="shapes-entry">
+      <img src="wf/sheet16.jpg" alt="16 首歌的聲紋總表" loading="lazy" width="2160" height="2160" decoding="async">
+      <span class="shapes-entry-cap">每一條線的長度，是那首歌在那一刻的真實音量。<b>看全部 16 張 →</b></span>
+    </a>
+
     <div class="block-head">
       <span class="block-tag">Look</span>
       <span class="block-rule"></span>
     </div>
     <span class="collage-label" style="display:block;margin-bottom:36px;">影像 — 全部我們自己做的</span>
+
+
+      .shapes-entry{display:block;max-width:820px;margin:0 auto 64px;text-decoration:none;
+        border:1px solid rgba(0,0,0,.10);background:#04040A;line-height:0;transition:opacity .3s;}
+      .shapes-entry:hover{opacity:.86;}
+      .shapes-entry img{width:100%;height:auto;display:block;}
+      .shapes-entry-cap{display:block;line-height:1.7;padding:16px 18px;background:#EAEAEC;
+        color:#4a4a52;font-size:12px;letter-spacing:.02em;}
+      .shapes-entry-cap b{color:#111;margin-left:6px;}
+      @media(max-width:600px){.shapes-entry{margin-bottom:44px;}}
+    /style>
 
     <style>
       .look-sheet{display:block;width:100%;max-width:820px;margin:0 auto 64px;line-height:0;
