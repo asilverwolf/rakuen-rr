@@ -2095,6 +2095,7 @@
 
   // ── Render ───────────────────────────────────────────────
   const grid = document.getElementById('objGrid');
+  if (!grid) return;   // 8/18 Take→Look 後這個容器就不存在了
   const isMobile = window.innerWidth <= 768;
 
   displayed.forEach((card, i) => {
@@ -2679,7 +2680,7 @@ window.addEventListener('load', function(){
       var t = list[i];
       html += '<a class="rail-item" href="' + t.page + '">'
            +    '<div class="rail-art">'
-           +      '<img src="' + t.cover + '" alt="' + t.title + '" loading="lazy">'
+           +      '<img src="' + t.cover + '" decoding="async" alt="' + t.title + '" loading="lazy">'
            +      '<button class="rail-play" aria-label="播放 ' + t.title + '" '
            +        'onclick="event.preventDefault();event.stopPropagation();gpLoad(' + i + ',true);">'
            +        '<span>&#9654;</span></button>'
