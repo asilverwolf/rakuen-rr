@@ -54,7 +54,7 @@ h1{font-size:clamp(32px,7.5vw,62px);font-weight:700;letter-spacing:-.03em;line-h
 .outro a.cta:hover{background:var(--white);color:var(--black);}
 .outro .fine{margin-top:14px;font-size:11px;color:#5a5a68;}
 
-#lb{position:fixed;inset:0;background:rgba(4,4,10,.975);z-index:900;display:none;
+#lb{position:fixed;inset:0;background:#04040A;z-index:900;display:none;
     align-items:center;justify-content:center;flex-direction:column;padding:18px;}
 #lb.on{display:flex;}
 #cv{width:min(74vw,440px);height:min(74vw,440px);}
@@ -214,7 +214,7 @@ function draw(){
     var played = head>=0 && i<=head;
     var boost = (head>=0 && Math.abs(i-head)<7) ? 1.22 : 1;   // 播放頭附近推出去
     var r1=R0 + W*0.028 + W*0.248*v*(played?pulse:1)*boost;
-    var g0 = played ? (70+185*v) : (26+64*v);
+    var g0 = played ? (72+183*v) : (44+104*v);
     if(head>=0 && Math.abs(i-head)<7) g0=245;
     var ca=Math.cos(a), sa=Math.sin(a);
     cx.strokeStyle='rgb('+(g0|0)+','+(g0|0)+','+(g0|0)+')';
@@ -269,6 +269,7 @@ document.addEventListener('keydown',function(e){
 document.getElementById('lbPlay').addEventListener('click',function(){
   if(au.paused) play(); else { au.pause(); setPlayLabel(); }
 });
+au.addEventListener('timeupdate',function(){ if(!raf) draw(); });
 au.addEventListener('ended',setPlayLabel);
 au.addEventListener('pause',setPlayLabel);
 au.addEventListener('play',setPlayLabel);
