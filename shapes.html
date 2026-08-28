@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="alternate icon" href="logo-main.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#04040A">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shapes | R.R — 16 songs, 16 shapes.</title>
+<meta name="description" content="Every line is the real loudness of that moment in the song. Nothing here was drawn. 16 songs by Luna, Ari &amp; Irene.">
+<meta property="og:title" content="16 songs. 16 shapes. Nothing was drawn.">
+<meta property="og:description" content="Each line is the actual loudness of that moment. Run it a hundred times, you get the same picture.">
+<meta property="og:image" content="https://rakuen-rr.com/wf/sheet16.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400&family=Space+Mono:wght@400;700&display=swap');
+:root{--black:#04040A;--deep:#080810;--grey:#888899;--grey-light:#BBBBCC;--white:#F0F0F5;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--black);color:var(--white);font-family:'Space Mono',monospace;font-size:14px;-webkit-font-smoothing:antialiased;}
+a{color:inherit;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;
+    padding:20px 28px;background:linear-gradient(to bottom,rgba(4,4,10,.92),rgba(4,4,10,0));}
+nav img{height:32px;}
+.nav-links{display:flex;gap:22px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;}
+.nav-links a{text-decoration:none;color:var(--grey-light);transition:color .2s;}
+.nav-links a:hover{color:var(--white);}
+
+header{padding:130px 28px 46px;max-width:900px;margin:0 auto;text-align:center;}
+h1{font-size:clamp(30px,7vw,58px);font-weight:700;letter-spacing:-.02em;line-height:1.08;}
+h1 span{display:block;color:var(--grey);font-size:clamp(14px,3vw,20px);font-weight:400;letter-spacing:.02em;margin-top:16px;}
+.lede{margin:30px auto 0;max-width:640px;color:var(--grey-light);line-height:2;font-size:14px;}
+.lede b{color:var(--white);font-weight:700;}
+.note{margin-top:22px;font-size:12px;color:var(--grey);letter-spacing:.05em;}
+
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:1180px;margin:0 auto;padding:0 20px 40px;}
+@media(max-width:900px){.grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr);gap:8px;padding:0 12px 30px;}}
+.cell{position:relative;background:var(--deep);border-radius:2px;overflow:hidden;cursor:pointer;}
+.cell img{width:100%;display:block;transition:opacity .3s,transform .5s;}
+.cell:hover img{opacity:.62;transform:scale(1.03);}
+.cell figcaption{position:absolute;left:0;right:0;bottom:0;padding:14px 12px 11px;
+  background:linear-gradient(to top,rgba(4,4,10,.94),rgba(4,4,10,0));
+  font-size:10px;letter-spacing:.09em;color:var(--grey-light);text-transform:uppercase;
+  opacity:0;transition:opacity .25s;text-align:center;}
+.cell:hover figcaption{opacity:1;}
+@media(hover:none){.cell figcaption{opacity:1;}}
+
+.outro{max-width:640px;margin:0 auto;padding:26px 28px 90px;text-align:center;color:var(--grey);line-height:2;font-size:13px;}
+.outro a.cta{display:inline-block;margin-top:24px;padding:14px 30px;border:1px solid rgba(240,240,245,.35);
+  color:var(--white);text-decoration:none;font-size:12px;letter-spacing:.12em;text-transform:uppercase;transition:.25s;}
+.outro a.cta:hover{background:var(--white);color:var(--black);}
+.outro .sub{margin-top:14px;font-size:11px;color:#666677;}
+
+/* lightbox */
+#lb{position:fixed;inset:0;background:rgba(4,4,10,.97);z-index:900;display:none;
+    align-items:center;justify-content:center;flex-direction:column;padding:20px;}
+#lb.on{display:flex;}
+#lb img{max-width:min(88vw,660px);max-height:64vh;}
+#lbTitle{margin-top:20px;font-size:16px;letter-spacing:.06em;}
+#lbArtist{margin-top:6px;font-size:11px;color:var(--grey);letter-spacing:.1em;text-transform:uppercase;}
+#lbBtns{margin-top:22px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
+#lbBtns button,#lbBtns a{font-family:inherit;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  padding:11px 22px;background:none;border:1px solid rgba(240,240,245,.35);color:var(--white);
+  cursor:pointer;text-decoration:none;transition:.2s;}
+#lbBtns button:hover,#lbBtns a:hover{background:var(--white);color:var(--black);}
+#lbClose{position:absolute;top:18px;right:22px;font-size:26px;color:var(--grey-light);cursor:pointer;line-height:1;}
+footer{padding:34px 28px;border-top:1px solid rgba(255,255,255,.07);text-align:center;color:#55555f;font-size:11px;}
+footer a{color:var(--grey);text-decoration:none;margin:0 8px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" style="display:flex;align-items:center;"><img src="logo-main.png" alt="R.R"></a>
+  <div class="nav-links">
+    <a href="what-we-do.html">Music</a>
+    <a href="index.html#who">Who</a>
+    <a href="what-we-do.html#membership">Membership</a>
+  </div>
+</nav>
+
+<header>
+  <h1>16 songs.<br>16 shapes.
+    <span>十六首歌，十六個形狀。</span>
+  </h1>
+  <p class="lede">
+    這裡沒有一張圖是畫的。<br>
+    每一條線的長度，是那首歌在那一刻的<b>真實音量</b>。<br>
+    整首切成 560 段，從十二點鐘順時針排一圈。<br><br>
+    同一首歌算一百次，會得到同一張圖。<br>
+    <b>它不是插畫，是那首歌的形狀。</b>
+  </p>
+  <p class="note">十六張共用同一把尺 — 所以大聲的歌就是比較大朵。點任何一張可以聽。</p>
+</header>
+
+<div class="grid" id="grid"></div>
+
+<div class="outro">
+  十六首歌，四種語言，全部可以免費聽完。<br>
+  想要無損檔就帶走，不想要也沒關係。
+  <a class="cta" href="what-we-do.html">聽完整 16 首 →</a>
+  <div class="sub">Free to stream. Available to own.</div>
+</div>
+
+<div id="lb">
+  <span id="lbClose">×</span>
+  <img id="lbImg" alt="">
+  <div id="lbTitle"></div>
+  <div id="lbArtist"></div>
+  <div id="lbBtns">
+    <button id="lbPlay">▶ Play</button>
+    <a id="lbPage" href="#">Song page →</a>
+  </div>
+</div>
+<audio id="au" preload="none"></audio>
+
+<footer>
+  <a href="index.html">Home</a>·<a href="what-we-do.html">Music</a>·<a href="https://instagram.com/rakuen.rr" target="_blank" rel="noopener">Instagram</a>
+  <div style="margin-top:12px;">© 2026 R.R｜RakuenɒuyɘЯ</div>
+</footer>
+
+<script>
+var SONGS=[
+ {t:'NO PROOF',a:'Luna · Irene · Ari',s:'noproof',p:'music-noproof.html'},
+ {t:'共犯',a:'Luna Liu',s:'kyouhan',p:'music-kyouhan.html'},
+ {t:'AIDA',a:'Luna Liu',s:'aida',p:'music-aida.html'},
+ {t:'ARE YOU SURE',a:'Luna Liu',s:'areyousure',p:'music-areyousure.html'},
+ {t:'BETWEEN',a:'Luna Liu',s:'between',p:'music-between.html'},
+ {t:'STILL HERE',a:'Luna Liu',s:'stillhere',p:'music-stillhere.html'},
+ {t:'幽滅',a:'Ari Lin',s:'youmetsu',p:'music-youmetsu.html'},
+ {t:'またね',a:'Ari Lin',s:'matane',p:'music-matane.html'},
+ {t:'界線',a:'Ari Lin',s:'jiexian',p:'music-jiexian.html'},
+ {t:'金魚が漂う',a:'Ari Lin',s:'kingyo',p:'music-kingyo.html'},
+ {t:'自由のままで',a:'Ari Lin',s:'jiyuu',p:'music-jiyuu.html'},
+ {t:'SIGNAL',a:'Irene Zang',s:'signal',p:'music-signal.html'},
+ {t:'SAY IT',a:'Irene Zang',s:'sayit',p:'music-sayit.html'},
+ {t:'Hey Dirty Boy',a:'Irene Zang',s:'heydirtyboy',p:'music-heydirtyboy.html'},
+ {t:'비의 밤',a:'Irene Zang',s:'rainnight',p:'music-rainnight.html'},
+ {t:'자유 얼마야?',a:'Irene Zang',s:'jayu',p:'music-jayu.html'}
+];
+var g=document.getElementById('grid');
+SONGS.forEach(function(o,i){
+  var f=document.createElement('figure');
+  f.className='cell'; f.setAttribute('data-i',i);
+  f.innerHTML='<img src="wf/wf-'+o.s+'.jpg" alt="'+o.t+' 的聲紋" loading="lazy">'+
+              '<figcaption>'+o.t+'</figcaption>';
+  g.appendChild(f);
+});
+var lb=document.getElementById('lb'),au=document.getElementById('au'),cur=null;
+function open_(i){
+  cur=SONGS[i];
+  document.getElementById('lbImg').src='wf/wf-'+cur.s+'.jpg';
+  document.getElementById('lbTitle').textContent=cur.t;
+  document.getElementById('lbArtist').textContent=cur.a;
+  document.getElementById('lbPage').href=cur.p;
+  document.getElementById('lbPlay').textContent='▶ Play';
+  au.pause(); au.src='audio/'+cur.s+'.mp3';
+  lb.classList.add('on');
+}
+function close_(){ lb.classList.remove('on'); au.pause(); }
+g.addEventListener('click',function(e){
+  var c=e.target.closest('.cell'); if(c) open_(+c.getAttribute('data-i'));
+});
+document.getElementById('lbClose').addEventListener('click',close_);
+lb.addEventListener('click',function(e){ if(e.target===lb) close_(); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') close_(); });
+document.getElementById('lbPlay').addEventListener('click',function(){
+  if(au.paused){ au.play(); this.textContent='❚❚ Pause'; }
+  else { au.pause(); this.textContent='▶ Play'; }
+});
+au.addEventListener('ended',function(){ document.getElementById('lbPlay').textContent='▶ Play'; });
+</script>
+</body>
+</html>
