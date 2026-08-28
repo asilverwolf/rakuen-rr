@@ -233,7 +233,7 @@ function readLevel(){
 }
 
 function draw(dt){
-  var W=cv.width, C=W/2, R0=W*0.165, N=base?base.length:0;
+  var W=cv.width, C=W/2, R0=W*0.138, N=base?base.length:0;
   cx.clearRect(0,0,W,W);
   if(!N) return;
   var p = au.paused ? lvl*0.94 : lvl;
@@ -247,12 +247,12 @@ function draw(dt){
     var a = -Math.PI/2 + 2*Math.PI*i/N + rot;
     var v = base[i];
     /* 固定形狀 × 此刻音量 —— 跟三人聲紋 Reel 同一條公式 */
-    var r1 = R0 + W*(0.042 + (0.072 + 0.162*p) * v) * swell;
-    var g  = 24 + (58 + 184*p) * v;
+    var r1 = R0 + W*(0.050 + (0.095 + 0.210*p) * v) * swell;
+    var g  = 30 + (86 + 172*p) * v;
     if(g>255) g=255;
     var ca=Math.cos(a), sa=Math.sin(a);
     cx.strokeStyle='rgb('+(g|0)+','+(g|0)+','+(g|0)+')';
-    cx.lineWidth=W/540;
+    cx.lineWidth=W/500;
     cx.beginPath(); cx.moveTo(C+R0*ca,C+R0*sa); cx.lineTo(C+r1*ca,C+r1*sa); cx.stroke();
   }
   /* 進度只留內圈一條細弧，不搶戲 */
@@ -261,7 +261,7 @@ function draw(dt){
     cx.beginPath(); cx.arc(C,C,R0-W*0.016,-Math.PI/2,-Math.PI/2+2*Math.PI*prog); cx.stroke();
   }
   cx.fillStyle='#E4E4E4';
-  cx.font='700 '+Math.round(W*0.052)+'px "Space Mono",monospace';
+  cx.font='700 '+Math.round(W*0.045)+'px "Space Mono",monospace';
   cx.textAlign='center'; cx.textBaseline='middle';
   var o=SONGS[idx]; if(o) cx.fillText(o.t, C, C);
   document.getElementById('lbTime').textContent=fmt(au.currentTime)+' / '+fmt(au.duration);
