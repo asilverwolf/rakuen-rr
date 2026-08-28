@@ -193,7 +193,7 @@ if(!g.children.length){
 /* ── lightbox ＋ 會跟著歌動的聲紋 ───────────────────────── */
 var lb=document.getElementById('lb'), au=document.getElementById('au'),
     cv=document.getElementById('cv'), cx=cv.getContext('2d'),
-    idx=-1, base=null, raf=null, rot=0, last=0,
+    idx=-1, base=null, raf=null, rot=0, last=0, peak=0.02,
     AC=null, an=null, td=null, fd=null, srcNode=null, lvl=0, kick=0;
 
 function decode(b64){
@@ -221,11 +221,15 @@ function readLevel(){
   an.getByteTimeDomainData(td);
   var s=0; for(var i=0;i<td.length;i+=2){ var d=(td[i]-128)/128; s+=d*d; }
   var rms=Math.sqrt(s/(td.length/2));
-  var p=Math.min(1, rms*3.1);
-  lvl += (p-lvl)*0.30;                       // 平滑，但保留衝擊
+  /* 自動增益：每首歌的響度不同，固定係數會讓大部分歌只用到三成的伸縮範圍
+     （2026.08.28 實測 Hey Dirty Boy 只到 0.26 → 看起來幾乎不動）。
+     用衰減的峰值當分母，每首歌都吃滿 0–1。 */
+  peak = Math.max(peak*0.9985, rms);
+  var p = Math.min(1, rms / Math.max(peak, 0.02));
+  lvl += (p-lvl)*0.34;                       // 平滑，但保留衝擊
   an.getByteFrequencyData(fd);
   var lo=0; for(var j=1;j<10;j++) lo+=fd[j];  // 低頻＝鼓點
-  kick += ((lo/9/255)-kick)*0.45;
+  kick += ((lo/9/255)-kick)*0.5;
 }
 
 function draw(dt){
@@ -237,14 +241,14 @@ function draw(dt){
   rot += (0.055 + kick*0.10) * dt;            // 慢慢轉，鼓點時轉快一點
 
   var prog = (au.duration&&isFinite(au.duration)) ? au.currentTime/au.duration : -1;
-  var swell = 1 + kick*0.10;
+  var swell = 1 + kick*0.15;
 
   for(var i=0;i<N;i++){
     var a = -Math.PI/2 + 2*Math.PI*i/N + rot;
     var v = base[i];
     /* 固定形狀 × 此刻音量 —— 跟三人聲紋 Reel 同一條公式 */
-    var r1 = R0 + W*(0.026 + (0.088 + 0.168*p) * v) * swell;
-    var g  = 26 + (48 + 190*p) * v;
+    var r1 = R0 + W*(0.042 + (0.072 + 0.162*p) * v) * swell;
+    var g  = 24 + (58 + 184*p) * v;
     if(g>255) g=255;
     var ca=Math.cos(a), sa=Math.sin(a);
     cx.strokeStyle='rgb('+(g|0)+','+(g|0)+','+(g|0)+')';
@@ -275,7 +279,7 @@ function open_(i){
   document.getElementById('lbTitle').textContent=o.t;
   document.getElementById('lbArtist').textContent=o.a;
   document.getElementById('lbPage').href=o.p;
-  au.pause(); au.src='audio/'+o.s+'.mp3'; au.currentTime=0; lvl=0; kick=0; rot=0;
+  au.pause(); au.src='audio/'+o.s+'.mp3'; au.currentTime=0; lvl=0; kick=0; rot=0; peak=0.02;
   setPlayLabel(); lb.classList.add('on');
   if(!raf){ last=0; raf=requestAnimationFrame(loop); }
   play();
