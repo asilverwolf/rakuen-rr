@@ -94,7 +94,24 @@ footer a{color:var(--grey);text-decoration:none;margin:0 8px;}
   <p class="note">十六張共用同一把尺 — 所以大聲的歌就是比較大朵。點任何一張可以聽。</p>
 </header>
 
-<div class="grid" id="grid"></div>
+<div class="grid" id="grid">
+  <figure class="cell" data-i="0"><img src="wf/wf-noproof.jpg" alt="NO PROOF 的聲紋" loading="lazy" width="1080" height="1080"><figcaption>NO PROOF</figcaption></figure>
+  <figure class="cell" data-i="1"><img src="wf/wf-kyouhan.jpg" alt="共犯 的聲紋" loading="lazy" width="1080" height="1080"><figcaption>共犯</figcaption></figure>
+  <figure class="cell" data-i="2"><img src="wf/wf-aida.jpg" alt="AIDA 的聲紋" loading="lazy" width="1080" height="1080"><figcaption>AIDA</figcaption></figure>
+  <figure class="cell" data-i="3"><img src="wf/wf-areyousure.jpg" alt="ARE YOU SURE 的聲紋" loading="lazy" width="1080" height="1080"><figcaption>ARE YOU SURE</figcaption></figure>
+  <figure class="cell" data-i="4"><img src="wf/wf-between.jpg" alt="BETWEEN 的聲紋" loading="lazy" width="1080" height="1080"><figcaption>BETWEEN</figcaption></figure>
+  <figure class="cell" data-i="5"><img src="wf/wf-stillhere.jpg" alt="STILL HERE 的聲紋" loading="lazy" width="1080" height="1080"><figcaption>STILL HERE</figcaption></figure>
+  <figure class="cell" data-i="6"><img src="wf/wf-youmetsu.jpg" alt="幽滅 的聲紋" loading="lazy" width="1080" height="1080"><figcaption>幽滅</figcaption></figure>
+  <figure class="cell" data-i="7"><img src="wf/wf-matane.jpg" alt="またね 的聲紋" loading="lazy" width="1080" height="1080"><figcaption>またね</figcaption></figure>
+  <figure class="cell" data-i="8"><img src="wf/wf-jiexian.jpg" alt="界線 的聲紋" loading="lazy" width="1080" height="1080"><figcaption>界線</figcaption></figure>
+  <figure class="cell" data-i="9"><img src="wf/wf-kingyo.jpg" alt="金魚が漂う 的聲紋" loading="lazy" width="1080" height="1080"><figcaption>金魚が漂う</figcaption></figure>
+  <figure class="cell" data-i="10"><img src="wf/wf-jiyuu.jpg" alt="自由のままで 的聲紋" loading="lazy" width="1080" height="1080"><figcaption>自由のままで</figcaption></figure>
+  <figure class="cell" data-i="11"><img src="wf/wf-signal.jpg" alt="SIGNAL 的聲紋" loading="lazy" width="1080" height="1080"><figcaption>SIGNAL</figcaption></figure>
+  <figure class="cell" data-i="12"><img src="wf/wf-sayit.jpg" alt="SAY IT 的聲紋" loading="lazy" width="1080" height="1080"><figcaption>SAY IT</figcaption></figure>
+  <figure class="cell" data-i="13"><img src="wf/wf-heydirtyboy.jpg" alt="Hey Dirty Boy 的聲紋" loading="lazy" width="1080" height="1080"><figcaption>Hey Dirty Boy</figcaption></figure>
+  <figure class="cell" data-i="14"><img src="wf/wf-rainnight.jpg" alt="비의 밤 的聲紋" loading="lazy" width="1080" height="1080"><figcaption>비의 밤</figcaption></figure>
+  <figure class="cell" data-i="15"><img src="wf/wf-jayu.jpg" alt="자유 얼마야? 的聲紋" loading="lazy" width="1080" height="1080"><figcaption>자유 얼마야?</figcaption></figure>
+</div>
 
 <div class="outro">
   十六首歌，四種語言，全部可以免費聽完。<br>
@@ -140,13 +157,6 @@ var SONGS=[
  {t:'자유 얼마야?',a:'Irene Zang',s:'jayu',p:'music-jayu.html'}
 ];
 var g=document.getElementById('grid');
-SONGS.forEach(function(o,i){
-  var f=document.createElement('figure');
-  f.className='cell'; f.setAttribute('data-i',i);
-  f.innerHTML='<img src="wf/wf-'+o.s+'.jpg" alt="'+o.t+' 的聲紋" loading="lazy">'+
-              '<figcaption>'+o.t+'</figcaption>';
-  g.appendChild(f);
-});
 var lb=document.getElementById('lb'),au=document.getElementById('au'),cur=null;
 function open_(i){
   cur=SONGS[i];
