@@ -88,6 +88,10 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
 .words-rule{display:none;}
 .cover-section img{width:min(320px,70vw);aspect-ratio:1/1;object-fit:cover;display:block;box-shadow:0 30px 90px rgba(0,0,0,0.55);transition:transform 0.4s;}
 .cover-section img:hover{transform:scale(1.015);}
+.mv-section{padding:72px 64px 0;max-width:720px;}
+.mv-player{width:min(380px,80vw);aspect-ratio:9/16;display:block;margin-top:18px;background:#04040A;box-shadow:0 30px 90px rgba(0,0,0,0.55);}
+.mv-note{display:block;margin-top:14px;font-size:12px;letter-spacing:0.08em;opacity:0.45;}
+@media(max-width:768px){.mv-section{padding:48px 24px 0;}}
 .bts-section{padding:0 64px 80px;}
 .bts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px;margin-top:24px;}
 .bts-grid img{width:100%;display:block;cursor:none;transition:opacity 0.3s;}
@@ -125,7 +129,6 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
   <a href="index.html" class="nav-logo"><img src="logo-main.png" alt="R.R" style="height:36px;opacity:1;"></a>
   <div class="nav-links">
     <a href="what-we-do.html">Music</a>
-    <a href="shapes.html">Shapes</a>
     <a href="index.html#who">Who</a>
     <a href="what-we-do.html#membership">Membership</a>
   </div>
@@ -142,6 +145,14 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
 </section>
 <section class="cover-section">
   <img src="cover-kyouhan.jpg" alt="共犯 — cover" id="coverFull">
+</section>
+
+<section class="mv-section">
+  <div class="words-rule"></div>
+  <span class="words-label">— Music Video</span>
+  <video class="mv-player" controls preload="none" playsinline
+         poster="cover-kyouhan.jpg" src="mv-kyouhan.mp4"></video>
+  <span class="mv-note">3:48 · 全片靜態攝影 ＋ 手繪筆刷歌詞</span>
 </section>
 
 <section class="words-section">
