@@ -14,8 +14,30 @@ img{height:60px;opacity:0;animation:f 0.5s ease forwards;}
 <body>
 <img src="/logo-rakuen.png" alt="RakuenɒuyɘЯ">
 <script>
-/* /ig — IG bio 導流追蹤頁：讓 Cloudflare Analytics 記到 /ig 路徑後轉首頁 */
-setTimeout(function(){ location.replace('/'); }, 600);
+/* /ig — IG bio 導流追蹤頁：讓 Cloudflare Analytics 記到 /ig 路徑後轉首頁
+   2026.09.03 修正：原本固定 600ms 就跳走。
+   Cloudflare 的 beacon 是自動注入的（原始碼裡看不到，線上有），
+   但它要先下載 static.cloudflareinsights.com/beacon.min.js 才會回報，
+   手機冷啟動常常超過 600ms → 跳太快，這一次瀏覽根本沒被記到。
+   改成：beacon 載入完成後再等 250ms 才跳；最多等 2.5 秒保底。 */
+(function () {
+  var gone = false;
+  function go() { if (!gone) { gone = true; location.replace('/'); } }
+
+  function beaconReady() {
+    return !!document.querySelector('script[src*="cloudflareinsights.com"]') &&
+           !!window.__cfBeacon;
+  }
+
+  var t0 = Date.now();
+  (function poll() {
+    if (Date.now() - t0 > 2500) return go();        // 保底：最多 2.5 秒
+    if (beaconReady() && Date.now() - t0 > 600) {   // 至少停 600ms，讓 logo 不會閃
+      return setTimeout(go, 250);                    // 給 beacon 送出的時間
+    }
+    setTimeout(poll, 100);
+  })();
+})();
 </script>
 </body>
 </html>
