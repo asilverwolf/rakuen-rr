@@ -9,17 +9,15 @@ RakuenɒuyɘЯ（R.R）官方網站。純靜態 HTML/CSS/JS，無框架、無 bu
 
 ### 部署責任規則（2026.07.13 統一，不再有三種版本）
 1. **預設：改檔案的 session 自己推、自己驗證上線**（git add / commit / push，部署後 curl -I 或 fetch 確認）。禁止改完檔案留著不推、叫 Aida 去點腳本——今天 SIGNAL 事故的缺口就是這樣來的
-2. **後備：只有 push 失敗（iCloud git lock 無法繞過）時**，明確告訴 Aida「我推不動，請點兩下 `web site/push-rakuen.command`」
+2. **後備：push 失敗時**，明確告訴 Aida「我推不動，請點兩下 Mac mini 上的 `~/Developer/rakuen-ops/push-rakuen.command`」
 3. **廢除**：貼指令到終端機的做法不再使用
-4. Aida 自己改檔案時，照舊用 push-rakuen.command
-- repo 在 iCloud 掛載目錄下，git 常有 lock 檔問題。commit 前先跑：
-  ```python
-  import os, glob
-  for f in glob.glob('.git/*.lock*') + glob.glob('.git/*.gone'):
-      try: os.rename(f, f + '.x')
-      except: pass
-  ```
-- 若 rename 也失敗，請 Aida 在 Mac Terminal 手動 `rm .git/*.lock`
+4. Aida 自己改檔案時，用 Mac mini 上的 `~/Developer/rakuen-ops/push-rakuen.command`
+
+### 🔴 repo 位置（2026.10.13 起）
+- **工作用 repo＝Mac mini 的 `~/Developer/rakuen-rr`**（從 GitHub 重新 clone，用 gh 鑰匙圈認證推送）
+- **iCloud 裡的 `web site/rakuen-rr` 已過期，不要再讀它、改它或從它推送。** 它停在 9 月前的版本，查網站現況一律看 GitHub main 或線上 rakuen-rr.com
+- 雲端 session：直接 `git clone` GitHub，改完自己推
+- 週五發行（補 Spotify 連結、改 `/ig` 轉址）與週日健檢由 Mac mini 的 `~/Developer/rakuen-ops/`（launchd）負責，改歌頁結構前先確認不會弄壞它的插入點
 
 ## 檔案慣例
 
