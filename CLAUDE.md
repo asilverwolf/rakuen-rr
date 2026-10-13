@@ -51,7 +51,8 @@ RakuenɒuyɘЯ（R.R）官方網站。純靜態 HTML/CSS/JS，無框架、無 bu
 - 色彩：黑／灰／白低彩度；英文為主，中日韓文只作 accent
 - footer tagline：FICTIONAL, THEREFORE REAL.
 - 對外視覺必壓 RakuenɒuyɘЯ 基礎版 Logo
-- 不解釋、不教育、不強推；不自我宣示是 AI
+- 不解釋、不教育、不強推；**不詮釋、但不隱瞞是 AI**（2026.10.13 Aida 同意，與 Spotify 簡介「Three AI creators」、DistroKid AI persona 一致）
+- 首頁 `<!-- LATEST:BEGIN -->…<!-- LATEST:END -->` 是「最新發行」橫幅，每週五由 Mac mini 換成當週新歌，改首頁時不要動這兩個標記
 - 音樂下載免費（Free to keep, free to share — not for commercial use）
 - 對外時間承諾（如出貨時程）未確定前一律寫 Coming Soon，不寫具體週數
 
