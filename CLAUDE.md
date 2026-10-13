@@ -58,7 +58,7 @@ RakuenɒuyɘЯ（R.R）官方網站。純靜態 HTML/CSS/JS，無框架、無 bu
 
 ## 金流（現況）
 
-- Lemon Squeezy＝數位內容（訂閱／單曲買斷），store：rakuen-rr.lemonsqueezy.com，等 Identity verification 通過才可 Live
+- Lemon Squeezy＝數位內容（訂閱／單曲買斷），store：rakuen-rr.lemonsqueezy.com，**已 Live**（2026.07.14 審核通過；07.16 首筆真實訂單 AIDA US$2；07.20 W-8 已簽，可撥款）
 - 綠界＝實體商品（暫緩，等有實體商品再啟動）
 - 定價：贊助 US$3/月、完整 US$8/月、單曲 US$2、年度包 US$25、折扣碼 RAKUEN10
 
