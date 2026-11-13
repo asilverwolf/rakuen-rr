@@ -107,6 +107,16 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
 .lb-x{position:absolute;top:20px;right:28px;font-size:20px;color:#888899;background:none;border:none;cursor:none;font-family:'Space Mono',monospace;}
 .lb-x:hover{color:#F0F0F5;}
 @media(max-width:768px){.cover-section{padding:24px 24px 0;}}
+/* cover row: canvas loop (muted) + behind-the-shoot reel — 2026.11.13 */
+.cover-section{gap:18px;align-items:flex-end;flex-wrap:wrap;}
+.cover-section video{height:min(320px,70vw);aspect-ratio:9/16;object-fit:cover;display:block;background:#04040A;box-shadow:0 30px 90px rgba(0,0,0,0.55);}
+@media(max-width:768px){
+  .cover-section.has-vid{gap:10px;}
+  .cover-section.has-vid img{width:50vw;}
+  .cover-section.has-vid video{height:50vw;}
+  .cover-section.has-vid2 img{width:38vw;}
+  .cover-section.has-vid2 video{height:38vw;}
+}
 </style>
 
 
@@ -148,8 +158,9 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
     <p class="hero-meta">2026 · Alternative K-pop · Neo-Soul Jazz-Hop</p>
   </div>
 </section>
-<section class="cover-section">
+<section class="cover-section has-vid">
   <img src="cover-jayu.jpg" alt="자유 얼마야? — cover" id="coverFull">
+  <video class="cv-loop" src="canvas-jayu.mp4" poster="canvas-jayu.jpg" autoplay muted loop playsinline preload="metadata" aria-label="자유 얼마야? — canvas loop"></video>
 </section>
 
 <section class="words-section">
@@ -430,6 +441,10 @@ document.querySelectorAll('.bts-photo').forEach(img=>{img.addEventListener('clic
 document.getElementById('lbX').addEventListener('click',()=>lb.classList.remove('open'));
 lb.addEventListener('click',e=>{if(e.target===lb)lb.classList.remove('open');});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('open');});
+</script>
+<script>
+(function(){var m=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)');
+if(m&&m.matches){document.querySelectorAll('video.cv-loop').forEach(function(v){v.removeAttribute('autoplay');v.pause();});}})();
 </script>
 </body>
 </html>

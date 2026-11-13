@@ -107,6 +107,16 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
 .bts-grid img{width:100%;display:block;cursor:none;transition:opacity 0.3s;}
 .bts-grid img:hover{opacity:0.72;}
 @media(max-width:768px){.bts-section{padding:0 24px 60px;}.bts-grid{grid-template-columns:repeat(2,1fr);gap:4px;}}
+/* cover row: canvas loop (muted) + behind-the-shoot reel — 2026.11.13 */
+.cover-section{gap:18px;align-items:flex-end;flex-wrap:wrap;}
+.cover-section video{height:min(320px,70vw);aspect-ratio:9/16;object-fit:cover;display:block;background:#04040A;box-shadow:0 30px 90px rgba(0,0,0,0.55);}
+@media(max-width:768px){
+  .cover-section.has-vid{gap:10px;}
+  .cover-section.has-vid img{width:50vw;}
+  .cover-section.has-vid video{height:50vw;}
+  .cover-section.has-vid2 img{width:38vw;}
+  .cover-section.has-vid2 video{height:38vw;}
+}
 </style>
 
 
@@ -148,8 +158,9 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
     <p class="hero-meta">2026 · Japanese Indie Rock · A minor · BPM 76–84</p>
   </div>
 </section>
-<section class="cover-section">
+<section class="cover-section has-vid">
   <img src="cover-jiexian.jpg" alt="界線 — cover" id="coverFull">
+  <video class="cv-loop" src="canvas-jiexian.mp4" poster="canvas-jiexian.jpg" autoplay muted loop playsinline preload="metadata" aria-label="界線 — canvas loop"></video>
 </section>
 
 <section class="words-section">
@@ -404,5 +415,9 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove(
 document.querySelectorAll('.bts-photo').forEach(img=>{img.addEventListener('click',function(){lbImg.src=this.src;lb.classList.add('open');});});
 </script>
 <script src="https://assets.lemonsqueezy.com/lemon.js" defer></script>
+<script>
+(function(){var m=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)');
+if(m&&m.matches){document.querySelectorAll('video.cv-loop').forEach(function(v){v.removeAttribute('autoplay');v.pause();});}})();
+</script>
 </body>
 </html>
