@@ -1368,9 +1368,10 @@
         <span id="heroPlayIcon">▶</span>
         <span>play</span>
       </button>
-      <span class="hero-play-track" id="heroPlayTrack">NO PROOF</span>
+      <span class="hero-play-track" id="heroPlayTrack">SIGNAL</span>
     </div>
     <!-- LATEST:BEGIN — 每週五由 Mac mini 的 release_weekly.py 更新成當週新歌 -->
+    <div class="hero-latest"><a href="music-signal.html"><span class="hl-tag">NEXT</span><span>SIGNAL — Irene Zang</span><span class="hl-go">12.01 →</span></a></div>
     <!-- LATEST:END -->
   </div>
 
@@ -2177,7 +2178,7 @@ let gi,gp=false,gpResume=0,gpArmed=false,gpLastSave=0;
 let userPaused=gpFresh&&gpSt.u===true;
 if(PAGE_IDX>=0){gi=PAGE_IDX;if(gpFresh&&gpSt.i===gi)gpResume=gpSt.t||0;}
 else if(gpFresh){gi=gpSt.i;gpResume=gpSt.t||0;}
-else{gi=Math.floor(Math.random()*GP.length);userPaused=false;}
+else{gi=1;userPaused=false;} // 首次造訪先放 SIGNAL（12.01 發行）；之後照隨機
 function gpSave(){try{localStorage.setItem('rr_gp',JSON.stringify({i:gi,t:ga.currentTime||0,u:userPaused,ts:Date.now()}))}catch(e){}}
 function gpUpd(){if(ge.p)ge.p.innerHTML=gp?'&#9646;&#9646;':'&#9654;';if(typeof heroPlaySync==='function')heroPlaySync();}
 function gpArm(){if(gpArmed)return;gpArmed=true;
@@ -2223,6 +2224,7 @@ function heroPlayToggle(){
 function heroPlaySync(){
   const btn=$g('heroPlayBtn'), icon=$g('heroPlayIcon'), track=$g('heroPlayTrack');
   if(!btn)return;
+  if(track&&GP[gi])track.textContent=GP[gi].title;
   if(gp){
     btn.classList.add('playing');
     if(icon)icon.textContent='■';
