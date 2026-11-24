@@ -116,6 +116,7 @@ footer a{color:var(--grey);text-decoration:none;margin:0 8px;}
 <script>
 /* 新的一支放最前面。at＝公開時間（台北），t＝點開時從第幾秒播（跟預覽同一段） */
 var MV=[
+ {t:'界線',a:'Ari Lin',v:'jiexian',id:'-c8rXGgzQ6E',s:39,at:'2026-12-15T20:00:00+08:00',p:'music-jiexian.html'},
  {t:'SIGNAL',a:'Irene Zang',v:'signal',id:'rnfrd4raDU4',s:40,at:'2026-12-01T00:00:00+08:00',p:'music-signal.html'},
  {t:'비의 밤',a:'Irene Zang',v:'rainnight',id:'rlmugdDvl-s',s:63,at:'2026-11-30T20:00:00+08:00',p:'music-rainnight.html'},
  {t:'金魚が漂う',a:'Ari Lin',v:'kingyo',id:'cZqNVJfhz1M',s:41,at:'2026-11-29T20:00:00+08:00',p:'music-kingyo.html'},
@@ -130,7 +131,7 @@ wall.innerHTML=MV.map(function(o,i){
    '<video muted loop playsinline preload="none" poster="watch-'+o.v+'.jpg" data-src="watch-'+o.v+'.mp4"></video>'+
    '<span class="play">'+(live(o)?'▶ Watch':'Soon')+'</span>'+
    '<figcaption class="meta"><div class="t">'+o.t+'</div><div class="a">'+o.a+'</div><div class="d">'+(live(o)?'Out now':'Premieres '+fmt(o.at))+'</div></figcaption></figure>';
-}).join('')+'<div class="card soon"><div class="s"><b>'+SOON.t+'</b>'+SOON.a+'<br>'+SOON.d+'</div></div>';
+}).join('');
 
 /* 只播看得到的那幾支，省流量 */
 var vids=[].slice.call(wall.querySelectorAll('video'));
