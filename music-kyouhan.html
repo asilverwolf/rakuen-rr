@@ -97,7 +97,7 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
 .cover-section img{width:min(320px,70vw);aspect-ratio:1/1;object-fit:cover;display:block;box-shadow:0 30px 90px rgba(0,0,0,0.55);transition:transform 0.4s;}
 .cover-section img:hover{transform:scale(1.015);}
 .mv-section{padding:72px 64px 0;max-width:720px;}
-.mv-player{width:min(380px,80vw);aspect-ratio:9/16;display:block;margin-top:18px;background:#04040A;box-shadow:0 30px 90px rgba(0,0,0,0.55);}
+.mv-player{width:min(380px,80vw);aspect-ratio:9/16;display:block;margin-top:18px;background:#04040A;box-shadow:0 30px 90px rgba(0,0,0,0.55);} .mv-player.wide{width:min(720px,100%);aspect-ratio:16/9;}
 .mv-note{display:block;margin-top:14px;font-size:12px;letter-spacing:0.08em;opacity:0.45;}
 @media(max-width:768px){.mv-section{padding:48px 24px 0;}}
 .bts-section{padding:0 64px 80px;}
@@ -169,12 +169,13 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
   <video class="cv-reel" src="reel-kyouhan-bts.mp4" poster="reel-kyouhan-bts.jpg" controls playsinline preload="none" aria-label="共犯 — behind the shoot"></video>
 </section>
 
-<section class="mv-section">
+<section class="mv-section" id="mvSection">
   <div class="words-rule"></div>
   <span class="words-label">— Music Video</span>
-  <iframe class="mv-player" style="border:0" src="https://www.youtube-nocookie.com/embed/p--qOrGzws0?rel=0" title="共犯 — Music Video" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-  <span class="mv-note">3:48 · 全片靜態攝影 ＋ 手繪筆刷歌詞</span>
+  <iframe class="mv-player" id="mvPlayer" style="border:0" src="https://www.youtube-nocookie.com/embed/p--qOrGzws0?rel=0" title="共犯 — Music Video" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  <span class="mv-note" id="mvNote"></span>
 </section>
+<script>(function(){var at=new Date('2026-11-28T20:00:00+08:00').getTime(),p=document.getElementById('mvPlayer'),n=document.getElementById('mvNote');if(Date.now()>=at){p.src='https://www.youtube-nocookie.com/embed/GZtJ-mkfOq4?rel=0';p.className='mv-player wide';p.style.display='block';n.textContent='Official MV · YouTube';}})();</script>
 
 <section class="words-section">
   <div class="words-rule"></div>
