@@ -160,6 +160,15 @@ footer{padding:28px 64px;display:flex;justify-content:space-between;align-items:
   <video class="cv-loop" src="canvas-kingyo.mp4" poster="canvas-kingyo.jpg" autoplay muted loop playsinline preload="metadata" aria-label="金魚が漂う — canvas loop"></video>
 </section>
 
+<style>.mv-section{padding:72px 64px 0;max-width:720px;} .mv-player{width:min(380px,80vw);aspect-ratio:9/16;display:block;margin-top:18px;background:#04040A;box-shadow:0 30px 90px rgba(0,0,0,0.55);} .mv-player.wide{width:min(720px,100%);aspect-ratio:16/9;} .mv-note{display:block;margin-top:14px;font-size:12px;letter-spacing:0.08em;opacity:0.45;} @media(max-width:768px){.mv-section{padding:48px 24px 0;}}</style>
+<section class="mv-section" id="mvSection">
+  <div class="words-rule"></div>
+  <span class="words-label">— Music Video</span>
+  <iframe class="mv-player" id="mvPlayer" style="border:0;display:none" title="金魚が漂う — Music Video" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  <span class="mv-note" id="mvNote">首播 11.29 20:00（GMT+8）</span>
+</section>
+<script>(function(){var at=new Date('2026-11-29T20:00:00+08:00').getTime(),p=document.getElementById('mvPlayer'),n=document.getElementById('mvNote');if(Date.now()>=at){p.src='https://www.youtube-nocookie.com/embed/cZqNVJfhz1M?rel=0';p.className='mv-player wide';p.style.display='block';n.textContent='Official MV · YouTube';}})();</script>
+
 <section class="words-section">
   <div class="words-rule"></div>
   <span class="words-label">— Why we made this</span>
